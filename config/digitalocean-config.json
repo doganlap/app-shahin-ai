@@ -1,0 +1,59 @@
+{
+  "provider": "digitalocean",
+  "region": "nyc1",
+  "project_name": "shahin-ai",
+  "domain": "shahin-ai.com",
+  "droplet_config": {
+    "name": "shahin-ai-server",
+    "size": "s-2vcpu-4gb",
+    "image": "ubuntu-22-04-x64",
+    "region": "nyc1",
+    "ssh_keys": [],
+    "backups": false,
+    "ipv6": true,
+    "monitoring": true,
+    "user_data": null
+  },
+  "database_config": {
+    "engine": "pg",
+    "name": "grc_db",
+    "size": "db-s-1vcpu-1gb",
+    "region": "nyc1",
+    "version": "16"
+  },
+  "networking": {
+    "firewall_rules": [
+      {
+        "type": "inbound",
+        "protocol": "tcp",
+        "port_range": "22",
+        "source": "0.0.0.0/0"
+      },
+      {
+        "type": "inbound",
+        "protocol": "tcp",
+        "port_range": "80",
+        "source": "0.0.0.0/0"
+      },
+      {
+        "type": "inbound",
+        "protocol": "tcp",
+        "port_range": "443",
+        "source": "0.0.0.0/0"
+      },
+      {
+        "type": "outbound",
+        "protocol": "tcp",
+        "port_range": "all",
+        "destination": "0.0.0.0/0"
+      }
+    ]
+  },
+  "environment": {
+    "ASPNETCORE_ENVIRONMENT": "Production",
+    "ASPNETCORE_URLS": "http://0.0.0.0:5000",
+    "DOMAIN": "shahin-ai.com"
+  }
+}
+
+

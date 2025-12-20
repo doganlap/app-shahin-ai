@@ -1,0 +1,309 @@
+# ============================================================
+# CURSOR RULES / AI AGENT CONTEXT FILE
+# ============================================================
+# Copy this entire file to: .cursorrules (Cursor IDE)
+# Or: .github/copilot-instructions.md (GitHub Copilot)
+# Or: Add to your AI agent's context window
+# ============================================================
+
+## PROJECT: Saudi GRC Compliance Platform
+
+You are building a multi-tenant GRC (Governance, Risk, Compliance) platform for Saudi Arabia.
+The platform manages 135+ regulatory frameworks with 3,500+ controls.
+
+## TECH STACK (100% Open Source)
+
+- Framework: ABP.io Open Source 8.3+ (LGPL-3.0)
+- Backend: .NET 8.0, ASP.NET Core, EF Core
+- Frontend: Angular 17+, PrimeNG, NgRx
+- Database: PostgreSQL 16+
+- Cache: Redis 7.2+
+- Queue: RabbitMQ 3.13+
+- Storage: MinIO (S3-compatible)
+- Search: Elasticsearch 8.x
+- Auth: OpenIddict (OAuth2/OIDC)
+- Real-time: SignalR
+
+## CODING RULES
+
+### 1. Entity Creation
+```csharp
+// Aggregate Root (main entity)
+public class Assessment : FullAuditedAggregateRoot<Guid>, IMultiTenant
+{
+    public Guid? TenantId { get; set; }
+    // ... properties
+}
+
+// Child Entity
+public class ControlAssessment : FullAuditedEntity<Guid>, IMultiTenant
+{
+    public Guid? TenantId { get; set; }
+    // ... properties
+}
+```
+
+### 2. Bilingual Strings (REQUIRED for all user-facing text)
+```csharp
+public class LocalizedString
+{
+    public string En { get; set; }
+    public string Ar { get; set; }
+}
+
+// Usage in entities:
+public LocalizedString Title { get; private set; }
+public LocalizedString Description { get; private set; }
+```
+
+### 3. Repository Pattern
+```csharp
+// Interface in Domain
+public interface IAssessmentRepository : IRepository<Assessment, Guid>
+{
+    Task<Assessment> GetWithControlsAsync(Guid id);
+    Task<List<Assessment>> GetListByStatusAsync(AssessmentStatus status);
+}
+
+// Implementation in EntityFrameworkCore
+public class AssessmentRepository : EfCoreRepository<GrcDbContext, Assessment, Guid>, IAssessmentRepository
+{
+    // Implementation
+}
+```
+
+### 4. Application Service
+```csharp
+[Authorize(GrcPermissions.Assessments.Default)]
+public class AssessmentAppService : GrcAppService, IAssessmentAppService
+{
+    private readonly IAssessmentRepository _repository;
+    
+    public AssessmentAppService(IAssessmentRepository repository)
+    {
+        _repository = repository;
+    }
+    
+    public async Task<AssessmentDto> GetAsync(Guid id)
+    {
+        var entity = await _repository.GetAsync(id);
+        return ObjectMapper.Map<Assessment, AssessmentDto>(entity);
+    }
+}
+```
+
+### 5. DTOs
+```csharp
+public class AssessmentDto : FullAuditedEntityDto<Guid>
+{
+    public string Name { get; set; }
+    public AssessmentType Type { get; set; }
+    public AssessmentStatus Status { get; set; }
+    // ... other properties
+}
+
+public class CreateAssessmentInput
+{
+    [Required]
+    [StringLength(200)]
+    public string Name { get; set; }
+    
+    [Required]
+    public AssessmentType Type { get; set; }
+    // ... other properties
+}
+```
+
+## KEY ENTITIES
+
+### Regulator
+```yaml
+properties:
+  - Code: string (20) - unique, e.g., "SAMA", "NCA"
+  - Name: LocalizedString
+  - Jurisdiction: LocalizedString
+  - Website: string
+  - Category: string
+```
+
+### Framework
+```yaml
+properties:
+  - RegulatorId: Guid (FK)
+  - Code: string (30) - e.g., "NCA-ECC", "SAMA-CSF"
+  - Version: string (20) - e.g., "v2.0"
+  - Title: LocalizedString
+  - Description: LocalizedString
+  - Category: string
+  - IsMandatory: bool
+  - EffectiveDate: DateTime
+  - Status: FrameworkStatus
+```
+
+### Control
+```yaml
+properties:
+  - FrameworkId: Guid (FK)
+  - ControlNumber: string - e.g., "1-1-1", "A.5.1"
+  - DomainCode: string
+  - Title: LocalizedString
+  - Requirement: LocalizedString
+  - ImplementationGuidance: LocalizedString
+  - Type: ControlType (Preventive/Detective/Corrective)
+  - MaturityLevel: int (1-5)
+  - Priority: Priority
+  - MappingISO27001: string
+  - MappingNIST: string
+```
+
+### Assessment
+```yaml
+properties:
+  - TenantId: Guid? (multi-tenant)
+  - Name: string
+  - Type: AssessmentType (Initial/Annual/Continuous)
+  - Status: AssessmentStatus (Draft/InProgress/Completed)
+  - StartDate: DateTime
+  - TargetEndDate: DateTime
+  - OwnerUserId: Guid?
+computed:
+  - TotalControls: int
+  - CompletedControls: int
+  - CompletionPercentage: decimal
+  - OverallScore: decimal
+```
+
+### ControlAssessment
+```yaml
+properties:
+  - TenantId: Guid?
+  - AssessmentId: Guid (FK)
+  - ControlId: Guid (FK)
+  - AssignedToUserId: Guid?
+  - Status: ControlAssessmentStatus
+  - SelfScore: decimal? (0-100)
+  - VerifiedScore: decimal? (0-100)
+  - ImplementationNotes: string
+  - DueDate: DateTime?
+```
+
+## ENUMS
+
+```csharp
+public enum AssessmentType { Initial = 1, Annual, Continuous, Targeted, Regulatory }
+public enum AssessmentStatus { Draft = 0, Planning, InProgress, UnderReview, Completed, Cancelled }
+public enum ControlAssessmentStatus { NotStarted = 0, InProgress, PendingReview, Verified, Rejected, NotApplicable }
+public enum ControlType { Preventive = 1, Detective, Corrective }
+public enum Priority { Critical = 1, High, Medium, Low }
+public enum EvidenceType { Policy = 1, Procedure, Screenshot, Log, Report, Certificate, Configuration, Contract, Training, Other = 99 }
+```
+
+## API ENDPOINTS (REST)
+
+```
+GET    /api/grc/regulators
+GET    /api/grc/regulators/{id}
+GET    /api/grc/frameworks
+GET    /api/grc/frameworks/{id}
+GET    /api/grc/frameworks/{id}/controls
+GET    /api/grc/controls/search?q={query}
+
+POST   /api/grc/assessments
+POST   /api/grc/assessments/generate
+GET    /api/grc/assessments
+GET    /api/grc/assessments/{id}
+GET    /api/grc/assessments/{id}/progress
+POST   /api/grc/assessments/{id}/start
+POST   /api/grc/assessments/{id}/complete
+
+GET    /api/grc/control-assessments/{id}
+POST   /api/grc/control-assessments/{id}/assign
+POST   /api/grc/control-assessments/bulk-assign
+PUT    /api/grc/control-assessments/{id}/score
+PUT    /api/grc/control-assessments/{id}/verify
+PUT    /api/grc/control-assessments/{id}/reject
+POST   /api/grc/control-assessments/{id}/evidence
+
+GET    /api/grc/dashboard/overview
+GET    /api/grc/dashboard/my-controls
+GET    /api/grc/dashboard/framework-progress
+```
+
+## PERMISSIONS
+
+```csharp
+public static class GrcPermissions
+{
+    public const string GroupName = "Grc";
+    
+    public static class Frameworks
+    {
+        public const string Default = GroupName + ".Frameworks";
+        public const string View = Default + ".View";
+        public const string Create = Default + ".Create";
+        public const string Edit = Default + ".Edit";
+        public const string Delete = Default + ".Delete";
+    }
+    
+    public static class Assessments
+    {
+        public const string Default = GroupName + ".Assessments";
+        public const string View = Default + ".View";
+        public const string Create = Default + ".Create";
+        public const string AssignControls = Default + ".AssignControls";
+        public const string VerifyControls = Default + ".VerifyControls";
+    }
+    
+    public static class ControlAssessments
+    {
+        public const string Default = GroupName + ".ControlAssessments";
+        public const string ViewOwn = Default + ".ViewOwn";
+        public const string ViewAll = Default + ".ViewAll";
+        public const string UpdateOwn = Default + ".UpdateOwn";
+        public const string UploadEvidence = Default + ".UploadEvidence";
+    }
+}
+```
+
+## PROJECT STRUCTURE
+
+```
+Grc/
+├── src/
+│   ├── Grc.Domain.Shared/          # Enums, constants, localization
+│   ├── Grc.Domain/                  # Entities, repositories, domain services
+│   ├── Grc.Application.Contracts/   # DTOs, app service interfaces
+│   ├── Grc.Application/             # App service implementations
+│   ├── Grc.EntityFrameworkCore/     # DbContext, EF configurations
+│   ├── Grc.HttpApi/                 # API controllers (optional)
+│   └── Grc.HttpApi.Host/            # API host, configuration
+├── angular/
+│   └── src/app/
+│       ├── core/services/           # API services
+│       ├── shared/                  # Shared components
+│       └── features/                # Feature modules
+└── test/
+```
+
+## IMPLEMENTATION ORDER
+
+1. **Foundation**: Solution, multi-tenancy, localization, enums
+2. **Framework Library**: Regulator, Framework, Control entities + import data
+3. **Assessment**: Assessment, ControlAssessment entities + services
+4. **Evidence**: Evidence entity + file upload with MinIO
+5. **Dashboard**: Overview metrics, progress tracking
+6. **Workflow**: Approval workflows for evidence verification
+7. **Reporting**: PDF/Excel report generation
+8. **AI Features**: Document classification, recommendations
+
+## REMEMBER
+
+1. ✅ Always use `IMultiTenant` for tenant-scoped entities
+2. ✅ Always use `LocalizedString` for user-facing text
+3. ✅ Follow ABP.io conventions (not generic .NET)
+4. ✅ Use `FullAuditedAggregateRoot<Guid>` for aggregates
+5. ✅ Add `[Authorize]` with proper permissions
+6. ✅ Support Arabic RTL in Angular
+7. ❌ Don't use repository directly in controllers
+8. ❌ Don't skip validation in DTOs
+9. ❌ Don't hardcode tenant filtering (ABP handles it)

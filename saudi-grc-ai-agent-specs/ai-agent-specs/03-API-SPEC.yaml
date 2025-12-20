@@ -1,0 +1,1485 @@
+openapi: 3.0.3
+info:
+  title: Saudi GRC Platform API
+  description: |
+    Multi-tenant GRC Compliance Platform API built with ABP.io Open Source.
+    AI Agent: Use this specification to implement API controllers.
+  version: 1.0.0
+  contact:
+    name: GRC Platform
+    email: api@grc-platform.sa
+    
+servers:
+  - url: https://{tenant}.grc-platform.sa/api
+    description: Production
+    variables:
+      tenant:
+        default: demo
+        description: Tenant subdomain
+  - url: http://localhost:5000/api
+    description: Development
+
+security:
+  - bearerAuth: []
+  - oauth2: []
+
+tags:
+  - name: Regulators
+    description: Regulatory authorities management
+  - name: Frameworks
+    description: Compliance frameworks and controls
+  - name: Assessments
+    description: Assessment lifecycle management
+  - name: ControlAssessments
+    description: Individual control assessment operations
+  - name: Evidence
+    description: Evidence document management
+  - name: Risks
+    description: Risk register and treatments
+  - name: ActionPlans
+    description: Remediation action plans
+  - name: Workflows
+    description: Workflow engine operations
+  - name: Dashboard
+    description: Dashboard and analytics
+  - name: AI
+    description: AI-powered features
+
+paths:
+  # ============================================================
+  # REGULATORS
+  # ============================================================
+  /grc/regulators:
+    get:
+      tags: [Regulators]
+      operationId: getRegulators
+      summary: List all regulators
+      parameters:
+        - $ref: '#/components/parameters/skipCount'
+        - $ref: '#/components/parameters/maxResultCount'
+        - name: category
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegulatorListResult'
+                
+  /grc/regulators/{id}:
+    get:
+      tags: [Regulators]
+      operationId: getRegulator
+      summary: Get regulator by ID
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegulatorDto'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ============================================================
+  # FRAMEWORKS
+  # ============================================================
+  /grc/frameworks:
+    get:
+      tags: [Frameworks]
+      operationId: getFrameworks
+      summary: List frameworks with filtering
+      parameters:
+        - $ref: '#/components/parameters/skipCount'
+        - $ref: '#/components/parameters/maxResultCount'
+        - name: regulatorId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [Active, Deprecated, Draft]
+        - name: isMandatory
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FrameworkListResult'
+
+  /grc/frameworks/{id}:
+    get:
+      tags: [Frameworks]
+      operationId: getFramework
+      summary: Get framework details
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FrameworkDto'
+
+  /grc/frameworks/{id}/controls:
+    get:
+      tags: [Frameworks]
+      operationId: getFrameworkControls
+      summary: Get all controls for a framework
+      parameters:
+        - $ref: '#/components/parameters/id'
+        - $ref: '#/components/parameters/skipCount'
+        - $ref: '#/components/parameters/maxResultCount'
+        - name: domain
+          in: query
+          schema:
+            type: string
+        - name: controlType
+          in: query
+          schema:
+            type: string
+            enum: [Preventive, Detective, Corrective]
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ControlListResult'
+
+  /grc/controls/{id}:
+    get:
+      tags: [Frameworks]
+      operationId: getControl
+      summary: Get control details
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ControlDto'
+
+  /grc/controls/search:
+    get:
+      tags: [Frameworks]
+      operationId: searchControls
+      summary: Full-text search controls
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Search query
+        - name: frameworkIds
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              format: uuid
+        - $ref: '#/components/parameters/maxResultCount'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ControlSearchResult'
+
+  # ============================================================
+  # ASSESSMENTS
+  # ============================================================
+  /grc/assessments:
+    get:
+      tags: [Assessments]
+      operationId: getAssessments
+      summary: List assessments
+      parameters:
+        - $ref: '#/components/parameters/skipCount'
+        - $ref: '#/components/parameters/maxResultCount'
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/AssessmentStatus'
+        - name: type
+          in: query
+          schema:
+            $ref: '#/components/schemas/AssessmentType'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentListResult'
+    post:
+      tags: [Assessments]
+      operationId: createAssessment
+      summary: Create new assessment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAssessmentInput'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentDto'
+
+  /grc/assessments/generate:
+    post:
+      tags: [Assessments]
+      operationId: generateAssessment
+      summary: Auto-generate assessment from organization profile
+      description: |
+        AI Agent: This endpoint automatically determines applicable frameworks
+        based on the organization's industry, entity type, and other profile data.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateAssessmentInput'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentDto'
+
+  /grc/assessments/{id}:
+    get:
+      tags: [Assessments]
+      operationId: getAssessment
+      summary: Get assessment details
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentDetailDto'
+    put:
+      tags: [Assessments]
+      operationId: updateAssessment
+      summary: Update assessment
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAssessmentInput'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentDto'
+    delete:
+      tags: [Assessments]
+      operationId: deleteAssessment
+      summary: Delete assessment
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '204':
+          description: No Content
+
+  /grc/assessments/{id}/start:
+    post:
+      tags: [Assessments]
+      operationId: startAssessment
+      summary: Start assessment (change status to InProgress)
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentDto'
+
+  /grc/assessments/{id}/complete:
+    post:
+      tags: [Assessments]
+      operationId: completeAssessment
+      summary: Mark assessment as completed
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentDto'
+
+  /grc/assessments/{id}/progress:
+    get:
+      tags: [Assessments]
+      operationId: getAssessmentProgress
+      summary: Get assessment progress metrics
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentProgressDto'
+
+  /grc/assessments/{id}/controls:
+    get:
+      tags: [Assessments]
+      operationId: getAssessmentControls
+      summary: Get control assessments for an assessment
+      parameters:
+        - $ref: '#/components/parameters/id'
+        - $ref: '#/components/parameters/skipCount'
+        - $ref: '#/components/parameters/maxResultCount'
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/ControlAssessmentStatus'
+        - name: assignedToUserId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: isOverdue
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ControlAssessmentListResult'
+
+  /grc/assessments/{id}/report:
+    get:
+      tags: [Assessments]
+      operationId: generateAssessmentReport
+      summary: Generate PDF report for assessment
+      parameters:
+        - $ref: '#/components/parameters/id'
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [pdf, excel]
+            default: pdf
+        - name: language
+          in: query
+          schema:
+            type: string
+            enum: [en, ar]
+            default: en
+      responses:
+        '200':
+          description: Success
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+
+  # ============================================================
+  # CONTROL ASSESSMENTS
+  # ============================================================
+  /grc/control-assessments/{id}:
+    get:
+      tags: [ControlAssessments]
+      operationId: getControlAssessment
+      summary: Get control assessment details
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ControlAssessmentDetailDto'
+
+  /grc/control-assessments/{id}/assign:
+    post:
+      tags: [ControlAssessments]
+      operationId: assignControl
+      summary: Assign control to user
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignControlInput'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ControlAssessmentDto'
+
+  /grc/control-assessments/bulk-assign:
+    post:
+      tags: [ControlAssessments]
+      operationId: bulkAssignControls
+      summary: Bulk assign controls to users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkAssignControlsInput'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkOperationResult'
+
+  /grc/control-assessments/{id}/score:
+    put:
+      tags: [ControlAssessments]
+      operationId: submitSelfScore
+      summary: Submit self-score for control
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitScoreInput'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ControlAssessmentDto'
+
+  /grc/control-assessments/{id}/verify:
+    put:
+      tags: [ControlAssessments]
+      operationId: verifyControl
+      summary: Verify control assessment
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyControlInput'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ControlAssessmentDto'
+
+  /grc/control-assessments/{id}/reject:
+    put:
+      tags: [ControlAssessments]
+      operationId: rejectControl
+      summary: Reject control assessment
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RejectControlInput'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ControlAssessmentDto'
+
+  /grc/control-assessments/{id}/evidence:
+    post:
+      tags: [ControlAssessments]
+      operationId: uploadEvidence
+      summary: Upload evidence for control
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                evidenceType:
+                  $ref: '#/components/schemas/EvidenceType'
+                description:
+                  type: string
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceDto'
+
+  # ============================================================
+  # EVIDENCE
+  # ============================================================
+  /grc/evidence/{id}:
+    get:
+      tags: [Evidence]
+      operationId: getEvidence
+      summary: Get evidence details
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceDto'
+    delete:
+      tags: [Evidence]
+      operationId: deleteEvidence
+      summary: Delete evidence
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '204':
+          description: No Content
+
+  /grc/evidence/{id}/download:
+    get:
+      tags: [Evidence]
+      operationId: downloadEvidence
+      summary: Download evidence file
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+
+  # ============================================================
+  # DASHBOARD
+  # ============================================================
+  /grc/dashboard/overview:
+    get:
+      tags: [Dashboard]
+      operationId: getDashboardOverview
+      summary: Get dashboard overview metrics
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardOverviewDto'
+
+  /grc/dashboard/my-controls:
+    get:
+      tags: [Dashboard]
+      operationId: getMyControls
+      summary: Get controls assigned to current user
+      parameters:
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/ControlAssessmentStatus'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MyControlDto'
+
+  /grc/dashboard/pending-verification:
+    get:
+      tags: [Dashboard]
+      operationId: getPendingVerification
+      summary: Get controls pending verification (for managers)
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ControlAssessmentDto'
+
+  /grc/dashboard/framework-progress:
+    get:
+      tags: [Dashboard]
+      operationId: getFrameworkProgress
+      summary: Get compliance progress by framework
+      parameters:
+        - name: assessmentId
+          in: query
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FrameworkProgressDto'
+
+  # ============================================================
+  # AI FEATURES
+  # ============================================================
+  /grc/ai/recommend:
+    post:
+      tags: [AI]
+      operationId: getAiRecommendations
+      summary: Get AI-powered recommendations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AiRecommendationInput'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiRecommendationResult'
+
+  /grc/ai/classify-document:
+    post:
+      tags: [AI]
+      operationId: classifyDocument
+      summary: AI document classification
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentClassificationResult'
+
+  /grc/ai/suggest-controls:
+    post:
+      tags: [AI]
+      operationId: suggestControls
+      summary: Suggest related controls based on document
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                documentText:
+                  type: string
+                assessmentId:
+                  type: string
+                  format: uuid
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ControlSuggestionDto'
+
+# ============================================================
+# COMPONENTS
+# ============================================================
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: /connect/authorize
+          tokenUrl: /connect/token
+          scopes:
+            grc:read: Read GRC data
+            grc:write: Write GRC data
+
+  parameters:
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    skipCount:
+      name: skipCount
+      in: query
+      schema:
+        type: integer
+        default: 0
+    maxResultCount:
+      name: maxResultCount
+      in: query
+      schema:
+        type: integer
+        default: 20
+        maximum: 100
+
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  schemas:
+    # --- Enums ---
+    AssessmentType:
+      type: string
+      enum: [Initial, Annual, Continuous, Targeted, Regulatory]
+      
+    AssessmentStatus:
+      type: string
+      enum: [Draft, Planning, InProgress, UnderReview, Completed, Cancelled]
+      
+    ControlAssessmentStatus:
+      type: string
+      enum: [NotStarted, InProgress, PendingReview, Verified, Rejected, NotApplicable]
+      
+    ControlType:
+      type: string
+      enum: [Preventive, Detective, Corrective]
+      
+    Priority:
+      type: string
+      enum: [Critical, High, Medium, Low]
+      
+    EvidenceType:
+      type: string
+      enum: [Policy, Procedure, Screenshot, Log, Report, Certificate, Configuration, Contract, Training, Other]
+
+    # --- Common ---
+    LocalizedString:
+      type: object
+      properties:
+        en:
+          type: string
+        ar:
+          type: string
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              type: string
+
+    PagedResultBase:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+          format: int64
+
+    # --- Regulator ---
+    RegulatorDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        code:
+          type: string
+        name:
+          $ref: '#/components/schemas/LocalizedString'
+        jurisdiction:
+          $ref: '#/components/schemas/LocalizedString'
+        website:
+          type: string
+        category:
+          type: string
+        logoUrl:
+          type: string
+
+    RegulatorListResult:
+      allOf:
+        - $ref: '#/components/schemas/PagedResultBase'
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/RegulatorDto'
+
+    # --- Framework ---
+    FrameworkDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        regulatorId:
+          type: string
+          format: uuid
+        code:
+          type: string
+        version:
+          type: string
+        title:
+          $ref: '#/components/schemas/LocalizedString'
+        description:
+          $ref: '#/components/schemas/LocalizedString'
+        category:
+          type: string
+        isMandatory:
+          type: boolean
+        effectiveDate:
+          type: string
+          format: date
+        status:
+          type: string
+        totalControls:
+          type: integer
+        regulator:
+          $ref: '#/components/schemas/RegulatorDto'
+
+    FrameworkListResult:
+      allOf:
+        - $ref: '#/components/schemas/PagedResultBase'
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/FrameworkDto'
+
+    # --- Control ---
+    ControlDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        frameworkId:
+          type: string
+          format: uuid
+        controlNumber:
+          type: string
+        domainCode:
+          type: string
+        title:
+          $ref: '#/components/schemas/LocalizedString'
+        requirement:
+          $ref: '#/components/schemas/LocalizedString'
+        implementationGuidance:
+          $ref: '#/components/schemas/LocalizedString'
+        type:
+          $ref: '#/components/schemas/ControlType'
+        maturityLevel:
+          type: integer
+          minimum: 1
+          maximum: 5
+        priority:
+          $ref: '#/components/schemas/Priority'
+        evidenceTypes:
+          type: array
+          items:
+            type: string
+        mappingISO27001:
+          type: string
+        mappingNIST:
+          type: string
+
+    ControlListResult:
+      allOf:
+        - $ref: '#/components/schemas/PagedResultBase'
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/ControlDto'
+
+    ControlSearchResult:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/ControlDto'
+              - type: object
+                properties:
+                  score:
+                    type: number
+                  highlights:
+                    type: array
+                    items:
+                      type: string
+
+    # --- Assessment ---
+    CreateAssessmentInput:
+      type: object
+      required:
+        - name
+        - type
+        - startDate
+        - targetEndDate
+        - frameworkIds
+      properties:
+        name:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+        type:
+          $ref: '#/components/schemas/AssessmentType'
+        startDate:
+          type: string
+          format: date
+        targetEndDate:
+          type: string
+          format: date
+        frameworkIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+          minItems: 1
+
+    GenerateAssessmentInput:
+      type: object
+      required:
+        - name
+        - type
+        - startDate
+        - targetEndDate
+      properties:
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/AssessmentType'
+        startDate:
+          type: string
+          format: date
+        targetEndDate:
+          type: string
+          format: date
+        includeOptionalFrameworks:
+          type: boolean
+          default: false
+
+    UpdateAssessmentInput:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        targetEndDate:
+          type: string
+          format: date
+
+    AssessmentDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          $ref: '#/components/schemas/AssessmentType'
+        status:
+          $ref: '#/components/schemas/AssessmentStatus'
+        startDate:
+          type: string
+          format: date
+        targetEndDate:
+          type: string
+          format: date
+        totalControls:
+          type: integer
+        completedControls:
+          type: integer
+        completionPercentage:
+          type: number
+        overallScore:
+          type: number
+
+    AssessmentDetailDto:
+      allOf:
+        - $ref: '#/components/schemas/AssessmentDto'
+        - type: object
+          properties:
+            frameworks:
+              type: array
+              items:
+                $ref: '#/components/schemas/FrameworkDto'
+
+    AssessmentListResult:
+      allOf:
+        - $ref: '#/components/schemas/PagedResultBase'
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/AssessmentDto'
+
+    AssessmentProgressDto:
+      type: object
+      properties:
+        totalControls:
+          type: integer
+        completedControls:
+          type: integer
+        inProgressControls:
+          type: integer
+        notStartedControls:
+          type: integer
+        overdueControls:
+          type: integer
+        completionPercentage:
+          type: number
+        overallScore:
+          type: number
+        byFramework:
+          type: array
+          items:
+            $ref: '#/components/schemas/FrameworkProgressDto'
+        byStatus:
+          type: object
+          additionalProperties:
+            type: integer
+
+    # --- Control Assessment ---
+    ControlAssessmentDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        assessmentId:
+          type: string
+          format: uuid
+        controlId:
+          type: string
+          format: uuid
+        control:
+          $ref: '#/components/schemas/ControlDto'
+        assignedToUserId:
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/ControlAssessmentStatus'
+        selfScore:
+          type: number
+        verifiedScore:
+          type: number
+        dueDate:
+          type: string
+          format: date
+        isOverdue:
+          type: boolean
+        evidenceCount:
+          type: integer
+
+    ControlAssessmentDetailDto:
+      allOf:
+        - $ref: '#/components/schemas/ControlAssessmentDto'
+        - type: object
+          properties:
+            implementationNotes:
+              type: string
+            rejectionReason:
+              type: string
+            verificationDate:
+              type: string
+              format: date-time
+            evidences:
+              type: array
+              items:
+                $ref: '#/components/schemas/EvidenceDto'
+            comments:
+              type: array
+              items:
+                $ref: '#/components/schemas/CommentDto'
+            history:
+              type: array
+              items:
+                $ref: '#/components/schemas/HistoryDto'
+
+    ControlAssessmentListResult:
+      allOf:
+        - $ref: '#/components/schemas/PagedResultBase'
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/ControlAssessmentDto'
+
+    AssignControlInput:
+      type: object
+      required:
+        - userId
+      properties:
+        userId:
+          type: string
+          format: uuid
+        dueDate:
+          type: string
+          format: date
+        priority:
+          $ref: '#/components/schemas/Priority'
+
+    BulkAssignControlsInput:
+      type: object
+      required:
+        - assignments
+      properties:
+        assignments:
+          type: array
+          items:
+            type: object
+            required:
+              - controlAssessmentId
+              - userId
+            properties:
+              controlAssessmentId:
+                type: string
+                format: uuid
+              userId:
+                type: string
+                format: uuid
+              dueDate:
+                type: string
+                format: date
+
+    SubmitScoreInput:
+      type: object
+      required:
+        - score
+      properties:
+        score:
+          type: number
+          minimum: 0
+          maximum: 100
+        notes:
+          type: string
+
+    VerifyControlInput:
+      type: object
+      required:
+        - score
+      properties:
+        score:
+          type: number
+          minimum: 0
+          maximum: 100
+        notes:
+          type: string
+
+    RejectControlInput:
+      type: object
+      required:
+        - reason
+      properties:
+        reason:
+          type: string
+          minLength: 10
+
+    BulkOperationResult:
+      type: object
+      properties:
+        successCount:
+          type: integer
+        failureCount:
+          type: integer
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              error:
+                type: string
+
+    # --- Evidence ---
+    EvidenceDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        fileName:
+          type: string
+        fileSize:
+          type: integer
+          format: int64
+        mimeType:
+          type: string
+        evidenceType:
+          $ref: '#/components/schemas/EvidenceType'
+        description:
+          type: string
+        uploadTime:
+          type: string
+          format: date-time
+        uploadedByUserId:
+          type: string
+          format: uuid
+
+    CommentDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        userName:
+          type: string
+        comment:
+          type: string
+        creationTime:
+          type: string
+          format: date-time
+
+    HistoryDto:
+      type: object
+      properties:
+        action:
+          type: string
+        details:
+          type: string
+        userId:
+          type: string
+          format: uuid
+        userName:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    # --- Dashboard ---
+    DashboardOverviewDto:
+      type: object
+      properties:
+        activeAssessments:
+          type: integer
+        totalControls:
+          type: integer
+        completedControls:
+          type: integer
+        overdueControls:
+          type: integer
+        averageScore:
+          type: number
+        complianceLevel:
+          type: string
+        upcomingDeadlines:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              dueDate:
+                type: string
+                format: date
+              daysRemaining:
+                type: integer
+
+    MyControlDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        controlNumber:
+          type: string
+        controlTitle:
+          $ref: '#/components/schemas/LocalizedString'
+        frameworkCode:
+          type: string
+        status:
+          $ref: '#/components/schemas/ControlAssessmentStatus'
+        dueDate:
+          type: string
+          format: date
+        isOverdue:
+          type: boolean
+        priority:
+          $ref: '#/components/schemas/Priority'
+
+    FrameworkProgressDto:
+      type: object
+      properties:
+        frameworkId:
+          type: string
+          format: uuid
+        frameworkCode:
+          type: string
+        frameworkName:
+          type: string
+        totalControls:
+          type: integer
+        completedControls:
+          type: integer
+        completionPercentage:
+          type: number
+        averageScore:
+          type: number
+
+    # --- AI ---
+    AiRecommendationInput:
+      type: object
+      properties:
+        controlAssessmentId:
+          type: string
+          format: uuid
+        context:
+          type: string
+
+    AiRecommendationResult:
+      type: object
+      properties:
+        recommendations:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              suggestion:
+                type: string
+              confidence:
+                type: number
+              relatedControls:
+                type: array
+                items:
+                  type: string
+
+    DocumentClassificationResult:
+      type: object
+      properties:
+        suggestedEvidenceType:
+          $ref: '#/components/schemas/EvidenceType'
+        confidence:
+          type: number
+        extractedText:
+          type: string
+        detectedLanguage:
+          type: string
+        suggestedControls:
+          type: array
+          items:
+            $ref: '#/components/schemas/ControlSuggestionDto'
+
+    ControlSuggestionDto:
+      type: object
+      properties:
+        controlId:
+          type: string
+          format: uuid
+        controlNumber:
+          type: string
+        controlTitle:
+          type: string
+        relevanceScore:
+          type: number
+        reason:
+          type: string

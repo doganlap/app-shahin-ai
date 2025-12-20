@@ -1,0 +1,821 @@
+# ============================================================
+# AI AGENT TASK BREAKDOWN
+# Step-by-step implementation guide for coding AI agents
+# ============================================================
+
+project: "Saudi GRC Platform"
+total_tasks: 85
+estimated_hours: 640
+
+# ============================================================
+# PHASE 1: FOUNDATION (Weeks 1-4)
+# ============================================================
+
+phase_1:
+  name: "Foundation"
+  weeks: "1-4"
+  total_tasks: 15
+  estimated_hours: 120
+
+  tasks:
+    - id: "T001"
+      name: "Create ABP Solution"
+      description: "Initialize ABP.io open source solution with Angular UI and PostgreSQL"
+      commands:
+        - "abp new Grc -t app -u angular -d ef -dbms PostgreSQL"
+      priority: "critical"
+      estimated_hours: 2
+      dependencies: []
+      output: "Grc.sln with all default projects"
+
+    - id: "T002"
+      name: "Configure Multi-Tenancy"
+      description: "Setup domain-based tenant resolution"
+      file: "src/Grc.HttpApi.Host/GrcHttpApiHostModule.cs"
+      code: |
+        Configure<AbpTenantResolveOptions>(options =>
+        {
+            options.TenantResolvers.Clear();
+            options.TenantResolvers.Add(new DomainTenantResolveContributor("{0}.grc-platform.sa"));
+        });
+      priority: "critical"
+      estimated_hours: 4
+      dependencies: ["T001"]
+
+    - id: "T003"
+      name: "Create Shared Enums"
+      description: "Define all enumerations in Domain.Shared"
+      file: "src/Grc.Domain.Shared/Enums/"
+      enums:
+        - "IndustrySector"
+        - "LegalEntityType"
+        - "SubscriptionTier"
+        - "ControlType"
+        - "ControlCategory"
+        - "Priority"
+        - "AssessmentType"
+        - "AssessmentStatus"
+        - "ControlAssessmentStatus"
+        - "EvidenceType"
+        - "RiskLevel"
+        - "WorkflowStatus"
+      priority: "critical"
+      estimated_hours: 4
+      dependencies: ["T001"]
+
+    - id: "T004"
+      name: "Create LocalizedString Value Object"
+      description: "Create bilingual string value object"
+      file: "src/Grc.Domain.Shared/ValueObjects/LocalizedString.cs"
+      priority: "critical"
+      estimated_hours: 2
+      dependencies: ["T001"]
+
+    - id: "T005"
+      name: "Setup Localization"
+      description: "Configure Arabic and English localization"
+      files:
+        - "src/Grc.Domain.Shared/Localization/Grc/en.json"
+        - "src/Grc.Domain.Shared/Localization/Grc/ar.json"
+      priority: "critical"
+      estimated_hours: 8
+      dependencies: ["T001"]
+
+    - id: "T006"
+      name: "Configure PostgreSQL DbContext"
+      description: "Setup EF Core with PostgreSQL provider"
+      file: "src/Grc.EntityFrameworkCore/GrcDbContext.cs"
+      priority: "critical"
+      estimated_hours: 4
+      dependencies: ["T001"]
+
+    - id: "T007"
+      name: "Add Redis Caching"
+      description: "Configure distributed Redis caching"
+      commands:
+        - "abp add-package Volo.Abp.Caching.StackExchangeRedis"
+      configuration:
+        file: "appsettings.json"
+        key: "Redis:Configuration"
+        value: "localhost:6379"
+      priority: "high"
+      estimated_hours: 4
+      dependencies: ["T001"]
+
+    - id: "T008"
+      name: "Add RabbitMQ"
+      description: "Configure RabbitMQ for events and background jobs"
+      commands:
+        - "abp add-package Volo.Abp.BackgroundJobs.RabbitMQ"
+        - "abp add-package Volo.Abp.EventBus.RabbitMQ"
+      priority: "high"
+      estimated_hours: 4
+      dependencies: ["T001"]
+
+    - id: "T009"
+      name: "Configure MinIO Blob Storage"
+      description: "Setup MinIO for file storage"
+      commands:
+        - "abp add-package Volo.Abp.BlobStoring.Minio"
+      priority: "high"
+      estimated_hours: 4
+      dependencies: ["T001"]
+
+    - id: "T010"
+      name: "Create Tenant Configuration Entity"
+      description: "Define GrcTenant entity with organization profile"
+      file: "src/Grc.Domain/Tenants/GrcTenant.cs"
+      properties:
+        - "OrganizationNameEn"
+        - "OrganizationNameAr"
+        - "IndustrySector"
+        - "LegalEntityType"
+        - "EmployeeCount"
+        - "SubscriptionTier"
+        - "DatabaseStrategy"
+      priority: "critical"
+      estimated_hours: 8
+      dependencies: ["T003", "T004"]
+
+    - id: "T011"
+      name: "Setup Docker Compose Infrastructure"
+      description: "Create docker-compose for PostgreSQL, Redis, RabbitMQ, etc."
+      file: "docker/docker-compose.infrastructure.yml"
+      services:
+        - "postgres:16"
+        - "redis:7.2-alpine"
+        - "rabbitmq:3.13-management"
+        - "elasticsearch:8.12.0"
+        - "minio/minio"
+        - "datalust/seq"
+      priority: "high"
+      estimated_hours: 4
+      dependencies: ["T001"]
+
+    - id: "T012"
+      name: "Configure CI/CD Pipeline"
+      description: "Setup GitHub Actions for build, test, deploy"
+      file: ".github/workflows/ci-cd.yml"
+      jobs:
+        - "build"
+        - "test"
+        - "docker-build"
+        - "deploy"
+      priority: "high"
+      estimated_hours: 8
+      dependencies: ["T001", "T011"]
+
+    - id: "T013"
+      name: "Create Database Migration"
+      description: "Generate and apply initial EF Core migration"
+      commands:
+        - "dotnet ef migrations add InitialCreate"
+        - "dotnet ef database update"
+      priority: "critical"
+      estimated_hours: 4
+      dependencies: ["T006", "T010"]
+
+    - id: "T014"
+      name: "Setup SignalR Hub"
+      description: "Configure SignalR for real-time updates"
+      file: "src/Grc.HttpApi.Host/Hubs/GrcHub.cs"
+      methods:
+        - "JoinAssessmentRoom"
+        - "NotifyControlUpdated"
+        - "NotifyUserTyping"
+      priority: "high"
+      estimated_hours: 8
+      dependencies: ["T001"]
+
+    - id: "T015"
+      name: "Implement Connection String Resolver"
+      description: "Dynamic connection string for per-tenant databases"
+      file: "src/Grc.EntityFrameworkCore/GrcConnectionStringResolver.cs"
+      priority: "critical"
+      estimated_hours: 8
+      dependencies: ["T010"]
+
+# ============================================================
+# PHASE 2: CORE MODULES (Weeks 5-8)
+# ============================================================
+
+phase_2:
+  name: "Core Modules"
+  weeks: "5-8"
+  total_tasks: 25
+  estimated_hours: 200
+
+  tasks:
+    # --- Framework Library Module ---
+    - id: "T016"
+      name: "Create Regulator Entity"
+      description: "Define Regulator aggregate root"
+      file: "src/Grc.FrameworkLibrary.Domain/Regulators/Regulator.cs"
+      spec_ref: "01-ENTITIES.yaml#Regulator"
+      priority: "critical"
+      estimated_hours: 4
+      dependencies: ["T004"]
+
+    - id: "T017"
+      name: "Create Framework Entity"
+      description: "Define Framework aggregate root"
+      file: "src/Grc.FrameworkLibrary.Domain/Frameworks/Framework.cs"
+      spec_ref: "01-ENTITIES.yaml#Framework"
+      priority: "critical"
+      estimated_hours: 6
+      dependencies: ["T016"]
+
+    - id: "T018"
+      name: "Create Control Entity"
+      description: "Define Control entity"
+      file: "src/Grc.FrameworkLibrary.Domain/Frameworks/Control.cs"
+      spec_ref: "01-ENTITIES.yaml#Control"
+      priority: "critical"
+      estimated_hours: 6
+      dependencies: ["T017"]
+
+    - id: "T019"
+      name: "Create Framework Repository"
+      description: "Implement IFrameworkRepository"
+      files:
+        - "src/Grc.FrameworkLibrary.Domain/Frameworks/IFrameworkRepository.cs"
+        - "src/Grc.FrameworkLibrary.EntityFrameworkCore/Frameworks/FrameworkRepository.cs"
+      priority: "critical"
+      estimated_hours: 4
+      dependencies: ["T017", "T018"]
+
+    - id: "T020"
+      name: "Create Framework DTOs"
+      description: "Define DTOs for Framework module"
+      file: "src/Grc.FrameworkLibrary.Application.Contracts/Frameworks/"
+      dtos:
+        - "RegulatorDto"
+        - "FrameworkDto"
+        - "ControlDto"
+        - "ControlListDto"
+        - "FrameworkDetailDto"
+      priority: "critical"
+      estimated_hours: 4
+      dependencies: ["T016", "T017", "T018"]
+
+    - id: "T021"
+      name: "Create Framework AppService"
+      description: "Implement IFrameworkAppService"
+      file: "src/Grc.FrameworkLibrary.Application/Frameworks/FrameworkAppService.cs"
+      methods:
+        - "GetListAsync"
+        - "GetAsync"
+        - "GetControlsAsync"
+        - "SearchControlsAsync"
+      spec_ref: "03-API-SPEC.yaml#/grc/frameworks"
+      priority: "critical"
+      estimated_hours: 8
+      dependencies: ["T019", "T020"]
+
+    - id: "T022"
+      name: "Import Framework Data"
+      description: "Import 135+ frameworks and 3500+ controls"
+      data_source: "project_files/*.csv"
+      implementation:
+        - "Create DataSeeder class"
+        - "Read CSV files"
+        - "Map to entities"
+        - "Bulk insert"
+      priority: "critical"
+      estimated_hours: 16
+      dependencies: ["T021"]
+
+    # --- Assessment Module ---
+    - id: "T023"
+      name: "Create Assessment Entity"
+      description: "Define Assessment aggregate root"
+      file: "src/Grc.Assessment.Domain/Assessments/Assessment.cs"
+      spec_ref: "01-ENTITIES.yaml#Assessment"
+      priority: "critical"
+      estimated_hours: 6
+      dependencies: ["T004"]
+
+    - id: "T024"
+      name: "Create ControlAssessment Entity"
+      description: "Define ControlAssessment entity"
+      file: "src/Grc.Assessment.Domain/Assessments/ControlAssessment.cs"
+      spec_ref: "01-ENTITIES.yaml#ControlAssessment"
+      priority: "critical"
+      estimated_hours: 6
+      dependencies: ["T023"]
+
+    - id: "T025"
+      name: "Create AssessmentTemplateGenerator"
+      description: "Auto-generate assessments from organization profile"
+      file: "src/Grc.Assessment.Application/Assessments/AssessmentTemplateGenerator.cs"
+      rules:
+        - "Sector-based framework selection"
+        - "Universal frameworks (NCA-ECC)"
+        - "Data-based (PDPL)"
+        - "Payment processing (PCI-DSS)"
+        - "Listed company (CMA)"
+      priority: "critical"
+      estimated_hours: 12
+      dependencies: ["T023", "T024", "T010"]
+
+    - id: "T026"
+      name: "Create Assessment AppService"
+      description: "Implement IAssessmentAppService"
+      file: "src/Grc.Assessment.Application/Assessments/AssessmentAppService.cs"
+      methods:
+        - "CreateAsync"
+        - "GenerateAsync"
+        - "StartAsync"
+        - "CompleteAsync"
+        - "GetProgressAsync"
+        - "GetControlsAsync"
+      spec_ref: "03-API-SPEC.yaml#/grc/assessments"
+      priority: "critical"
+      estimated_hours: 12
+      dependencies: ["T023", "T024", "T025"]
+
+    - id: "T027"
+      name: "Create ControlAssessment AppService"
+      description: "Implement IControlAssessmentAppService"
+      file: "src/Grc.Assessment.Application/Assessments/ControlAssessmentAppService.cs"
+      methods:
+        - "GetAsync"
+        - "AssignAsync"
+        - "BulkAssignAsync"
+        - "SubmitScoreAsync"
+        - "VerifyAsync"
+        - "RejectAsync"
+      spec_ref: "03-API-SPEC.yaml#/grc/control-assessments"
+      priority: "critical"
+      estimated_hours: 12
+      dependencies: ["T024"]
+
+    # --- Evidence Module ---
+    - id: "T028"
+      name: "Create Evidence Entity"
+      description: "Define Evidence entity"
+      file: "src/Grc.Evidence.Domain/Evidences/Evidence.cs"
+      spec_ref: "01-ENTITIES.yaml#Evidence"
+      priority: "critical"
+      estimated_hours: 4
+      dependencies: ["T004"]
+
+    - id: "T029"
+      name: "Create Evidence AppService"
+      description: "Implement IEvidenceAppService with file upload"
+      file: "src/Grc.Evidence.Application/Evidences/EvidenceAppService.cs"
+      methods:
+        - "UploadAsync"
+        - "GetAsync"
+        - "DownloadAsync"
+        - "DeleteAsync"
+      features:
+        - "MinIO blob storage"
+        - "File hash calculation"
+        - "Virus scanning"
+      priority: "critical"
+      estimated_hours: 8
+      dependencies: ["T028", "T009"]
+
+    # --- Domain Events ---
+    - id: "T030"
+      name: "Define Domain Events"
+      description: "Create domain event classes"
+      file: "src/Grc.Domain.Shared/Events/"
+      events:
+        - "AssessmentCreatedEto"
+        - "AssessmentStartedEto"
+        - "AssessmentCompletedEto"
+        - "ControlAssignedEto"
+        - "SelfScoreSubmittedEto"
+        - "ControlVerifiedEto"
+        - "ControlRejectedEto"
+        - "EvidenceUploadedEto"
+      priority: "high"
+      estimated_hours: 4
+      dependencies: ["T001"]
+
+    - id: "T031"
+      name: "Create Event Handlers"
+      description: "Handle domain events for notifications and SignalR"
+      file: "src/Grc.Application/EventHandlers/"
+      handlers:
+        - "AssessmentEventHandler"
+        - "ControlAssessmentEventHandler"
+        - "SignalRNotificationHandler"
+      priority: "high"
+      estimated_hours: 8
+      dependencies: ["T030", "T014"]
+
+    # --- Permissions ---
+    - id: "T032"
+      name: "Define Permissions"
+      description: "Create GrcPermissions constants"
+      file: "src/Grc.Application.Contracts/Permissions/GrcPermissions.cs"
+      groups:
+        - "Frameworks"
+        - "Assessments"
+        - "ControlAssessments"
+        - "Evidence"
+        - "Risks"
+        - "Reports"
+        - "Admin"
+      priority: "critical"
+      estimated_hours: 4
+      dependencies: ["T001"]
+
+    - id: "T033"
+      name: "Configure Permission Provider"
+      description: "Register permissions with ABP"
+      file: "src/Grc.Application.Contracts/Permissions/GrcPermissionDefinitionProvider.cs"
+      priority: "critical"
+      estimated_hours: 4
+      dependencies: ["T032"]
+
+    - id: "T034"
+      name: "Create Dashboard AppService"
+      description: "Implement IDashboardAppService"
+      file: "src/Grc.Application/Dashboard/DashboardAppService.cs"
+      methods:
+        - "GetOverviewAsync"
+        - "GetMyControlsAsync"
+        - "GetPendingVerificationAsync"
+        - "GetFrameworkProgressAsync"
+        - "GetOverdueControlsAsync"
+      spec_ref: "03-API-SPEC.yaml#/grc/dashboard"
+      priority: "high"
+      estimated_hours: 8
+      dependencies: ["T026", "T027"]
+
+    # --- GraphQL ---
+    - id: "T035"
+      name: "Setup GraphQL with HotChocolate"
+      description: "Configure HotChocolate GraphQL server"
+      file: "src/Grc.HttpApi.Host/GraphQL/"
+      files:
+        - "Query.cs"
+        - "Mutation.cs"
+        - "Subscription.cs"
+      priority: "medium"
+      estimated_hours: 12
+      dependencies: ["T021", "T026", "T027"]
+
+    # --- Elasticsearch ---
+    - id: "T036"
+      name: "Configure Elasticsearch"
+      description: "Setup Elasticsearch for full-text search"
+      file: "src/Grc.HttpApi.Host/Elasticsearch/"
+      features:
+        - "Control indexing"
+        - "Full-text search"
+        - "Arabic analyzer"
+      priority: "medium"
+      estimated_hours: 12
+      dependencies: ["T022"]
+
+    # --- Angular Core ---
+    - id: "T037"
+      name: "Create Angular Services"
+      description: "Implement API services in Angular"
+      path: "angular/src/app/core/services/"
+      services:
+        - "framework.service.ts"
+        - "assessment.service.ts"
+        - "control-assessment.service.ts"
+        - "evidence.service.ts"
+        - "dashboard.service.ts"
+      priority: "critical"
+      estimated_hours: 16
+      dependencies: ["T021", "T026", "T027", "T029"]
+
+    - id: "T038"
+      name: "Create Dashboard Component"
+      description: "Build dashboard UI with charts"
+      path: "angular/src/app/features/dashboard/"
+      components:
+        - "overview"
+        - "framework-progress"
+        - "my-controls"
+        - "timeline-chart"
+      priority: "critical"
+      estimated_hours: 16
+      dependencies: ["T037"]
+
+    - id: "T039"
+      name: "Create Assessment Components"
+      description: "Build assessment management UI"
+      path: "angular/src/app/features/assessments/"
+      components:
+        - "assessment-list"
+        - "assessment-detail"
+        - "assessment-wizard"
+        - "control-list"
+        - "control-detail"
+      priority: "critical"
+      estimated_hours: 24
+      dependencies: ["T037"]
+
+    - id: "T040"
+      name: "Setup RTL Support"
+      description: "Configure Arabic RTL layouts"
+      files:
+        - "angular/src/assets/styles/_rtl.scss"
+        - "angular/src/app/core/services/locale.service.ts"
+      priority: "high"
+      estimated_hours: 8
+      dependencies: ["T037"]
+
+# ============================================================
+# PHASE 3: ADVANCED FEATURES (Weeks 9-12)
+# ============================================================
+
+phase_3:
+  name: "Advanced Features"
+  weeks: "9-12"
+  total_tasks: 20
+  estimated_hours: 160
+
+  tasks:
+    - id: "T041"
+      name: "Create Workflow Engine"
+      description: "BPMN-style workflow engine"
+      files:
+        - "src/Grc.Workflow.Domain/WorkflowDefinition.cs"
+        - "src/Grc.Workflow.Domain/WorkflowInstance.cs"
+        - "src/Grc.Workflow.Domain/WorkflowTask.cs"
+        - "src/Grc.Workflow.Application/WorkflowEngine.cs"
+      priority: "high"
+      estimated_hours: 24
+      dependencies: ["T030"]
+
+    - id: "T042"
+      name: "Implement AI Service"
+      description: "ML.NET-based recommendation engine"
+      file: "src/Grc.AI.Application/AiComplianceEngine.cs"
+      features:
+        - "Document classification"
+        - "Control recommendations"
+        - "Gap prediction"
+      priority: "high"
+      estimated_hours: 32
+      dependencies: ["T022"]
+
+    - id: "T043"
+      name: "Implement Document OCR"
+      description: "Tesseract OCR for document text extraction"
+      file: "src/Grc.AI.Application/DocumentIntelligenceService.cs"
+      features:
+        - "Arabic + English OCR"
+        - "PDF text extraction"
+        - "Entity extraction"
+      priority: "medium"
+      estimated_hours: 16
+      dependencies: ["T042"]
+
+    - id: "T044"
+      name: "Implement Event Sourcing"
+      description: "Event store for audit trail"
+      files:
+        - "src/Grc.Domain/EventSourcing/EventStore.cs"
+        - "src/Grc.Domain/EventSourcing/IEventStoreRepository.cs"
+      features:
+        - "Event persistence"
+        - "Event replay"
+        - "Point-in-time reconstruction"
+      priority: "medium"
+      estimated_hours: 16
+      dependencies: ["T030"]
+
+    - id: "T045"
+      name: "Create SignalR Client Service"
+      description: "Angular SignalR integration"
+      file: "angular/src/app/core/services/signalr.service.ts"
+      events:
+        - "ControlUpdated"
+        - "AssessmentProgress"
+        - "Notification"
+      priority: "high"
+      estimated_hours: 8
+      dependencies: ["T014"]
+
+    - id: "T046"
+      name: "Create Risk Module Entities"
+      description: "Risk register entities"
+      files:
+        - "src/Grc.Risk.Domain/Risks/Risk.cs"
+        - "src/Grc.Risk.Domain/Risks/RiskTreatment.cs"
+      priority: "high"
+      estimated_hours: 8
+      dependencies: ["T004"]
+
+    - id: "T047"
+      name: "Create Risk AppService"
+      description: "Implement IRiskAppService"
+      file: "src/Grc.Risk.Application/Risks/RiskAppService.cs"
+      priority: "high"
+      estimated_hours: 8
+      dependencies: ["T046"]
+
+    - id: "T048"
+      name: "Create Action Plan Module"
+      description: "Remediation planning"
+      files:
+        - "src/Grc.ActionPlan.Domain/ActionPlan.cs"
+        - "src/Grc.ActionPlan.Domain/ActionItem.cs"
+        - "src/Grc.ActionPlan.Application/ActionPlanAppService.cs"
+      priority: "high"
+      estimated_hours: 12
+      dependencies: ["T004"]
+
+    - id: "T049"
+      name: "Create Audit Module"
+      description: "Internal/external audit management"
+      files:
+        - "src/Grc.Audit.Domain/Audits/Audit.cs"
+        - "src/Grc.Audit.Domain/Audits/AuditFinding.cs"
+        - "src/Grc.Audit.Application/AuditAppService.cs"
+      priority: "medium"
+      estimated_hours: 12
+      dependencies: ["T004"]
+
+    - id: "T050"
+      name: "Create Reporting Engine"
+      description: "PDF/Excel report generation"
+      file: "src/Grc.Reporting.Application/ReportGenerator.cs"
+      libraries:
+        - "QuestPDF"
+        - "ClosedXML"
+      reports:
+        - "AssessmentReport"
+        - "GapAnalysisReport"
+        - "ExecutiveSummary"
+      priority: "high"
+      estimated_hours: 16
+      dependencies: ["T026"]
+
+    # ... Additional tasks for remaining features
+
+# ============================================================
+# PHASE 4: EXTENDED MODULES (Weeks 13-16)
+# ============================================================
+
+phase_4:
+  name: "Extended Modules"
+  weeks: "13-16"
+  total_tasks: 15
+  estimated_hours: 120
+
+  tasks:
+    - id: "T051"
+      name: "Create Notification System"
+      description: "Multi-channel notifications"
+      files:
+        - "src/Grc.Notification.Domain/Notification.cs"
+        - "src/Grc.Notification.Application/NotificationService.cs"
+        - "src/Grc.Notification.Application/Channels/EmailChannel.cs"
+        - "src/Grc.Notification.Application/Channels/SmsChannel.cs"
+      priority: "high"
+      estimated_hours: 12
+      dependencies: ["T030"]
+
+    - id: "T052"
+      name: "Create Integration Hub"
+      description: "External system connectors"
+      connectors:
+        - "ActiveDirectory"
+        - "ServiceNow"
+        - "Jira"
+        - "SharePoint"
+      priority: "medium"
+      estimated_hours: 24
+      dependencies: ["T001"]
+
+    - id: "T053"
+      name: "Create Mobile PWA"
+      description: "Progressive Web App"
+      path: "angular/"
+      features:
+        - "Service worker"
+        - "Offline support"
+        - "Push notifications"
+        - "Camera access"
+      priority: "medium"
+      estimated_hours: 16
+      dependencies: ["T038", "T039"]
+
+    - id: "T054"
+      name: "Create Policy Module"
+      description: "Policy lifecycle management"
+      files:
+        - "src/Grc.Policy.Domain/Policies/Policy.cs"
+        - "src/Grc.Policy.Domain/Policies/PolicyVersion.cs"
+        - "src/Grc.Policy.Application/PolicyAppService.cs"
+      priority: "medium"
+      estimated_hours: 12
+      dependencies: ["T004"]
+
+    - id: "T055"
+      name: "Create Compliance Calendar"
+      description: "Deadline and reminder management"
+      files:
+        - "src/Grc.Calendar.Domain/CalendarEvent.cs"
+        - "src/Grc.Calendar.Application/CalendarService.cs"
+      priority: "medium"
+      estimated_hours: 8
+      dependencies: ["T051"]
+
+    # ... Additional tasks
+
+# ============================================================
+# PHASE 5: PRODUCTION (Weeks 17-20)
+# ============================================================
+
+phase_5:
+  name: "Production"
+  weeks: "17-20"
+  total_tasks: 10
+  estimated_hours: 80
+
+  tasks:
+    - id: "T056"
+      name: "Create Kubernetes Manifests"
+      description: "K8s deployment configuration"
+      files:
+        - "k8s/namespace.yaml"
+        - "k8s/configmap.yaml"
+        - "k8s/secret.yaml"
+        - "k8s/deployment-api.yaml"
+        - "k8s/deployment-web.yaml"
+        - "k8s/service.yaml"
+        - "k8s/ingress.yaml"
+        - "k8s/hpa.yaml"
+      priority: "critical"
+      estimated_hours: 12
+      dependencies: ["T011"]
+
+    - id: "T057"
+      name: "Performance Testing"
+      description: "Load and stress testing"
+      tools:
+        - "k6"
+        - "Apache JMeter"
+      targets:
+        - "API: < 500ms P95"
+        - "500 concurrent users"
+      priority: "critical"
+      estimated_hours: 16
+      dependencies: ["T056"]
+
+    - id: "T058"
+      name: "Security Audit"
+      description: "Security assessment and penetration testing"
+      checks:
+        - "OWASP Top 10"
+        - "SQL Injection"
+        - "XSS"
+        - "Authentication bypass"
+        - "Authorization bypass"
+      priority: "critical"
+      estimated_hours: 16
+      dependencies: ["T056"]
+
+    - id: "T059"
+      name: "Create Documentation"
+      description: "API and user documentation"
+      docs:
+        - "API Reference (Swagger)"
+        - "User Manual (EN/AR)"
+        - "Admin Guide"
+        - "Deployment Runbook"
+      priority: "critical"
+      estimated_hours: 24
+      dependencies: ["T001"]
+
+    - id: "T060"
+      name: "Production Deployment"
+      description: "Deploy to production environment"
+      steps:
+        - "Create production namespace"
+        - "Deploy infrastructure"
+        - "Deploy application"
+        - "Configure monitoring"
+        - "Verify health checks"
+      priority: "critical"
+      estimated_hours: 12
+      dependencies: ["T056", "T057", "T058"]
+
+# ============================================================
+# QUICK REFERENCE - FILE LOCATIONS
+# ============================================================
+
+file_reference:
+  entities: "01-ENTITIES.yaml"
+  database: "02-DATABASE-SCHEMA.sql"
+  api: "03-API-SPEC.yaml"
+  setup: "04-ABP-CLI-SETUP.sh"
+  project: "00-PROJECT-SPEC.yaml"
+  tasks: "05-TASK-BREAKDOWN.yaml (this file)"
+
+# ============================================================
+# END OF TASK BREAKDOWN
+# ============================================================
