@@ -1,0 +1,114 @@
+<div class="subscription-management-container">
+  <div class="header">
+    <h1>{{ currentLanguage === 'ar' ? 'إدارة الاشتراك' : 'Subscription Management' }}</h1>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <p>{{ currentLanguage === 'ar' ? 'جاري التحميل...' : 'Loading...' }}</p>
+  </div>
+
+  <div *ngIf="!loading && subscription" class="subscription-details">
+    <div class="subscription-card">
+      <div class="subscription-header">
+        <h2>{{ subscription.product?.name?.[currentLanguage] || 'Subscription' }}</h2>
+        <span class="status-badge" [class.active]="subscription.isActive" [class.expired]="subscription.isExpired">
+          {{ subscription.status }}
+        </span>
+      </div>
+
+      <div class="subscription-info">
+        <div class="info-item">
+          <strong>{{ currentLanguage === 'ar' ? 'تاريخ البدء' : 'Start Date' }}:</strong>
+          <span>{{ subscription.startDate | date }}</span>
+        </div>
+        <div class="info-item" *ngIf="subscription.endDate">
+          <strong>{{ currentLanguage === 'ar' ? 'تاريخ الانتهاء' : 'End Date' }}:</strong>
+          <span>{{ subscription.endDate | date }}</span>
+        </div>
+        <div class="info-item" *ngIf="subscription.trialEndDate">
+          <strong>{{ currentLanguage === 'ar' ? 'نهاية الفترة التجريبية' : 'Trial End Date' }}:</strong>
+          <span>{{ subscription.trialEndDate | date }}</span>
+        </div>
+        <div class="info-item">
+          <strong>{{ currentLanguage === 'ar' ? 'التجديد التلقائي' : 'Auto Renew' }}:</strong>
+          <span>{{ subscription.autoRenew ? (currentLanguage === 'ar' ? 'نعم' : 'Yes') : (currentLanguage === 'ar' ? 'لا' : 'No') }}</span>
+        </div>
+      </div>
+
+      <div class="quota-usage-section">
+        <h3>{{ currentLanguage === 'ar' ? 'استخدام الحصص' : 'Quota Usage' }}</h3>
+        <div class="quota-item" *ngFor="let quotaType of getQuotaTypes()">
+          <div class="quota-header">
+            <span class="quota-name">{{ getQuotaName(quotaType) }}</span>
+            <span class="quota-status" [class.exceeded]="isQuotaExceeded(quotaType)">
+              {{ getQuotaUsage(quotaType) }}
+            </span>
+          </div>
+          <div class="quota-bar">
+            <div class="quota-progress" 
+                 [style.width.%]="getQuotaPercentage(quotaType)"
+                 [class.exceeded]="isQuotaExceeded(quotaType)">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subscription-actions">
+        <button class="btn-secondary" (click)="openUpgradeDialog()" *ngIf="subscription.isActive">
+          {{ currentLanguage === 'ar' ? 'ترقية' : 'Upgrade' }}
+        </button>
+        <button class="btn-danger" (click)="openCancelDialog()" *ngIf="subscription.isActive">
+          {{ currentLanguage === 'ar' ? 'إلغاء الاشتراك' : 'Cancel Subscription' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cancel Dialog -->
+  <div class="dialog-overlay" *ngIf="showCancelDialog" (click)="showCancelDialog = false">
+    <div class="dialog" (click)="$event.stopPropagation()">
+      <h3>{{ currentLanguage === 'ar' ? 'إلغاء الاشتراك' : 'Cancel Subscription' }}</h3>
+      <p>{{ currentLanguage === 'ar' ? 'يرجى إدخال سبب الإلغاء' : 'Please provide a reason for cancellation' }}</p>
+      <textarea [(ngModel)]="cancelReason" 
+                [placeholder]="currentLanguage === 'ar' ? 'سبب الإلغاء...' : 'Cancellation reason...'"
+                rows="4"></textarea>
+      <div class="dialog-actions">
+        <button class="btn-secondary" (click)="showCancelDialog = false">
+          {{ currentLanguage === 'ar' ? 'إلغاء' : 'Cancel' }}
+        </button>
+        <button class="btn-danger" (click)="cancelSubscription()">
+          {{ currentLanguage === 'ar' ? 'تأكيد الإلغاء' : 'Confirm Cancellation' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upgrade Dialog -->
+  <div class="dialog-overlay" *ngIf="showUpgradeDialog" (click)="showUpgradeDialog = false">
+    <div class="dialog" (click)="$event.stopPropagation()">
+      <h3>{{ currentLanguage === 'ar' ? 'ترقية الاشتراك' : 'Upgrade Subscription' }}</h3>
+      <div class="form-group">
+        <label>{{ currentLanguage === 'ar' ? 'المنتج الجديد' : 'New Product' }}</label>
+        <select [(ngModel)]="selectedProductId">
+          <option value="">{{ currentLanguage === 'ar' ? 'اختر منتج' : 'Select Product' }}</option>
+          <option *ngFor="let product of availableProducts" [value]="product.id">
+            {{ product.name[currentLanguage] }}
+          </option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>{{ currentLanguage === 'ar' ? 'تاريخ السريان' : 'Effective Date' }}</label>
+        <input type="date" [(ngModel)]="upgradeEffectiveDate">
+      </div>
+      <div class="dialog-actions">
+        <button class="btn-secondary" (click)="showUpgradeDialog = false">
+          {{ currentLanguage === 'ar' ? 'إلغاء' : 'Cancel' }}
+        </button>
+        <button class="btn-primary" (click)="upgradeSubscription()">
+          {{ currentLanguage === 'ar' ? 'ترقية' : 'Upgrade' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+

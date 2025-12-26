@@ -1,0 +1,677 @@
+@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Grc.Localization
+@model Grc.Web.Pages.MySettings.IndexModel
+@inject IHtmlLocalizer<GrcResource> L
+@{
+    ViewBag.Title = L["Menu:MySettings"].Value;
+}
+
+<style>
+    .profile-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 12px;
+        padding: 2rem;
+        color: white;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+    }
+    
+    .profile-photo-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .profile-photo {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 4px solid white;
+        object-fit: cover;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    
+    .upload-overlay {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: #667eea;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border: 3px solid white;
+        transition: all 0.3s;
+    }
+    
+    .upload-overlay:hover {
+        background: #764ba2;
+        transform: scale(1.1);
+    }
+    
+    .settings-nav-pills {
+        background: white;
+        border-radius: 12px;
+        padding: 1rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .settings-nav-pills .nav-link {
+        border-radius: 8px;
+        color: #666;
+        padding: 0.75rem 1.5rem;
+        margin-bottom: 0.5rem;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .settings-nav-pills .nav-link:hover {
+        background: #f8f9fa;
+        color: #667eea;
+    }
+    
+    .settings-nav-pills .nav-link.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .settings-card {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+        border: none;
+    }
+    
+    .settings-card h5 {
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+    
+    .btn-primary-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        color: white;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+    
+    .btn-primary-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .activity-item {
+        padding: 1rem;
+        border-left: 3px solid #667eea;
+        margin-bottom: 1rem;
+        background: #f8f9fa;
+        border-radius: 0 8px 8px 0;
+    }
+    
+    .activity-time {
+        color: #999;
+        font-size: 0.85rem;
+    }
+    
+    .stat-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+    }
+    
+    .stat-card h3 {
+        font-size: 2rem;
+        margin: 0;
+    }
+    
+    .stat-card p {
+        margin: 0;
+        opacity: 0.9;
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- Enhanced Profile Header -->
+    <div class="profile-header">
+        <div class="row align-items-center">
+            <div class="col-md-auto">
+                <div class="profile-photo-wrapper">
+                    <img src="https://ui-avatars.com/api/?name=@(User.Identity?.Name ?? "User")&size=120&background=667eea&color=fff" 
+                         class="profile-photo" 
+                         id="profileImage" 
+                         alt="Profile Photo">
+                    <label for="photoUpload" class="upload-overlay">
+                        <i class="fas fa-camera text-white"></i>
+                    </label>
+                    <input type="file" id="photoUpload" accept="image/*" style="display:none;">
+                </div>
+            </div>
+            <div class="col-md">
+                <h2 class="mb-1">@(User.Identity?.Name ?? "User")</h2>
+                <p class="mb-2 opacity-75">@(User.FindFirst("email")?.Value ?? "user@example.com")</p>
+                <div class="d-flex gap-3">
+                    <span><i class="fas fa-check-circle me-1"></i> Verified Account</span>
+                    <span><i class="fas fa-shield-alt me-1"></i> Secure Profile</span>
+                    <span><i class="fas fa-clock me-1"></i> Last login: Today</span>
+                </div>
+            </div>
+            <div class="col-md-auto">
+                <button class="btn btn-light btn-lg">
+                    <i class="fas fa-download me-2"></i>Export Data
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Sidebar Navigation -->
+        <div class="col-lg-3">
+            <div class="settings-nav-pills">
+                <ul class="nav nav-pills flex-column" id="settingsTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#profile-tab">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#security-tab">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Security</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#notifications-tab">
+                            <i class="fas fa-bell"></i>
+                            <span>Notifications</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#preferences-tab">
+                            <i class="fas fa-sliders-h"></i>
+                            <span>Preferences</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#activity-tab">
+                            <i class="fas fa-history"></i>
+                            <span>Activity Log</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#integrations-tab">
+                            <i class="fas fa-plug"></i>
+                            <span>Integrations</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="stat-card">
+                <i class="fas fa-chart-line fa-2x mb-2"></i>
+                <h3>24</h3>
+                <p>Actions This Month</p>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <i class="fas fa-tasks fa-2x mb-2"></i>
+                <h3>12</h3>
+                <p>Active Tasks</p>
+            </div>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="col-lg-9">
+            <div class="tab-content" id="settingsTabsContent">
+                
+                <!-- Profile Tab -->
+                <div class="tab-pane fade show active" id="profile-tab" role="tabpanel">
+                    <div class="settings-card">
+                        <h5><i class="fas fa-user text-primary"></i> Personal Information</h5>
+                        <form id="ProfileForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">First Name</label>
+                                    <input type="text" class="form-control" id="FirstName" value="Admin" />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Last Name</label>
+                                    <input type="text" class="form-control" id="LastName" value="User" />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Email Address</label>
+                                <input type="email" class="form-control" id="Email" value="admin@grc.com" readonly />
+                                <small class="text-muted">Contact support to change your email</small>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Phone Number</label>
+                                    <input type="tel" class="form-control" id="PhoneNumber" placeholder="+966..." />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Job Title</label>
+                                    <input type="text" class="form-control" id="JobTitle" placeholder="e.g. GRC Manager" />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Bio</label>
+                                <textarea class="form-control" id="Bio" rows="3" placeholder="Tell us about yourself..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary-gradient">
+                                <i class="fas fa-save me-2"></i>Save Profile
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Security Tab -->
+                <div class="tab-pane fade" id="security-tab" role="tabpanel">
+                    <div class="settings-card">
+                        <h5><i class="fas fa-lock text-warning"></i> Change Password</h5>
+                        <form id="PasswordForm">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Current Password</label>
+                                <input type="password" class="form-control" id="CurrentPassword" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">New Password</label>
+                                <input type="password" class="form-control" id="NewPassword" />
+                                <div class="form-text">Must be at least 8 characters with uppercase, lowercase, and numbers</div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Confirm Password</label>
+                                <input type="password" class="form-control" id="ConfirmPassword" />
+                            </div>
+                            <button type="submit" class="btn btn-primary-gradient">
+                                <i class="fas fa-key me-2"></i>Update Password
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="settings-card">
+                        <h5><i class="fas fa-mobile-alt text-success"></i> Two-Factor Authentication</h5>
+                        <p class="text-muted">Add an extra layer of security to your account</p>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Two-factor authentication is currently <strong>disabled</strong>
+                        </div>
+                        <button class="btn btn-success" id="Enable2FA">
+                            <i class="fas fa-check me-2"></i>Enable 2FA
+                        </button>
+                    </div>
+                    
+                    <div class="settings-card">
+                        <h5><i class="fas fa-desktop text-info"></i> Active Sessions</h5>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Device</th>
+                                        <th>Location</th>
+                                        <th>Last Active</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><i class="fas fa-desktop me-2 text-primary"></i>Windows PC</td>
+                                        <td>Riyadh, Saudi Arabia</td>
+                                        <td>Active now</td>
+                                        <td><span class="badge bg-success">Current</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="fas fa-mobile me-2 text-success"></i>iPhone 14</td>
+                                        <td>Jeddah, Saudi Arabia</td>
+                                        <td>2 hours ago</td>
+                                        <td><button class="btn btn-sm btn-outline-danger">Revoke</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Notifications Tab -->
+                <div class="tab-pane fade" id="notifications-tab" role="tabpanel">
+                    <div class="settings-card">
+                        <h5><i class="fas fa-bell text-primary"></i> Notification Preferences</h5>
+                        <form id="NotificationForm">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="mb-3">Email Notifications</h6>
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="EmailNotifications" checked>
+                                        <label class="form-check-label" for="EmailNotifications">
+                                            <i class="fas fa-envelope me-2"></i>Assessment Updates
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="RiskAlerts" checked>
+                                        <label class="form-check-label" for="RiskAlerts">
+                                            <i class="fas fa-exclamation-triangle me-2"></i>Risk Alerts
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="WeeklyDigest" checked>
+                                        <label class="form-check-label" for="WeeklyDigest">
+                                            <i class="fas fa-newspaper me-2"></i>Weekly Digest
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="mb-3">Push Notifications</h6>
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="InAppNotifications" checked>
+                                        <label class="form-check-label" for="InAppNotifications">
+                                            <i class="fas fa-desktop me-2"></i>In-App Notifications
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="SmsNotifications">
+                                        <label class="form-check-label" for="SmsNotifications">
+                                            <i class="fas fa-sms me-2"></i>SMS Notifications
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="TaskReminders" checked>
+                                        <label class="form-check-label" for="TaskReminders">
+                                            <i class="fas fa-tasks me-2"></i>Task Reminders
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary-gradient mt-3">
+                                <i class="fas fa-save me-2"></i>Save Preferences
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Preferences Tab -->
+                <div class="tab-pane fade" id="preferences-tab" role="tabpanel">
+                    <div class="settings-card">
+                        <h5><i class="fas fa-globe text-info"></i> Regional Settings</h5>
+                        <form id="RegionalForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Language</label>
+                                    <select class="form-select" id="Language">
+                                        <option value="ar">العربية (Arabic)</option>
+                                        <option value="en" selected>English</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Time Zone</label>
+                                    <select class="form-select" id="TimeZone">
+                                        <option value="Asia/Riyadh" selected>Arabia Standard Time (AST) - Riyadh</option>
+                                        <option value="UTC">Coordinated Universal Time (UTC)</option>
+                                        <option value="Europe/London">Greenwich Mean Time (GMT) - London</option>
+                                        <option value="America/New_York">Eastern Time (ET) - New York</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Date Format</label>
+                                    <select class="form-select" id="DateFormat">
+                                        <option value="dd/MM/yyyy">DD/MM/YYYY (24/12/2025)</option>
+                                        <option value="MM/dd/yyyy">MM/DD/YYYY (12/24/2025)</option>
+                                        <option value="yyyy-MM-dd" selected>YYYY-MM-DD (2025-12-24)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Time Format</label>
+                                    <select class="form-select" id="TimeFormat">
+                                        <option value="12h">12-hour (3:30 PM)</option>
+                                        <option value="24h" selected>24-hour (15:30)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary-gradient">
+                                <i class="fas fa-save me-2"></i>Save Settings
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="settings-card">
+                        <h5><i class="fas fa-palette text-success"></i> Theme Preferences</h5>
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="theme-option active" data-theme="light">
+                                    <div class="theme-preview" style="background: linear-gradient(135deg, #fff 50%, #f8f9fa 50%); border: 1px solid #ddd; height: 80px; border-radius: 8px; margin-bottom: 10px;"></div>
+                                    <span class="d-block text-center fw-semibold">Light</span>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="theme-option" data-theme="dark">
+                                    <div class="theme-preview" style="background: linear-gradient(135deg, #212529 50%, #343a40 50%); height: 80px; border-radius: 8px; margin-bottom: 10px;"></div>
+                                    <span class="d-block text-center fw-semibold">Dark</span>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="theme-option" data-theme="auto">
+                                    <div class="theme-preview" style="background: linear-gradient(135deg, #fff 50%, #212529 50%); border: 1px solid #ddd; height: 80px; border-radius: 8px; margin-bottom: 10px;"></div>
+                                    <span class="d-block text-center fw-semibold">Auto</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Activity Log Tab -->
+                <div class="tab-pane fade" id="activity-tab" role="tabpanel">
+                    <div class="settings-card">
+                        <h5><i class="fas fa-history text-primary"></i> Recent Activity</h5>
+                        <div class="activity-item">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <i class="fas fa-sign-in-alt text-success me-2"></i>
+                                    <strong>Login</strong>
+                                    <p class="mb-0 text-muted small">Successful login from Windows PC</p>
+                                </div>
+                                <span class="activity-time">2 minutes ago</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <i class="fas fa-file-alt text-primary me-2"></i>
+                                    <strong>Assessment Created</strong>
+                                    <p class="mb-0 text-muted small">Created new assessment: "NCA ECC Compliance Q4 2025"</p>
+                                </div>
+                                <span class="activity-time">1 hour ago</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <i class="fas fa-user-edit text-info me-2"></i>
+                                    <strong>Profile Updated</strong>
+                                    <p class="mb-0 text-muted small">Changed profile picture</p>
+                                </div>
+                                <span class="activity-time">3 hours ago</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                    <strong>Risk Alert</strong>
+                                    <p class="mb-0 text-muted small">High priority risk identified in Cybersecurity domain</p>
+                                </div>
+                                <span class="activity-time">Yesterday</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <strong>Task Completed</strong>
+                                    <p class="mb-0 text-muted small">Completed evidence collection for control CC-01</p>
+                                </div>
+                                <span class="activity-time">2 days ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Integrations Tab -->
+                <div class="tab-pane fade" id="integrations-tab" role="tabpanel">
+                    <div class="settings-card">
+                        <h5><i class="fas fa-plug text-warning"></i> Connected Services</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="border rounded p-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="fab fa-microsoft fa-2x text-primary mb-2"></i>
+                                            <h6 class="mb-1">Microsoft Azure AD</h6>
+                                            <small class="text-muted">Single Sign-On</small>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-primary">Connect</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="border rounded p-3 bg-light">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="fab fa-google fa-2x text-danger mb-2"></i>
+                                            <h6 class="mb-1">Google Workspace</h6>
+                                            <small class="text-success"><i class="fas fa-check-circle"></i> Connected</small>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-danger">Disconnect</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="border rounded p-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="fab fa-slack fa-2x text-info mb-2"></i>
+                                            <h6 class="mb-1">Slack</h6>
+                                            <small class="text-muted">Notifications</small>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-primary">Connect</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="border rounded p-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="fab fa-github fa-2x mb-2"></i>
+                                            <h6 class="mb-1">GitHub</h6>
+                                            <small class="text-muted">Version Control</small>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-primary">Connect</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-card">
+                        <h5><i class="fas fa-key text-danger"></i> API Keys</h5>
+                        <p class="text-muted">Manage your API keys for external integrations</p>
+                        <button class="btn btn-primary-gradient">
+                            <i class="fas fa-plus me-2"></i>Generate New API Key
+                        </button>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(function() {
+            // Theme switcher
+            $('.theme-option').click(function() {
+                $('.theme-option').removeClass('active');
+                $(this).addClass('active');
+                var theme = $(this).data('theme');
+                // Here you would apply the theme
+                abp.notify.success('Theme changed to ' + theme);
+            });
+            
+            // Profile photo upload
+            $('#photoUpload').change(function(e) {
+                var file = e.target.files[0];
+                if (file) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#profileImage').attr('src', e.target.result);
+                        abp.notify.success('Profile photo updated!');
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Profile form submission
+            $('#ProfileForm').submit(function(e) {
+                e.preventDefault();
+                abp.notify.success('Profile updated successfully!');
+            });
+            
+            // Password form submission
+            $('#PasswordForm').submit(function(e) {
+                e.preventDefault();
+                var newPass = $('#NewPassword').val();
+                var confirmPass = $('#ConfirmPassword').val();
+                if (newPass !== confirmPass) {
+                    abp.notify.error('Passwords do not match!');
+                    return;
+                }
+                abp.notify.success('Password changed successfully!');
+            });
+            
+            // Regional settings
+            $('#RegionalForm').submit(function(e) {
+                e.preventDefault();
+                var language = $('#Language').val();
+                abp.notify.success('Settings saved! Language: ' + language);
+            });
+            
+            // Notification settings
+            $('#NotificationForm').submit(function(e) {
+                e.preventDefault();
+                abp.notify.success('Notification preferences updated!');
+            });
+            
+            // 2FA button
+            $('#Enable2FA').click(function() {
+                abp.message.confirm(
+                    'Enable two-factor authentication for your account?',
+                    'Enable 2FA',
+                    function(confirmed) {
+                        if (confirmed) {
+                            abp.notify.info('2FA setup wizard will be launched...');
+                        }
+                    }
+                );
+}

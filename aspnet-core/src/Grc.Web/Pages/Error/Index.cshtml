@@ -1,0 +1,93 @@
+@page "{statusCode?}"
+@model Grc.Web.Pages.Error.IndexModel
+@{
+    ViewData["Title"] = "Error | خطأ";
+}
+
+<div class="container-fluid" style="min-height: 70vh; display: flex; align-items: center; justify-content: center;">
+    <div class="row justify-content-center w-100">
+        <div class="col-lg-6 col-md-8">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-5 text-center">
+                    @if (Model.StatusCode == 404)
+                    {
+                        <!-- 404 Not Found -->
+                        <div class="mb-4">
+                            <i class="fas fa-search text-warning" style="font-size: 80px;"></i>
+                        </div>
+                        <h2 class="text-dark mb-3">Page Not Found | الصفحة غير موجودة</h2>
+                        <p class="text-muted mb-4">
+                            The page you're looking for doesn't exist or has been moved.
+                        </p>
+                        <p class="text-muted mb-4" dir="rtl">
+                            الصفحة التي تبحث عنها غير موجودة أو تم نقلها.
+                        </p>
+                    }
+                    else if (Model.StatusCode == 403)
+                    {
+                        <!-- 403 Forbidden -->
+                        <div class="mb-4">
+                            <i class="fas fa-lock text-danger" style="font-size: 80px;"></i>
+                        </div>
+                        <h2 class="text-dark mb-3">Access Denied | الوصول مرفوض</h2>
+                        <p class="text-muted mb-4">
+                            You don't have permission to access this resource.
+                        </p>
+                        <p class="text-muted mb-4" dir="rtl">
+                            ليس لديك صلاحية للوصول إلى هذا المورد.
+                        </p>
+                    }
+                    else if (Model.StatusCode == 500)
+                    {
+                        <!-- 500 Server Error -->
+                        <div class="mb-4">
+                            <i class="fas fa-exclamation-triangle text-danger" style="font-size: 80px;"></i>
+                        </div>
+                        <h2 class="text-dark mb-3">Server Error | خطأ في الخادم</h2>
+                        <p class="text-muted mb-4">
+                            Something went wrong on our end. We're working to fix it.
+                        </p>
+                        <p class="text-muted mb-4" dir="rtl">
+                            حدث خطأ من جانبنا. نحن نعمل على إصلاحه.
+                        </p>
+                    }
+                    else
+                    {
+                        <!-- Generic Error -->
+                        <div class="mb-4">
+                            <i class="fas fa-times-circle text-danger" style="font-size: 80px;"></i>
+                        </div>
+                        <h2 class="text-dark mb-3">Error @Model.StatusCode</h2>
+                        <p class="text-muted mb-4">
+                            An error occurred while processing your request.
+                        </p>
+                        <p class="text-muted mb-4" dir="rtl">
+                            حدث خطأ أثناء معالجة طلبك.
+                        </p>
+                    }
+                    
+                    <hr class="my-4">
+                    
+                    <!-- Actions -->
+                    <div class="mt-4">
+                        <a href="/" class="btn btn-primary btn-lg me-2">
+                            <i class="fas fa-home"></i> Go Home | الصفحة الرئيسية
+                        </a>
+                        <button onclick="history.back()" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-arrow-left"></i> Go Back | رجوع
+                        </button>
+                    </div>
+                    
+                    @if (Model.StatusCode == 500)
+                    {
+                        <div class="mt-4">
+                            <p class="text-muted small">
+                                Error ID: @Model.ErrorId
+                            </p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

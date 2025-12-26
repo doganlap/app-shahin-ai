@@ -1,0 +1,142 @@
+@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Grc.Localization
+@model Grc.Web.Pages.Support.IndexModel
+@inject IHtmlLocalizer<GrcResource> L
+@{
+    ViewBag.Title = L["Menu:Support"].Value;
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="page-header">
+                <i class="fas fa-headset"></i> @L["Menu:Support"]
+            </h1>
+            <p class="text-muted">@L["Support:Description"]</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Contact Information -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-phone-alt me-2"></i>@L["ContactUs"]</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h6><i class="fas fa-envelope me-2"></i>@L["Email"]</h6>
+                        <a href="mailto:@Model.ContactInfo.Email">@Model.ContactInfo.Email</a>
+                    </div>
+                    <div class="mb-4">
+                        <h6><i class="fas fa-phone me-2"></i>@L["Phone"]</h6>
+                        <p>@Model.ContactInfo.Phone</p>
+                    </div>
+                    <div>
+                        <h6><i class="fas fa-clock me-2"></i>@L["BusinessHours"]</h6>
+                        <p>@Model.ContactInfo.Hours</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Ticket -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-ticket-alt me-2"></i>@L["SubmitTicket"]</h5>
+                </div>
+                <div class="card-body">
+                    <form id="TicketForm">
+                        <div class="mb-3">
+                            <label class="form-label">@L["Subject"]</label>
+                            <input type="text" class="form-control" id="Subject" required />
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">@L["Category"]</label>
+                                <select class="form-select" id="Category">
+                                    <option value="technical">@L["TechnicalIssue"]</option>
+                                    <option value="billing">@L["Billing"]</option>
+                                    <option value="feature">@L["FeatureRequest"]</option>
+                                    <option value="other">@L["Other"]</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">@L["Priority"]</label>
+                                <select class="form-select" id="Priority">
+                                    <option value="low">@L["Low"]</option>
+                                    <option value="medium" selected>@L["Medium"]</option>
+                                    <option value="high">@L["High"]</option>
+                                    <option value="critical">@L["Critical"]</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">@L["Description"]</label>
+                            <textarea class="form-control" id="Description" rows="5" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">@L["Attachments"]</label>
+                            <input type="file" class="form-control" id="Attachments" multiple />
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane me-1"></i>@L["SubmitTicket"]
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Tickets -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>@L["RecentTickets"]</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>@L["TicketId"]</th>
+                                    <th>@L["Subject"]</th>
+                                    <th>@L["Status"]</th>
+                                    <th>@L["Priority"]</th>
+                                    <th>@L["Created"]</th>
+                                    <th>@L["Actions"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var ticket in Model.RecentTickets)
+                                {
+                                    <tr>
+                                        <td><strong>@ticket.Id</strong></td>
+                                        <td>@ticket.Subject</td>
+                                        <td>
+                                            <span class="badge @(ticket.Status == "Open" ? "bg-danger" : ticket.Status == "In Progress" ? "bg-warning" : "bg-success")">
+                                                @ticket.Status
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge @(ticket.Priority == "High" ? "bg-danger" : ticket.Priority == "Medium" ? "bg-warning" : "bg-secondary")">
+                                                @ticket.Priority
+                                            </span>
+                                        </td>
+                                        <td>@ticket.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary">@L["View"]</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

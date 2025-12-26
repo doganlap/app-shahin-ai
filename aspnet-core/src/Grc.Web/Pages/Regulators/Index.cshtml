@@ -1,0 +1,73 @@
+@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Grc.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@model Grc.Web.Pages.Regulators.IndexModel
+@inject IHtmlLocalizer<GrcResource> L
+@inject IPageLayout PageLayout
+@{
+    PageLayout.Content.Title = L["Regulators"].Value;
+    PageLayout.Content.BreadCrumb.Add(L["Menu:Regulators"].Value);
+}
+
+@section scripts
+{
+    <abp-script src="/Pages/Regulators/Index.js" />
+}
+
+@section styles
+{
+    <abp-style src="/Pages/Regulators/Index.css" />
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <h3>
+                    <i class="fas fa-landmark"></i>
+                    @L["Regulators"]
+                </h3>
+                <p class="text-muted">@L["Regulators:Description"]</p>
+            </abp-column>
+            <abp-column size-md="_6" class="text-end">
+                <abp-button id="NewRegulatorButton"
+                            text="@L["Regulators:NewRegulator"].Value"
+                            icon="plus"
+                            button-type="Primary"/>
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-row class="mb-3">
+            <abp-column size-md="_4">
+                <div class="input-group">
+                    <input type="text" id="RegulatorSearchInput" class="form-control" placeholder="@L["Regulators:Search"]">
+                    <button class="btn btn-outline-secondary" type="button" id="SearchButton">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </abp-column>
+            <abp-column size-md="_3">
+                <select id="CategoryFilter" class="form-select">
+                    <option value="">@L["Regulators:All"]</option>
+                </select>
+            </abp-column>
+            <abp-column size-md="_3">
+                <div class="btn-group" role="group">
+                    <input type="radio" class="btn-check" name="regionFilter" id="allRegions" value="" checked>
+                    <label class="btn btn-outline-primary" for="allRegions">@L["Regulators:All"]</label>
+                    
+                    <input type="radio" class="btn-check" name="regionFilter" id="saudiOnly" value="saudi">
+                    <label class="btn btn-outline-primary" for="saudiOnly">@L["Regulators:Saudi"]</label>
+                    
+                    <input type="radio" class="btn-check" name="regionFilter" id="intlOnly" value="international">
+                    <label class="btn btn-outline-primary" for="intlOnly">@L["Regulators:International"]</label>
+                </div>
+            </abp-column>
+        </abp-row>
+
+        <abp-table striped-rows="true" id="RegulatorsTable" class="nowrap"></abp-table>
+    </abp-card-body>
+</abp-card>
+

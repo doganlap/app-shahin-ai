@@ -1,0 +1,20 @@
+@page
+@using Microsoft.Extensions.Localization
+@using Grc.Localization
+@model Grc.Web.Pages.Notifications.IndexModel
+@inject IStringLocalizer<GrcResource> L
+
+<abp-card>
+    <abp-card-header>
+        <h2><i class="fas fa-bell text-info"></i> @L["Menu:Notifications"]</h2>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-list-group>
+            <abp-list-group-item>
+                <h6>@L["NoNewNotifications"]</h6>
+                <p class="text-muted">@L["Notifications:EmptyMessage"]</p>
+            </abp-list-group-item>
+        </abp-list-group>
+    </abp-card-body>
+</abp-card>
+

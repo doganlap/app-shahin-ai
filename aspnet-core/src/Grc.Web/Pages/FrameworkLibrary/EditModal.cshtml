@@ -1,0 +1,74 @@
+@page "{id?}"
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@{
+    Layout = null;
+    var id = (string?)RouteData.Values["id"] ?? "";
+}
+
+<abp-modal size="Large">
+    <abp-modal-header title="Edit Framework"></abp-modal-header>
+
+    <abp-modal-body>
+        <form id="FrameworkEditForm" autocomplete="off">
+            <input type="hidden" id="Id" value="@id" />
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Regulator</label>
+                    <select class="form-select" id="RegulatorId" required>
+                        <option value="">Loading...</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Code</label>
+                    <input class="form-control" id="Code" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Version</label>
+                    <input class="form-control" id="Version" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Status</label>
+                    <select class="form-select" id="Status">
+                        <option value="Draft">Draft</option>
+                        <option value="Active">Active</option>
+                        <option value="Deprecated">Deprecated</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Title (EN)</label>
+                    <input class="form-control" id="TitleEn" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Title (AR)</label>
+                    <input class="form-control" id="TitleAr" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Effective Date</label>
+                    <input type="date" class="form-control" id="EffectiveDate" />
+                </div>
+
+                <div class="col-md-6 mb-3 d-flex align-items-center">
+                    <div class="form-check mt-4">
+                        <input class="form-check-input" type="checkbox" id="IsMandatory" />
+                        <label class="form-check-label" for="IsMandatory">Mandatory</label>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="alert alert-info mb-0">
+            Data source: GET /api/app/framework-library/framework/{id} — Save: PUT /api/app/framework-library/framework/{id}
+        </div>
+    </abp-modal-body>
+
+    <abp-modal-footer buttons="@(AbpModalButtons.Cancel | AbpModalButtons.Save)"></abp-modal-footer>
+</abp-modal>
+
+<script src="/Pages/FrameworkLibrary/EditModal.js"></script>

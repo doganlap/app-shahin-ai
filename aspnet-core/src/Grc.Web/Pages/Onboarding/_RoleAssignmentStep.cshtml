@@ -1,0 +1,446 @@
+@page
+@model Grc.Web.Pages.Onboarding.IndexModel
+
+<div class="role-assignment-step">
+    <div class="step-header mb-4">
+        <h4 class="text-primary">
+            <i class="fas fa-user-shield me-2"></i>
+            @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+            {
+                <span>تعيين الأدوار والصلاحيات</span>
+            }
+            else
+            {
+                <span>Role & Permission Assignment</span>
+            }
+        </h4>
+        <p class="text-muted">
+            @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+            {
+                <span>اختر الأدوار التي تناسب مسؤولياتك في النظام - سيتم تفعيل الصلاحيات تلقائياً</span>
+            }
+            else
+            {
+                <span>Select roles that match your responsibilities - permissions will be activated automatically</span>
+            }
+        </p>
+    </div>
+
+    <!-- Role Selection Cards -->
+    <div class="row g-4 mb-4">
+        <!-- GRC Manager Role -->
+        <div class="col-md-6 col-lg-4">
+            <div class="role-card card border-0 shadow-sm h-100" data-role="GrcManager">
+                <div class="card-body">
+                    <div class="form-check">
+                        <input class="form-check-input role-checkbox" type="checkbox" id="roleGrcManager" name="Roles" value="GrcManager">
+                        <label class="form-check-label w-100" for="roleGrcManager">
+                            <div class="role-icon text-center mb-3">
+                                <i class="fas fa-shield-alt fa-3x text-primary"></i>
+                            </div>
+                            <h5 class="text-center mb-3">
+                                @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                                {
+                                    <span>مدير الحوكمة والمخاطر والامتثال</span>
+                                }
+                                else
+                                {
+                                    <span>GRC Manager</span>
+                                }
+                            </h5>
+                            <ul class="small text-muted mb-0">
+                                <li>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "إدارة جميع وحدات النظام" : "Manage all system modules")</li>
+                                <li>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "الموافقة على التقييمات" : "Approve assessments")</li>
+                                <li>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "مراجعة المخاطر" : "Review risks")</li>
+                                <li>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "إنشاء التقارير التنفيذية" : "Generate executive reports")</li>
+                            </ul>
+                        </label>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <small class="text-muted">
+                        <i class="fas fa-key me-1"></i>
+                        <span id="permCountGrcManager">15</span> @(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "صلاحية" : "permissions")
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Compliance Officer Role -->
+        <div class="col-md-6 col-lg-4">
+            <div class="role-card card border-0 shadow-sm h-100" data-role="ComplianceOfficer">
+                <div class="card-body">
+                    <div class="form-check">
+                        <input class="form-check-input role-checkbox" type="checkbox" id="roleComplianceOfficer" name="Roles" value="ComplianceOfficer">
+                        <label class="form-check-label w-100" for="roleComplianceOfficer">
+                            <div class="role-icon text-center mb-3">
+                                <i class="fas fa-balance-scale fa-3x text-success"></i>
+                            </div>
+                            <h5 class="text-center mb-3">
+                                @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                                {
+                                    <span>مسؤول الامتثال</span>
+                                }
+                                else
+                                {
+                                    <span>Compliance Officer</span>
+                                }
+                            </h5>
+                            <ul class="small text-muted mb-0">
+                                <li>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "إدارة التقييمات" : "Manage assessments")</li>
+                                <li>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "تتبع الامتثال" : "Track compliance")</li>
+                                <li>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "إدارة الأدلة" : "Manage evidence")</li>
+                                <li>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "إعداد التقارير" : "Generate reports")</li>
+                            </ul>
+                        </label>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <small class="text-muted">
+                        <i class="fas fa-key me-1"></i>
+                        <span id="permCountComplianceOfficer">12</span> @(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "صلاحية" : "permissions")
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Risk Manager Role -->
+        <div class="col-md-6 col-lg-4">
+            <div class="role-card card border-0 shadow-sm h-100" data-role="RiskManager">
+                <div class="card-body">
+                    <div class="form-check">
+                        <input class="form-check-input role-checkbox" type="checkbox" id="roleRiskManager" name="Roles" value="RiskManager">
+                        <label class="form-check-label w-100" for="roleRiskManager">
+                            <div class="role-icon text-center mb-3">
+                                <i class="fas fa-exclamation-triangle fa-3x text-warning"></i>
+                            </div>
+                            <h5 class="text-center mb-3">
+                                @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                                {
+                                    <span>مدير المخاطر</span>
+                                }
+                                else
+                                {
+                                    <span>Risk Manager</span>
+                                }
+                            </h5>
+                            <ul class="small text-muted mb-0">
+                                <li>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "تحديد المخاطر" : "Identify risks")</li>
+                                <li>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "تقييم المخاطر" : "Assess risks")</li>
+                                <li>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "إدارة المعالجات" : "Manage treatments")</li>
+                                <li>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "مراقبة المخاطر" : "Monitor risks")</li>
+                            </ul>
+                        </label>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <small class="text-muted">
+                        <i class="fas fa-key me-1"></i>
+                        <span id="permCountRiskManager">10</span> @(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "صلاحية" : "permissions")
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audit Manager Role -->
+        <div class="col-md-6 col-lg-4">
+            <div class="role-card card border-0 shadow-sm h-100" data-role="AuditManager">
+                <div class="card-body">
+                    <div class="form-check">
+                        <input class="form-check-input role-checkbox" type="checkbox" id="roleAuditManager" name="Roles" value="AuditManager">
+                        <label class="form-check-label w-100" for="roleAuditManager">
+                            <div class="role-icon text-center mb-3">
+                                <i class="fas fa-search fa-3x text-info"></i>
+                            </div>
+                            <h5 class="text-center mb-3">
+                                @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                                {
+                                    <span>مدير التدقيق</span>
+                                }
+                                else
+                                {
+                                    <span>Audit Manager</span>
+                                }
+                            </h5>
+                            <ul class="small text-muted mb-0">
+                                <li>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "تخطيط عمليات التدقيق" : "Plan audits")</li>
+                                <li>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "تنفيذ التدقيق" : "Execute audits")</li>
+                                <li>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "مراجعة النتائج" : "Review findings")</li>
+                                <li>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "تتبع الإجراءات التصحيحية" : "Track corrective actions")</li>
+                            </ul>
+                        </label>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <small class="text-muted">
+                        <i class="fas fa-key me-1"></i>
+                        <span id="permCountAuditManager">8</span> @(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "صلاحية" : "permissions")
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Owner Role -->
+        <div class="col-md-6 col-lg-4">
+            <div class="role-card card border-0 shadow-sm h-100" data-role="ControlOwner">
+                <div class="card-body">
+                    <div class="form-check">
+                        <input class="form-check-input role-checkbox" type="checkbox" id="roleControlOwner" name="Roles" value="ControlOwner">
+                        <label class="form-check-label w-100" for="roleControlOwner">
+                            <div class="role-icon text-center mb-3">
+                                <i class="fas fa-tasks fa-3x text-secondary"></i>
+                            </div>
+                            <h5 class="text-center mb-3">
+                                @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                                {
+                                    <span>مالك الضوابط</span>
+                                }
+                                else
+                                {
+                                    <span>Control Owner</span>
+                                }
+                            </h5>
+                            <ul class="small text-muted mb-0">
+                                <li>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "تنفيذ الضوابط" : "Implement controls")</li>
+                                <li>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "تقييم الفعالية" : "Assess effectiveness")</li>
+                                <li>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "رفع الأدلة" : "Upload evidence")</li>
+                                <li>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "الإبلاغ عن الحالة" : "Report status")</li>
+                            </ul>
+                        </label>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <small class="text-muted">
+                        <i class="fas fa-key me-1"></i>
+                        <span id="permCountControlOwner">6</span> @(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "صلاحية" : "permissions")
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Viewer Role (Read-Only) -->
+        <div class="col-md-6 col-lg-4">
+            <div class="role-card card border-0 shadow-sm h-100" data-role="Viewer">
+                <div class="card-body">
+                    <div class="form-check">
+                        <input class="form-check-input role-checkbox" type="checkbox" id="roleViewer" name="Roles" value="Viewer">
+                        <label class="form-check-label w-100" for="roleViewer">
+                            <div class="role-icon text-center mb-3">
+                                <i class="fas fa-eye fa-3x text-muted"></i>
+                            </div>
+                            <h5 class="text-center mb-3">
+                                @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                                {
+                                    <span>مشاهد (قراءة فقط)</span>
+                                }
+                                else
+                                {
+                                    <span>Viewer (Read-Only)</span>
+                                }
+                            </h5>
+                            <ul class="small text-muted mb-0">
+                                <li>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "عرض البيانات" : "View data")</li>
+                                <li>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "عرض التقارير" : "View reports")</li>
+                                <li>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "الوصول للقراءة فقط" : "Read-only access")</li>
+                                <li>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "بدون صلاحيات تعديل" : "No edit permissions")</li>
+                            </ul>
+                        </label>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <small class="text-muted">
+                        <i class="fas fa-key me-1"></i>
+                        <span id="permCountViewer">3</span> @(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "صلاحيات" : "permissions")
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Selected Roles Summary -->
+    <div class="card border-primary shadow-sm mb-4" id="rolesSummary" style="display: none;">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-check-circle me-2"></i>
+                @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                {
+                    <span>الأدوار والصلاحيات المحددة</span>
+                }
+                else
+                {
+                    <span>Selected Roles & Permissions</span>
+                }
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>
+                        @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                        {
+                            <span>الأدوار (<span id="selectedRolesCount">0</span>):</span>
+                        }
+                        else
+                        {
+                            <span>Roles (<span id="selectedRolesCount">0</span>):</span>
+                        }
+                    </h6>
+                    <ul id="selectedRolesList" class="list-unstyled"></ul>
+                </div>
+                <div class="col-md-6">
+                    <h6>
+                        @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                        {
+                            <span>إجمالي الصلاحيات: <span id="totalPermissions" class="badge bg-primary">0</span></span>
+                        }
+                        else
+                        {
+                            <span>Total Permissions: <span id="totalPermissions" class="badge bg-primary">0</span></span>
+                        }
+                    </h6>
+                    <small class="text-muted">
+                        @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                        {
+                            <span>سيتم تطبيق جميع الصلاحيات المرتبطة تلقائياً عند الانتهاء</span>
+                        }
+                        else
+                        {
+                            <span>All associated permissions will be applied automatically upon completion</span>
+                        }
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Validation Alert -->
+    <div class="alert alert-warning d-none" id="roleValidationAlert">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <span>
+            @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+            {
+                <span>الرجاء اختيار دور واحد على الأقل للمتابعة</span>
+            }
+            else
+            {
+                <span>Please select at least one role to continue</span>
+            }
+        </span>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            const rolePermissions = {
+                'GrcManager': 15,
+                'ComplianceOfficer': 12,
+                'RiskManager': 10,
+                'AuditManager': 8,
+                'ControlOwner': 6,
+                'Viewer': 3
+            };
+
+            const roleNames = {
+                'GrcManager': '@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "مدير الحوكمة والمخاطر والامتثال" : "GRC Manager")',
+                'ComplianceOfficer': '@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "مسؤول الامتثال" : "Compliance Officer")',
+                'RiskManager': '@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "مدير المخاطر" : "Risk Manager")',
+                'AuditManager': '@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "مدير التدقيق" : "Audit Manager")',
+                'ControlOwner': '@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "مالك الضوابط" : "Control Owner")',
+                'Viewer': '@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "مشاهد" : "Viewer")'
+            };
+
+            function updateRolesSummary() {
+                const selectedRoles = [];
+                let totalPerms = 0;
+
+                $('.role-checkbox:checked').each(function() {
+                    const role = $(this).val();
+                    selectedRoles.push(role);
+                    totalPerms += rolePermissions[role] || 0;
+                });
+
+                if (selectedRoles.length > 0) {
+                    $('#rolesSummary').slideDown();
+                    $('#selectedRolesCount').text(selectedRoles.length);
+                    $('#totalPermissions').text(totalPerms);
+
+                    const rolesList = selectedRoles.map(role => 
+                        `<li><i class="fas fa-check-circle text-success me-2"></i>${roleNames[role]}</li>`
+                    ).join('');
+                    $('#selectedRolesList').html(rolesList);
+
+                    $('#roleValidationAlert').addClass('d-none');
+                } else {
+                    $('#rolesSummary').slideUp();
+                }
+            }
+
+            // Role card selection
+            $('.role-checkbox').on('change', function() {
+                const $card = $(this).closest('.role-card');
+                if ($(this).is(':checked')) {
+                    $card.addClass('border-primary shadow-lg');
+                } else {
+                    $card.removeClass('border-primary shadow-lg');
+                }
+                updateRolesSummary();
+            });
+
+            // Card click to toggle checkbox
+            $('.role-card').on('click', function(e) {
+                if (!$(e.target).is('input[type="checkbox"]')) {
+                    const $checkbox = $(this).find('.role-checkbox');
+                    $checkbox.prop('checked', !$checkbox.prop('checked')).trigger('change');
+                }
+            });
+
+            // Validation function
+            window.validateRoleAssignment = function() {
+                const selectedCount = $('.role-checkbox:checked').length;
+                if (selectedCount === 0) {
+                    $('#roleValidationAlert').removeClass('d-none');
+                    $('html, body').animate({
+                        scrollTop: $('#roleValidationAlert').offset().top - 100
+                    }, 500);
+                    return false;
+                }
+                return true;
+            };
+
+            // Initial state
+            updateRolesSummary();
+        });
+    </script>
+}
+
+<style>
+    .role-card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent !important;
+    }
+
+    .role-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .role-card .form-check-input {
+        width: 1.5em;
+        height: 1.5em;
+        cursor: pointer;
+    }
+
+    .role-card.border-primary {
+        background-color: #f8f9ff;
+    }
+
+    .role-icon i {
+        transition: transform 0.3s ease;
+    }
+
+    .role-card:hover .role-icon i {
+        transform: scale(1.1);
+    }
+</style>

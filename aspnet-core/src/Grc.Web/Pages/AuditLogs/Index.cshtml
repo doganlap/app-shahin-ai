@@ -1,0 +1,44 @@
+@page
+@model Grc.Web.Pages.AuditLogs.IndexModel
+@inject IHtmlLocalizer<Grc.Localization.GrcResource> L
+@{
+    ViewBag.Title = L["Menu:AuditLogs"];
+}
+
+<abp-card>
+    <abp-card-header>
+        <h2><i class="fas fa-history"></i> @L["Menu:AuditLogs"]</h2>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="AuditLogsTable">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>URL</th>
+                    <th>Status</th>
+                    <th>Duration</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var log in Model.AuditLogs)
+                {
+                    <tr>
+                        <td>@log.ExecutionTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                        <td>@(log.UserName ?? "System")</td>
+                        <td><span class="badge bg-info">@log.HttpMethod</span></td>
+                        <td><small>@log.Url</small></td>
+                        <td>
+                            <span class="badge bg-@(log.HttpStatusCode >= 200 && log.HttpStatusCode < 300 ? "success" : "danger")">
+                                @log.HttpStatusCode
+                            </span>
+                        </td>
+                        <td>@log.ExecutionDuration ms</td>
+                    </tr>
+                }
+            </tbody>
+        </abp-table>
+    </abp-card-body>
+</abp-card>
+

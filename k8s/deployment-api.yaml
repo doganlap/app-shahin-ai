@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grc-api
+  namespace: grc-platform
+  labels:
+    app: grc-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: grc-api
+  template:
+    metadata:
+      labels:
+        app: grc-api
+    spec:
+      containers:
+      - name: grc-api
+        image: grc-platform/api:latest
+        ports:
+        - containerPort: 80
+          name: http
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        envFrom:
+        - configMapRef:
+            name: grc-config
+        - secretRef:
+            name: grc-secrets
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        volumeMounts:
+        - name: app-logs
+          mountPath: /app/logs
+      volumes:
+      - name: app-logs
+        emptyDir: {}
+

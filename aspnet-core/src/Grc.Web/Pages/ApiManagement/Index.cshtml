@@ -1,0 +1,166 @@
+@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Grc.Localization
+@model Grc.Web.Pages.ApiManagement.IndexModel
+@inject IHtmlLocalizer<GrcResource> L
+@{
+    ViewBag.Title = L["Menu:ApiManagement"].Value;
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="page-header">
+                <i class="fas fa-code"></i> @L["Menu:ApiManagement"]
+            </h1>
+            <p class="text-muted">@L["ApiManagement:Description"]</p>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-2 col-md-4 mb-3">
+            <div class="card shadow border-left-primary h-100">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">@L["TotalRequests"]</div>
+                    <div class="h5 mb-0">@Model.UsageStats.TotalRequests.ToString("N0")</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 mb-3">
+            <div class="card shadow border-left-success h-100">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">@L["SuccessRate"]</div>
+                    <div class="h5 mb-0">@Model.UsageStats.SuccessRate.ToString("F1")%</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 mb-3">
+            <div class="card shadow border-left-info h-100">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">@L["AvgResponseTime"]</div>
+                    <div class="h5 mb-0">@Model.UsageStats.AverageResponseTimeMs ms</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 mb-3">
+            <div class="card shadow border-left-warning h-100">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">@L["Today"]</div>
+                    <div class="h5 mb-0">@Model.UsageStats.RequestsToday.ToString("N0")</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 mb-3">
+            <div class="card shadow border-left-secondary h-100">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">@L["ThisMonth"]</div>
+                    <div class="h5 mb-0">@Model.UsageStats.RequestsThisMonth.ToString("N0")</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 mb-3">
+            <div class="card shadow border-left-danger h-100">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">@L["Failed"]</div>
+                    <div class="h5 mb-0">@Model.UsageStats.FailedRequests.ToString("N0")</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- API Keys -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-key me-2"></i>@L["ApiKeys"]</h5>
+                    <button class="btn btn-primary btn-sm" id="CreateApiKeyBtn">
+                        <i class="fas fa-plus me-1"></i>@L["CreateNewKey"]
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>@L["Name"]</th>
+                                    <th>@L["Key"]</th>
+                                    <th>@L["LastUsed"]</th>
+                                    <th>@L["Status"]</th>
+                                    <th>@L["Actions"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var key in Model.ApiKeys)
+                                {
+                                    <tr>
+                                        <td>@key.Name</td>
+                                        <td><code>@key.KeyPrefix</code></td>
+                                        <td>@(key.LastUsed?.ToString("MMM dd, HH:mm") ?? "-")</td>
+                                        <td><span class="badge bg-success">@key.Status</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></button>
+                                            <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Endpoints -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-route me-2"></i>@L["PopularEndpoints"]</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>@L["Method"]</th>
+                                    <th>@L["Endpoint"]</th>
+                                    <th>@L["CallsToday"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var endpoint in Model.Endpoints)
+                                {
+                                    <tr>
+                                        <td>
+                                            <span class="badge @(endpoint.Method == "GET" ? "bg-success" : endpoint.Method == "POST" ? "bg-primary" : "bg-warning")">
+                                                @endpoint.Method
+                                            </span>
+                                        </td>
+                                        <td><code>@endpoint.Path</code></td>
+                                        <td>@endpoint.CallsToday</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Documentation Link -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-body text-center py-4">
+                    <h5><i class="fas fa-book me-2"></i>@L["ApiDocumentation"]</h5>
+                    <p class="text-muted">@L["ApiDocumentation:Description"]</p>
+                    <a href="/swagger" target="_blank" class="btn btn-primary">
+                        <i class="fas fa-external-link-alt me-1"></i>@L["OpenSwaggerUI"]
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

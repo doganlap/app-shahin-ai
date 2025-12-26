@@ -1,0 +1,30 @@
+@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Grc.Localization
+@using Grc.Enums
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@model Grc.Web.Pages.Regulators.EditModalModel
+@inject IHtmlLocalizer<GrcResource> L
+@{
+    Layout = null;
+}
+<abp-dynamic-form abp-model="Regulator" asp-page="/Regulators/EditModal">
+    <abp-modal>
+        <abp-modal-header title="@L["Regulators:Edit"].Value"></abp-modal-header>
+        <abp-modal-body>
+            <abp-input asp-for="Regulator.Code" />
+            <abp-input asp-for="Regulator.Name.En" label="@($"{L["Regulators:Name"].Value} (EN)")" />
+            <abp-input asp-for="Regulator.Name.Ar" label="@($"{L["Regulators:Name"].Value} (AR)")" />
+            <abp-select asp-for="Regulator.Category" asp-items="@Model.CategoryList" />
+            <abp-input asp-for="Regulator.Jurisdiction.En" label="@($"{L["Regulators:Jurisdiction"].Value} (EN)")" />
+            <abp-input asp-for="Regulator.Jurisdiction.Ar" label="@($"{L["Regulators:Jurisdiction"].Value} (AR)")" />
+            <abp-input asp-for="Regulator.Website" />
+            <abp-input asp-for="Regulator.LogoUrl" />
+            <abp-input asp-for="Regulator.Contact.Email" label="@L["Email"].Value" />
+            <abp-input asp-for="Regulator.Contact.Phone" label="@L["Phone"].Value" />
+            <abp-input asp-for="Regulator.Contact.Address" label="@L["Address"].Value" />
+        </abp-modal-body>
+        <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
+    </abp-modal>
+</abp-dynamic-form>
+

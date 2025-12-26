@@ -1,0 +1,89 @@
+@page
+@model Grc.Web.Pages.MyTasks.IndexModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Grc.Localization.GrcResource> L
+@{
+    ViewBag.Title = L["Menu:MyTasks"];
+}
+
+<abp-card>
+    <abp-card-header>
+        <h2><i class="fas fa-tasks"></i> @L["Menu:MyTasks"]</h2>
+    </abp-card-header>
+    <abp-card-body>
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h5>@Model.PendingTasks</h5>
+                        <small>Pending Tasks</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                        <h5>@Model.InProgressTasks</h5>
+                        <small>In Progress</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h5>@Model.CompletedTasks</h5>
+                        <small>Completed</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h5>@Model.OverdueTasks</h5>
+                        <small>Overdue</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h4>Recent Tasks</h4>
+        <abp-table striped-rows="true" id="TasksTable">
+            <thead>
+                <tr>
+                    <th>Task</th>
+                    <th>Due Date</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var task in Model.Tasks)
+                {
+                    <tr>
+                        <td>@task.Title</td>
+                        <td>@task.DueDate?.ToString("yyyy-MM-dd")</td>
+                        <td>
+                            <span class="badge bg-@task.PriorityColor">@task.Priority</span>
+                        </td>
+                        <td>
+                            <span class="badge bg-@task.StatusColor">@task.Status</span>
+                        </td>
+                        <td>
+                            <a href="#" class="btn btn-sm btn-outline-primary">View</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </abp-table>
+
+        @if (!Model.Tasks.Any())
+        {
+            <div class="text-center text-muted p-5">
+                <i class="fas fa-check-circle fa-3x mb-3"></i>
+                <p>No tasks assigned yet. Great job!</p>
+            </div>
+        }
+    </abp-card-body>
+</abp-card>
+

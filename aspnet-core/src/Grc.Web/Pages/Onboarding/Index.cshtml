@@ -1,0 +1,338 @@
+@page
+@model Grc.Web.Pages.Onboarding.IndexModel
+@using Grc.Onboarding
+@{
+    ViewData["Title"] = "Welcome to Saudi GRC Platform | مرحباً بك في منصة الحوكمة";
+}
+
+<div class="container-fluid py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Progress Bar -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="mb-3">Onboarding Progress | تقدم الإعداد</h5>
+                    <div class="progress" style="height: 30px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                             role="progressbar" 
+                             style="width: @Model.ProgressPercentage%"
+                             aria-valuenow="@Model.ProgressPercentage" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                            @Model.ProgressPercentage%
+                        </div>
+                    </div>
+                    <p class="text-muted mt-2 mb-0">
+                        Step @((int)Model.CurrentStep) of @Model.TotalSteps | الخطوة @((int)Model.CurrentStep) من @Model.TotalSteps
+                    </p>
+                </div>
+            </div>
+
+            <!-- Main Onboarding Content -->
+            <div class="card shadow-lg">
+                <div class="card-body p-5">
+                    @switch (Model.CurrentStep)
+                    {
+                        case OnboardingStep.Welcome:
+                            <partial name="_WelcomeStep" model="Model" />
+                            break;
+                        case OnboardingStep.ProfileSetup:
+                            <partial name="_ProfileSetupStep" model="Model" />
+                            break;
+                        case OnboardingStep.OrganizationAssignment:
+                            <partial name="_OrganizationStep" model="Model" />
+                            break;
+                        case OnboardingStep.RoleAssignment:
+                            <partial name="_RoleAssignmentStep" model="Model" />
+                            break;
+                        case OnboardingStep.FeatureConfiguration:
+                            <partial name="_FeatureConfigStep" model="Model" />
+                            break;
+                        case OnboardingStep.ApplicationTour:
+                            <partial name="_ApplicationTourStep" model="Model" />
+                            break;
+                        case OnboardingStep.Completion:
+                            <partial name="_CompletionStep" model="Model" />
+                            break;
+                    }
+                </div>
+                
+                <!-- Navigation Buttons -->
+                <div class="card-footer bg-light">
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-outline-secondary" 
+                                @(Model.CurrentStep == OnboardingStep.Welcome ? "disabled" : "")
+                                onclick="location.href='?step=@((int)Model.CurrentStep - 1)'">
+                            <i class="fas fa-arrow-left"></i> Previous | السابق
+                        </button>
+                        
+                        @if (Model.CurrentStep == OnboardingStep.Completion)
+                        {
+                            <form method="post" asp-page-handler="Complete">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="fas fa-check"></i> Complete Onboarding | إكمال الإعداد
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form method="post" asp-page-handler="NextStep">
+                                <input type="hidden" name="currentStep" value="@((int)Model.CurrentStep)" />
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    Next | التالي <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Skip Option (REMOVED - Onboarding is MANDATORY) -->
+            @if (false)  @* Onboarding is now mandatory for all users *@
+            {
+                <div class="text-center mt-3">
+                    <button type="button" class="btn btn-link text-muted" data-bs-toggle="modal" data-bs-target="#skipModal">
+                        <i class="fas fa-forward"></i> Skip onboarding (I'll set this up later)
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Skip Modal -->
+<div class="modal fade" id="skipModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Skip Onboarding?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to skip the onboarding process?</p>
+                <p class="text-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    You may have limited access to features until your profile is fully configured.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="post" asp-page-handler="Skip">
+                    <button type="submit" class="btn btn-warning">Skip Onboarding</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        let currentStep = 1;
+        const totalSteps = 7;
+        
+        // Update progress and step visibility
+        function updateProgress() {
+            const progress = Math.round((currentStep / totalSteps) * 100);
+            $('.progress-bar').css('width', progress + '%').text(`Step ${currentStep} of ${totalSteps}`);
+            
+            // Update button states
+            $('#prevBtn').prop('disabled', currentStep === 1);
+            
+            if (currentStep === totalSteps) {
+                $('#nextBtn').addClass('d-none');
+                $('#completeBtn').removeClass('d-none');
+            } else {
+                $('#nextBtn').removeClass('d-none');
+                $('#completeBtn').addClass('d-none');
+            }
+            
+            // Show current step content
+            $('.step-content').addClass('d-none');
+            $(`#step${currentStep}`).removeClass('d-none');
+            
+            // Update step indicators
+            $('.step-indicator').each(function(index) {
+                const stepNum = index + 1;
+                $(this).removeClass('active completed');
+                if (stepNum < currentStep) {
+                    $(this).addClass('completed');
+                    $(this).find('i').removeClass().addClass('fas fa-check-circle');
+                } else if (stepNum === currentStep) {
+                    $(this).addClass('active');
+                } else {
+                    $(this).find('i').removeClass().addClass('fas fa-circle');
+                }
+            });
+        }
+        
+        // Step validation functions
+        function validateCurrentStep() {
+            switch(currentStep) {
+                case 1: // Welcome
+                    return true; // No validation needed
+                case 2: // Profile Setup
+                    return typeof window.validateProfileStep === 'function' ? validateProfileStep() : true;
+                case 3: // Organization
+                    return true; // Optional step
+                case 4: // Role Assignment
+                    return typeof window.validateRoleAssignment === 'function' ? validateRoleAssignment() : true;
+                case 5: // Feature Config
+                    return typeof window.validateFeatureConfig === 'function' ? validateFeatureConfig() : true;
+                case 6: // Application Tour
+                    return true; // Tutorial step
+                case 7: // Completion
+                    return true; // Summary step
+                default:
+                    return true;
+            }
+        }
+        
+        // Navigate to next step
+        function nextStep() {
+            if (!validateCurrentStep()) {
+                return;
+            }
+            
+            // Save current step data
+            saveStepData(currentStep);
+            
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateProgress();
+                
+                // Smooth scroll to top
+                $('html, body').animate({ scrollTop: 0 }, 300);
+            }
+        }
+        
+        // Navigate to previous step
+        function previousStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateProgress();
+                $('html, body').animate({ scrollTop: 0 }, 300);
+            }
+        }
+        
+        // Save step data via AJAX
+        function saveStepData(step) {
+            const formData = new FormData();
+            formData.append('step', step);
+            
+            // Collect form data based on step
+            switch(step) {
+                case 2: // Profile Setup
+                    formData.append('fullName', $('#fullName').val());
+                    formData.append('jobTitle', $('#jobTitle').val());
+                    formData.append('department', $('#department').val());
+                    formData.append('phoneNumber', $('#phoneNumber').val());
+                    formData.append('preferredLanguage', $('#preferredLanguage').val());
+                    formData.append('timezone', $('#timezone').val());
+                    formData.append('emailNotifications', $('#emailNotifications').is(':checked'));
+                    formData.append('smsNotifications', $('#smsNotifications').is(':checked'));
+                    formData.append('browserNotifications', $('#browserNotifications').is(':checked'));
+                    break;
+                case 4: // Role Assignment
+                    const roles = [];
+                    $('.role-checkbox:checked').each(function() {
+                        roles.push($(this).val());
+                    });
+                    formData.append('roles', JSON.stringify(roles));
+                    break;
+                case 5: // Feature Config
+                    const features = [];
+                    $('.feature-checkbox:checked').each(function() {
+                        features.push($(this).val());
+                    });
+                    formData.append('features', JSON.stringify(features));
+                    break;
+            }
+            
+            // Send AJAX request
+            $.ajax({
+                url: '/Onboarding?handler=SaveStep',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function(response) {
+                    console.log('Step data saved:', step);
+                    // Show success indicator
+                    showNotification('@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "تم حفظ البيانات" : "Data saved")', 'success');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error saving step data:', error);
+                    showNotification('@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "خطأ في حفظ البيانات" : "Error saving data")', 'error');
+                }
+            });
+        }
+        
+        // Complete onboarding
+        function completeOnboarding() {
+            // Final validation
+            if (!validateCurrentStep()) {
+                return;
+            }
+            
+            // Show loading state
+            $('#completeBtn').prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "جاري الإنهاء..." : "Completing...")');
+            
+            // Submit final data
+            $.ajax({
+                url: '/Onboarding?handler=Complete',
+                type: 'POST',
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function(response) {
+                    // Show success message
+                    showNotification('@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "تم إكمال الإعداد بنجاح!" : "Setup completed successfully!")', 'success');
+                    
+                    // Redirect to dashboard after 2 seconds
+                    setTimeout(function() {
+                        window.location.href = '/Dashboard';
+                    }, 2000);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error completing onboarding:', error);
+                    showNotification('@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "خطأ في إكمال الإعداد" : "Error completing setup")', 'error');
+                    $('#completeBtn').prop('disabled', false).html('<i class="fas fa-check me-2"></i>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "إنهاء الإعداد" : "Complete Setup")');
+                }
+            });
+        }
+        
+        // Show notification toast
+        function showNotification(message, type) {
+            const bgClass = type === 'success' ? 'bg-success' : 'bg-danger';
+            const toast = $(`
+                <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999">
+                    <div class="toast align-items-center text-white ${bgClass} border-0" role="alert">
+                        <div class="d-flex">
+                            <div class="toast-body">${message}</div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                        </div>
+                    </div>
+                </div>
+            `);
+            $('body').append(toast);
+            const toastEl = toast.find('.toast')[0];
+            const bsToast = new bootstrap.Toast(toastEl, { delay: 3000 });
+            bsToast.show();
+            setTimeout(() => toast.remove(), 4000);
+        }
+        
+        // Auto-save user preferences
+        function savePreference(key, value) {
+            fetch('/api/onboarding/preference', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ key: key, value: value })
+            });
+        }
+    </script>
+}

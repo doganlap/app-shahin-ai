@@ -1,0 +1,15 @@
+@page
+@using Microsoft.Extensions.Localization
+@using Grc.Localization
+@model Grc.Web.Pages.Workflows.IndexModel
+@inject IStringLocalizer<GrcResource> L
+
+<abp-card>
+    <abp-card-header>
+        <h2><i class="fas fa-project-diagram text-primary"></i> @L["Menu:WorkflowEngine"]</h2>
+    </abp-card-header>
+    <abp-card-body>
+        <p class="text-muted">@L["Workflows:Description"]</p>
+    </abp-card-body>
+</abp-card>
+

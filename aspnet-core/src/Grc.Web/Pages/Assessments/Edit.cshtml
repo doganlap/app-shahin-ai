@@ -1,0 +1,62 @@
+@page "{id?}"
+@{
+    ViewData["Title"] = "Edit Assessment";
+    var id = (string?)RouteData.Values["id"] ?? "";
+}
+
+<div class="container-fluid">
+    <h3 class="mb-3">Edit Assessment</h3>
+
+    <div class="card">
+        <div class="card-body">
+            <form id="AssessmentEditForm" autocomplete="off">
+                <input type="hidden" id="Id" value="@id" />
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Name</label>
+                        <input class="form-control" id="Name" required />
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Type</label>
+                        <select class="form-select" id="Type">
+                            <option value="SelfAssessment">SelfAssessment</option>
+                            <option value="InternalAudit">InternalAudit</option>
+                            <option value="ExternalAudit">ExternalAudit</option>
+                            <option value="Certification">Certification</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="Status">
+                            <option value="Draft">Draft</option>
+                            <option value="InProgress">InProgress</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" class="form-control" id="StartDate" />
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Target End Date</label>
+                        <input type="date" class="form-control" id="TargetEndDate" />
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a class="btn btn-outline-secondary" id="BackLink" href="/Assessments">Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="/Pages/Assessments/Edit.js"></script>
+}

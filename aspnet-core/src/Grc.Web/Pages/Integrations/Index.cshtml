@@ -1,0 +1,122 @@
+@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Grc.Localization
+@model Grc.Web.Pages.Integrations.IndexModel
+@inject IHtmlLocalizer<GrcResource> L
+@{
+    ViewBag.Title = L["Menu:IntegrationHub"].Value;
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="page-header">
+                <i class="fas fa-plug"></i> @L["Menu:IntegrationHub"]
+            </h1>
+            <p class="text-muted">@L["Integrations:Description"]</p>
+        </div>
+    </div>
+
+    <!-- Integration Connectors -->
+    <div class="row">
+        @foreach (var connector in Model.Connectors)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card shadow h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="@connector.Icon me-2"></i>
+                            <strong>@connector.Name</strong>
+                        </div>
+                        <span class="badge @(connector.Status == "Connected" ? "bg-success" : connector.Status == "Disconnected" ? "bg-danger" : "bg-secondary")">
+                            @connector.Status
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-2">@L["Type"]: @connector.Type</p>
+                        @if (connector.LastSync.HasValue)
+                        {
+                            <p class="text-muted mb-0">
+                                <i class="fas fa-sync-alt me-1"></i>
+                                @L["LastSync"]: @connector.LastSync.Value.ToString("MMM dd, yyyy HH:mm")
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="text-muted mb-0">
+                                <i class="fas fa-clock me-1"></i>
+                                @L["NeverSynced"]
+                            </p>
+                        }
+                    </div>
+                    <div class="card-footer">
+                        @if (connector.Status == "Connected")
+                        {
+                            <button class="btn btn-sm btn-outline-primary me-2">
+                                <i class="fas fa-sync-alt"></i> @L["Sync"]
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-cog"></i> @L["Configure"]
+                            </button>
+                        }
+                        else if (connector.Status == "Not Configured")
+                        {
+                            <button class="btn btn-sm btn-primary">
+                                <i class="fas fa-plug"></i> @L["Setup"]
+                            </button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-sm btn-warning">
+                                <i class="fas fa-redo"></i> @L["Reconnect"]
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Recent Sync History -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>@L["RecentSyncs"]</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>@L["Connector"]</th>
+                                    <th>@L["Type"]</th>
+                                    <th>@L["RecordsProcessed"]</th>
+                                    <th>@L["Status"]</th>
+                                    <th>@L["SyncedAt"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var sync in Model.RecentSyncs)
+                                {
+                                    <tr>
+                                        <td>@sync.Connector</td>
+                                        <td>@sync.Type</td>
+                                        <td>@sync.RecordsProcessed</td>
+                                        <td>
+                                            <span class="badge @(sync.Status == "Success" ? "bg-success" : sync.Status == "Partial" ? "bg-warning" : "bg-danger")">
+                                                @sync.Status
+                                            </span>
+                                        </td>
+                                        <td>@sync.SyncedAt.ToString("MMM dd, yyyy HH:mm")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

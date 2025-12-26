@@ -1,0 +1,65 @@
+<div class="product-list-container">
+  <div class="header">
+    <h1>{{ currentLanguage === 'ar' ? 'اختر خطة الاشتراك' : 'Choose Your Subscription Plan' }}</h1>
+    <p class="subtitle">{{ currentLanguage === 'ar' ? 'اختر الخطة التي تناسب احتياجاتك' : 'Select the plan that fits your needs' }}</p>
+  </div>
+
+  <div class="products-grid" *ngIf="!loading; else loadingTemplate">
+    <div class="product-card" *ngFor="let product of products" [class.featured]="product.code === 'Professional'">
+      <div class="product-header">
+        <h2>{{ getProductName(product) }}</h2>
+        <div class="price-section">
+          <div class="monthly-price" *ngIf="getMonthlyPrice(product)">
+            <span class="currency">SAR</span>
+            <span class="amount">{{ getMonthlyPrice(product) | number }}</span>
+            <span class="period">/month</span>
+          </div>
+          <div class="yearly-price" *ngIf="getYearlyPrice(product)">
+            <span class="currency">SAR</span>
+            <span class="amount">{{ getYearlyPrice(product) | number }}</span>
+            <span class="period">/year</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-description">
+        <p>{{ getProductDescription(product) }}</p>
+      </div>
+
+      <div class="features-list">
+        <div class="feature-item" *ngFor="let feature of product.features">
+          <i class="check-icon">✓</i>
+          <span>{{ currentLanguage === 'ar' ? feature.name.ar : feature.name.en }}</span>
+        </div>
+      </div>
+
+      <div class="quotas-section">
+        <div class="quota-item">
+          <strong>{{ currentLanguage === 'ar' ? 'التقييمات' : 'Assessments' }}:</strong>
+          <span>{{ getQuotaLimit(product, 'Assessments') }}</span>
+        </div>
+        <div class="quota-item">
+          <strong>{{ currentLanguage === 'ar' ? 'المستخدمون' : 'Users' }}:</strong>
+          <span>{{ getQuotaLimit(product, 'Users') }}</span>
+        </div>
+        <div class="quota-item">
+          <strong>{{ currentLanguage === 'ar' ? 'التخزين' : 'Storage' }}:</strong>
+          <span>{{ getQuotaLimit(product, 'EvidenceStorageMB') }} MB</span>
+        </div>
+      </div>
+
+      <div class="product-actions">
+        <button class="btn-primary" [routerLink]="['/subscriptions/subscribe', product.id]">
+          {{ currentLanguage === 'ar' ? 'اشترك الآن' : 'Subscribe Now' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #loadingTemplate>
+    <div class="loading-spinner">
+      <p>{{ currentLanguage === 'ar' ? 'جاري التحميل...' : 'Loading...' }}</p>
+    </div>
+  </ng-template>
+</div>
+

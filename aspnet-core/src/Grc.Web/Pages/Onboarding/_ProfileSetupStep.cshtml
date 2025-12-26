@@ -1,0 +1,504 @@
+@page
+@model Grc.Web.Pages.Onboarding.IndexModel
+
+<div class="profile-setup-step">
+    <div class="step-header mb-4">
+        <h4 class="text-primary">
+            <i class="fas fa-user-circle me-2"></i>
+            @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+            {
+                <span>إعداد الملف الشخصي</span>
+            }
+            else
+            {
+                <span>Profile Setup</span>
+            }
+        </h4>
+        <p class="text-muted">
+            @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+            {
+                <span>أكمل ملفك الشخصي لتخصيص تجربتك في النظام</span>
+            }
+            else
+            {
+                <span>Complete your profile to personalize your system experience</span>
+            }
+        </p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Personal Information Section -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="fas fa-id-card text-primary me-2"></i>
+                        @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                        {
+                            <span>المعلومات الشخصية</span>
+                        }
+                        else
+                        {
+                            <span>Personal Information</span>
+                        }
+                    </h5>
+
+                    <!-- Full Name (Required) -->
+                    <div class="mb-3">
+                        <label class="form-label required-field">
+                            @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                            {
+                                <span>الاسم الكامل</span>
+                            }
+                            else
+                            {
+                                <span>Full Name</span>
+                            }
+                            <i class="fas fa-info-circle text-info ms-1" 
+                               data-bs-toggle="tooltip" 
+                               title="@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "أدخل اسمك الكامل كما يظهر في الوثائق الرسمية" : "Enter your full name as it appears on official documents")"></i>
+                        </label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="fullName" 
+                               name="FullName" 
+                               required 
+                               placeholder="@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "محمد أحمد السعيد" : "John Smith")"
+                               maxlength="100"
+                               pattern="^[a-zA-Z\u0600-\u06FF\s]{3,}$">
+                        <div class="form-text">
+                            @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                            {
+                                <span>الاسم الكامل مطلوب (3 أحرف على الأقل)</span>
+                            }
+                            else
+                            {
+                                <span>Full name required (minimum 3 characters)</span>
+                            }
+                        </div>
+                        <div class="invalid-feedback">
+                            @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                            {
+                                <span>الرجاء إدخال اسم صحيح</span>
+                            }
+                            else
+                            {
+                                <span>Please enter a valid name</span>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Job Title (Required) -->
+                    <div class="mb-3">
+                        <label class="form-label required-field">
+                            @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                            {
+                                <span>المسمى الوظيفي</span>
+                            }
+                            else
+                            {
+                                <span>Job Title</span>
+                            }
+                            <i class="fas fa-info-circle text-info ms-1" 
+                               data-bs-toggle="tooltip" 
+                               title="@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "حدد دورك الوظيفي الحالي" : "Specify your current job role")"></i>
+                        </label>
+                        <select class="form-select" id="jobTitle" name="JobTitle" required>
+                            <option value="">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "اختر المسمى الوظيفي" : "Select Job Title")</option>
+                            <option value="GRC Manager">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "مدير الحوكمة والمخاطر والامتثال" : "GRC Manager")</option>
+                            <option value="Compliance Officer">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "مسؤول الامتثال" : "Compliance Officer")</option>
+                            <option value="Risk Manager">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "مدير المخاطر" : "Risk Manager")</option>
+                            <option value="Audit Manager">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "مدير التدقيق" : "Audit Manager")</option>
+                            <option value="Control Owner">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "مالك الضوابط" : "Control Owner")</option>
+                            <option value="Security Officer">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "مسؤول الأمن" : "Security Officer")</option>
+                            <option value="Other">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "أخرى" : "Other")</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                            {
+                                <span>الرجاء اختيار المسمى الوظيفي</span>
+                            }
+                            else
+                            {
+                                <span>Please select a job title</span>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Department -->
+                    <div class="mb-3">
+                        <label class="form-label">
+                            @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                            {
+                                <span>القسم</span>
+                            }
+                            else
+                            {
+                                <span>Department</span>
+                            }
+                        </label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="department" 
+                               name="Department" 
+                               placeholder="@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "مثال: إدارة المخاطر" : "e.g., Risk Management")">
+                    </div>
+
+                    <!-- Phone Number (Required) -->
+                    <div class="mb-3">
+                        <label class="form-label required-field">
+                            @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                            {
+                                <span>رقم الهاتف</span>
+                            }
+                            else
+                            {
+                                <span>Phone Number</span>
+                            }
+                            <i class="fas fa-info-circle text-info ms-1" 
+                               data-bs-toggle="tooltip" 
+                               title="@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "رقم هاتف صالح مطلوب للإشعارات" : "Valid phone number required for notifications")"></i>
+                        </label>
+                        <input type="tel" 
+                               class="form-control" 
+                               id="phoneNumber" 
+                               name="PhoneNumber" 
+                               required 
+                               placeholder="@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "+966501234567" : "+966501234567")"
+                               pattern="^\+?[0-9]{10,15}$">
+                        <div class="form-text">
+                            @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                            {
+                                <span>أدخل رقم الهاتف بصيغة دولية (مثال: +966501234567)</span>
+                            }
+                            else
+                            {
+                                <span>Enter phone number in international format (e.g., +966501234567)</span>
+                            }
+                        </div>
+                        <div class="invalid-feedback">
+                            @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                            {
+                                <span>الرجاء إدخال رقم هاتف صحيح</span>
+                            }
+                            else
+                            {
+                                <span>Please enter a valid phone number</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preferences Section -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="fas fa-cog text-primary me-2"></i>
+                        @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                        {
+                            <span>التفضيلات</span>
+                        }
+                        else
+                        {
+                            <span>Preferences</span>
+                        }
+                    </h5>
+
+                    <!-- Language Preference (Required) -->
+                    <div class="mb-3">
+                        <label class="form-label required-field">
+                            @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                            {
+                                <span>لغة الواجهة المفضلة</span>
+                            }
+                            else
+                            {
+                                <span>Preferred Interface Language</span>
+                            }
+                            <i class="fas fa-info-circle text-info ms-1" 
+                               data-bs-toggle="tooltip" 
+                               title="@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "اختر اللغة الافتراضية للنظام" : "Choose your default system language")"></i>
+                        </label>
+                        <select class="form-select" id="preferredLanguage" name="PreferredLanguage" required>
+                            <option value="ar" @(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "selected" : "")>العربية (Arabic)</option>
+                            <option value="en" @(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "" : "selected")>English (الإنجليزية)</option>
+                        </select>
+                    </div>
+
+                    <!-- Timezone (Required) -->
+                    <div class="mb-3">
+                        <label class="form-label required-field">
+                            @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                            {
+                                <span>المنطقة الزمنية</span>
+                            }
+                            else
+                            {
+                                <span>Timezone</span>
+                            }
+                            <i class="fas fa-info-circle text-info ms-1" 
+                               data-bs-toggle="tooltip" 
+                               title="@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "المنطقة الزمنية للإشعارات والتقارير" : "Timezone for notifications and reports")"></i>
+                        </label>
+                        <select class="form-select" id="timezone" name="Timezone" required>
+                            <option value="Asia/Riyadh" selected>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "الرياض (GMT+3)" : "Riyadh (GMT+3)")</option>
+                            <option value="Asia/Dubai">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "دبي (GMT+4)" : "Dubai (GMT+4)")</option>
+                            <option value="Asia/Kuwait">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "الكويت (GMT+3)" : "Kuwait (GMT+3)")</option>
+                            <option value="Asia/Qatar">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "قطر (GMT+3)" : "Qatar (GMT+3)")</option>
+                            <option value="Asia/Bahrain">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "البحرين (GMT+3)" : "Bahrain (GMT+3)")</option>
+                        </select>
+                    </div>
+
+                    <!-- Notification Preferences -->
+                    <div class="mb-3">
+                        <label class="form-label">
+                            @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                            {
+                                <span>تفضيلات الإشعارات</span>
+                            }
+                            else
+                            {
+                                <span>Notification Preferences</span>
+                            }
+                        </label>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="emailNotifications" name="EmailNotifications" checked>
+                            <label class="form-check-label" for="emailNotifications">
+                                @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                                {
+                                    <span>إشعارات البريد الإلكتروني</span>
+                                }
+                                else
+                                {
+                                    <span>Email Notifications</span>
+                                }
+                            </label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="smsNotifications" name="SmsNotifications">
+                            <label class="form-check-label" for="smsNotifications">
+                                @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                                {
+                                    <span>إشعارات SMS</span>
+                                }
+                                else
+                                {
+                                    <span>SMS Notifications</span>
+                                }
+                            </label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="browserNotifications" name="BrowserNotifications" checked>
+                            <label class="form-check-label" for="browserNotifications">
+                                @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                                {
+                                    <span>إشعارات المتصفح</span>
+                                }
+                                else
+                                {
+                                    <span>Browser Notifications</span>
+                                }
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Profile Completion Progress -->
+                    <div class="mt-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small class="text-muted">
+                                @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                                {
+                                    <span>اكتمال الملف الشخصي</span>
+                                }
+                                else
+                                {
+                                    <span>Profile Completion</span>
+                                }
+                            </small>
+                            <small class="text-muted"><span id="profileProgress">0</span>%</small>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-success" id="profileProgressBar" role="progressbar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Validation Summary -->
+    <div class="alert alert-info mt-4 d-none" id="validationSummary">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        <span id="validationMessage"></span>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Initialize tooltips
+            $('[data-bs-toggle="tooltip"]').tooltip();
+
+            // Required fields
+            const requiredFields = ['#fullName', '#jobTitle', '#phoneNumber', '#preferredLanguage', '#timezone'];
+            
+            // Real-time validation and progress tracking
+            function updateProfileProgress() {
+                let filledCount = 0;
+                let totalCount = requiredFields.length;
+
+                requiredFields.forEach(function(selector) {
+                    const field = $(selector);
+                    if (field.val() && field.val().trim() !== '') {
+                        filledCount++;
+                        field.removeClass('is-invalid').addClass('is-valid');
+                    } else {
+                        field.removeClass('is-valid');
+                    }
+                });
+
+                const progress = Math.round((filledCount / totalCount) * 100);
+                $('#profileProgress').text(progress);
+                $('#profileProgressBar').css('width', progress + '%');
+
+                // Update progress bar color
+                if (progress < 50) {
+                    $('#profileProgressBar').removeClass('bg-warning bg-success').addClass('bg-danger');
+                } else if (progress < 100) {
+                    $('#profileProgressBar').removeClass('bg-danger bg-success').addClass('bg-warning');
+                } else {
+                    $('#profileProgressBar').removeClass('bg-danger bg-warning').addClass('bg-success');
+                }
+
+                return progress === 100;
+            }
+
+            // Real-time field validation
+            requiredFields.forEach(function(selector) {
+                $(selector).on('input change blur', function() {
+                    updateProfileProgress();
+                    validateField($(this));
+                });
+            });
+
+            // Field-specific validation
+            function validateField($field) {
+                const fieldId = $field.attr('id');
+                const value = $field.val();
+                let isValid = true;
+                let message = '';
+
+                if (fieldId === 'fullName') {
+                    const pattern = /^[a-zA-Z\u0600-\u06FF\s]{3,}$/;
+                    isValid = pattern.test(value);
+                    message = '@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "الاسم يجب أن يحتوي على 3 أحرف على الأقل" : "Name must be at least 3 characters")';
+                } else if (fieldId === 'phoneNumber') {
+                    const pattern = /^\+?[0-9]{10,15}$/;
+                    isValid = pattern.test(value);
+                    message = '@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "رقم هاتف غير صحيح" : "Invalid phone number")';
+                }
+
+                if (!isValid && value) {
+                    $field.removeClass('is-valid').addClass('is-invalid');
+                    showValidationMessage(message);
+                } else if (value) {
+                    $field.removeClass('is-invalid').addClass('is-valid');
+                    hideValidationMessage();
+                }
+
+                return isValid;
+            }
+
+            // Validation message helpers
+            function showValidationMessage(message) {
+                $('#validationMessage').text(message);
+                $('#validationSummary').removeClass('d-none');
+            }
+
+            function hideValidationMessage() {
+                $('#validationSummary').addClass('d-none');
+            }
+
+            // Form submission validation
+            window.validateProfileStep = function() {
+                let isValid = true;
+                let missingFields = [];
+
+                requiredFields.forEach(function(selector) {
+                    const field = $(selector);
+                    const value = field.val();
+                    
+                    if (!value || value.trim() === '') {
+                        field.addClass('is-invalid');
+                        isValid = false;
+                        missingFields.push(field.siblings('label').text().replace('*', '').trim());
+                    } else if (!validateField(field)) {
+                        isValid = false;
+                    }
+                });
+
+                if (!isValid) {
+                    const message = '@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "الرجاء إكمال جميع الحقول المطلوبة" : "Please complete all required fields")';
+                    showValidationMessage(message + ': ' + missingFields.join(', '));
+                    
+                    // Scroll to first invalid field
+                    $('html, body').animate({
+                        scrollTop: $('.is-invalid').first().offset().top - 100
+                    }, 500);
+                }
+
+                return isValid;
+            };
+
+            // Auto-save preferences
+            $('input[type="checkbox"]').on('change', function() {
+                const preference = $(this).attr('name');
+                const value = $(this).is(':checked');
+                console.log('Preference changed:', preference, value);
+                // TODO: Auto-save via AJAX
+            });
+
+            // Initial progress update
+            updateProfileProgress();
+        });
+    </script>
+}
+
+<style>
+    .required-field::after {
+        content: ' *';
+        color: #dc3545;
+    }
+
+    .form-control.is-valid,
+    .form-select.is-valid {
+        border-color: #28a745;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right calc(.375em + .1875rem) center;
+        background-size: calc(.75em + .375rem) calc(.75em + .375rem);
+        padding-right: calc(1.5em + .75rem);
+    }
+
+    .card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .progress {
+        border-radius: 10px;
+        background-color: #e9ecef;
+    }
+
+    .progress-bar {
+        border-radius: 10px;
+        transition: width 0.3s ease;
+    }
+</style>

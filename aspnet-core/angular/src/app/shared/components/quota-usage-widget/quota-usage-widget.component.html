@@ -1,0 +1,28 @@
+<div class="quota-widget" *ngIf="!loading && quotaStatus">
+  <div class="quota-header" *ngIf="showLabel">
+    <span class="quota-label">{{ getQuotaLabel() }}</span>
+    <span class="quota-usage-text" [class.exceeded]="isExceeded()">
+      {{ getUsageText() }}
+    </span>
+  </div>
+  
+  <div class="quota-bar">
+    <div class="quota-progress" 
+         [style.width.%]="getPercentage()"
+         [class.exceeded]="isExceeded()"
+         [class.warning]="getPercentage() > 80 && !isExceeded()">
+    </div>
+  </div>
+  
+  <div class="quota-footer" *ngIf="showLabel">
+    <span class="quota-percentage">{{ getPercentage().toFixed(1) }}%</span>
+    <span class="quota-status" *ngIf="isExceeded()" class="exceeded">
+      Exceeded
+    </span>
+  </div>
+</div>
+
+<div class="quota-widget loading" *ngIf="loading">
+  <p>Loading quota...</p>
+</div>
+

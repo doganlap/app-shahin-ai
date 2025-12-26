@@ -1,0 +1,30 @@
+@page
+@using Microsoft.Extensions.Localization
+@using Grc.Localization
+@model Grc.Web.Pages.Reports.IndexModel
+@inject IStringLocalizer<GrcResource> L
+
+<abp-card>
+    <abp-card-header>
+        <h2><i class="fas fa-chart-bar text-info"></i> @L["Menu:ReportingAnalytics"]</h2>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-row>
+            <abp-column size-md="_12">
+                <h4>@L["Reports:AvailableReports"]</h4>
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="fas fa-file-pdf me-2"></i>@L["ComplianceReport"]
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="fas fa-file-excel me-2"></i>@L["RiskRegisterReport"]
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="fas fa-file-pdf me-2"></i>@L["AuditSummaryReport"]
+                    </a>
+                </div>
+            </abp-column>
+        </abp-row>
+    </abp-card-body>
+</abp-card>
+

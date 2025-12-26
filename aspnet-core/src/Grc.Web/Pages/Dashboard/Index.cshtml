@@ -1,0 +1,179 @@
+@page
+@model Grc.Web.Pages.Dashboard.IndexModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Grc.Localization
+@inject IHtmlLocalizer<GrcResource> L
+@{
+    ViewBag.Title = L["Menu:Dashboard"].Value;
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="page-header">
+                <i class="fas fa-chart-line"></i> @L["Menu:Dashboard"]
+            </h1>
+        </div>
+    </div>
+
+    <!-- Dashboard Cards -->
+    <div class="row">
+        <!-- Compliance Score -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                @L["ComplianceScore"]
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.CompliancePercentage%</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-shield-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Frameworks -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                @L["TotalFrameworks"]
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalFrameworks</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-book fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Risks -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                @L["ActiveRisks"]
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalRisks</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Actions -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                @L["PendingActions"]
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalControls</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-tasks fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row">
+        <!-- Compliance Trend -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">@L["ComplianceTrend"]</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="complianceTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Risk Distribution -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">@L["RiskDistribution"]</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-pie pt-4">
+                        <canvas id="riskDistributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activities -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">@L["RecentActivities"]</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>@L["Activity"]</th>
+                                    <th>@L["User"]</th>
+                                    <th>@L["Date"]</th>
+                                    <th>@L["Status"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.RecentActivities.Any())
+                                {
+                                    @foreach (var activity in Model.RecentActivities)
+                                    {
+                                        <tr>
+                                            <td><i class="fas fa-circle-notch text-info"></i> @activity.Activity</td>
+                                            <td>@activity.UserName</td>
+                                            <td>@activity.Date.ToString("yyyy-MM-dd")</td>
+                                            <td><span class="badge badge-@(activity.Status == "مكتمل" ? "success" : "warning")">@activity.Status</span></td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted">@L["NoRecentActivities"]</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="~/Pages/Dashboard/Index.js"></script>
+}
+

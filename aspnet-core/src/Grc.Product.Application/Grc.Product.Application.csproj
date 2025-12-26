@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\common.props" />
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Grc.Product</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Grc.Product.Domain\Grc.Product.Domain.csproj" />
+    <ProjectReference Include="..\Grc.Product.Application.Contracts\Grc.Product.Application.Contracts.csproj" />
+    <ProjectReference Include="..\Grc.Application.Contracts\Grc.Application.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Ddd.Application" Version="8.3.0" />
+    <PackageReference Include="Volo.Abp.AutoMapper" Version="8.3.0" />
+  </ItemGroup>
+
+</Project>
+

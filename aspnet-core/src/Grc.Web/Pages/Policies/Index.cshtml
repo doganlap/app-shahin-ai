@@ -1,0 +1,26 @@
+@page
+@using Microsoft.Extensions.Localization
+@using Grc.Localization
+@model Grc.Web.Pages.Policies.IndexModel
+@inject IStringLocalizer<GrcResource> L
+
+<abp-card>
+    <abp-card-header>
+        <h2><i class="fas fa-file-contract text-primary"></i> @L["Menu:PolicyManagement"]</h2>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="PoliciesTable">
+            <thead>
+                <tr>
+                    <th>@L["PolicyCode"]</th>
+                    <th>@L["Title"]</th>
+                    <th>@L["Version"]</th>
+                    <th>@L["EffectiveDate"]</th>
+                    <th>@L["Status"]</th>
+                    <th>@L["Actions"]</th>
+                </tr>
+            </thead>
+        </abp-table>
+    </abp-card-body>
+</abp-card>
+

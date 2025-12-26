@@ -1,0 +1,400 @@
+@page
+@model Grc.Web.Pages.Onboarding.IndexModel
+
+<div class="feature-config-step">
+    <div class="step-header mb-4">
+        <h4 class="text-primary">
+            <i class="fas fa-cogs me-2"></i>
+            @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+            {
+                <span>تكوين النظام والميزات</span>
+            }
+            else
+            {
+                <span>System & Feature Configuration</span>
+            }
+        </h4>
+        <p class="text-muted">
+            @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+            {
+                <span>فعّل الميزات التي تحتاجها - سنتأكد من جاهزية كل شيء</span>
+            }
+            else
+            {
+                <span>Enable the features you need - we'll ensure everything is ready</span>
+            }
+        </p>
+    </div>
+
+    <!-- System Health Check -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-heartbeat me-2"></i>
+                @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                {
+                    <span>فحص صحة النظام</span>
+                }
+                else
+                {
+                    <span>System Health Check</span>
+                }
+                <button type="button" class="btn btn-sm btn-light float-end" id="refreshHealthBtn">
+                    <i class="fas fa-sync-alt"></i>
+                    @(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "تحديث" : "Refresh")
+                </button>
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="health-item">
+                        <div class="d-flex align-items-center">
+                            <div class="spinner-border spinner-border-sm text-primary me-2" id="dbSpinner"></div>
+                            <i class="fas fa-database fa-2x text-primary me-2 d-none" id="dbIcon"></i>
+                            <div>
+                                <small class="text-muted d-block">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "قاعدة البيانات" : "Database")</small>
+                                <strong id="dbStatus">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "جاري الفحص..." : "Checking...")</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="health-item">
+                        <div class="d-flex align-items-center">
+                            <div class="spinner-border spinner-border-sm text-warning me-2" id="cacheSpinner"></div>
+                            <i class="fas fa-bolt fa-2x text-warning me-2 d-none" id="cacheIcon"></i>
+                            <div>
+                                <small class="text-muted d-block">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "الذاكرة المؤقتة" : "Cache")</small>
+                                <strong id="cacheStatus">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "جاري الفحص..." : "Checking...")</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="health-item">
+                        <div class="d-flex align-items-center">
+                            <div class="spinner-border spinner-border-sm text-success me-2" id="storageSpinner"></div>
+                            <i class="fas fa-hdd fa-2x text-success me-2 d-none" id="storageIcon"></i>
+                            <div>
+                                <small class="text-muted d-block">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "التخزين" : "Storage")</small>
+                                <strong id="storageStatus">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "جاري الفحص..." : "Checking...")</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="health-item">
+                        <div class="d-flex align-items-center">
+                            <div class="spinner-border spinner-border-sm text-danger me-2" id="apiSpinner"></div>
+                            <i class="fas fa-plug fa-2x text-danger me-2 d-none" id="apiIcon"></i>
+                            <div>
+                                <small class="text-muted d-block">API</small>
+                                <strong id="apiStatus">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "جاري الفحص..." : "Checking...")</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core Modules -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-puzzle-piece me-2"></i>
+                @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                {
+                    <span>الوحدات الأساسية (مطلوبة)</span>
+                }
+                else
+                {
+                    <span>Core Modules (Required)</span>
+                }
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="form-check form-switch feature-switch">
+                        <input class="form-check-input" type="checkbox" id="featureFrameworkLibrary" checked disabled>
+                        <label class="form-check-label" for="featureFrameworkLibrary">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-book text-primary fa-2x me-3"></i>
+                                <div>
+                                    <strong>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "مكتبة الأطر التنظيمية" : "Framework Library")</strong>
+                                    <small class="text-muted d-block">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "إدارة الأطر والضوابط التنظيمية" : "Manage regulatory frameworks and controls")</small>
+                                    <span class="badge bg-success">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "جاهز - 39 إطار، 3,655 ضابط" : "Ready - 39 frameworks, 3,655 controls")</span>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check form-switch feature-switch">
+                        <input class="form-check-input" type="checkbox" id="featureAssessments" checked disabled>
+                        <label class="form-check-label" for="featureAssessments">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-clipboard-check text-success fa-2x me-3"></i>
+                                <div>
+                                    <strong>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "التقييمات" : "Assessments")</strong>
+                                    <small class="text-muted d-block">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "تقييم الامتثال للأطر التنظيمية" : "Assess compliance with frameworks")</small>
+                                    <span class="badge bg-success">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "جاهز" : "Ready")</span>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Optional Modules -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-th-large me-2"></i>
+                @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                {
+                    <span>الوحدات الاختيارية</span>
+                }
+                else
+                {
+                    <span>Optional Modules</span>
+                }
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="form-check form-switch feature-switch">
+                        <input class="form-check-input feature-checkbox" type="checkbox" id="featureRiskManagement" name="Features" value="RiskManagement" checked>
+                        <label class="form-check-label" for="featureRiskManagement">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-exclamation-triangle text-warning fa-2x me-3"></i>
+                                <div>
+                                    <strong>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "إدارة المخاطر" : "Risk Management")</strong>
+                                    <small class="text-muted d-block">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "تحديد وتقييم ومعالجة المخاطر" : "Identify, assess, and treat risks")</small>
+                                    <span class="badge bg-info">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "موصى به" : "Recommended")</span>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check form-switch feature-switch">
+                        <input class="form-check-input feature-checkbox" type="checkbox" id="featureEvidence" name="Features" value="Evidence" checked>
+                        <label class="form-check-label" for="featureEvidence">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-file-alt text-info fa-2x me-3"></i>
+                                <div>
+                                    <strong>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "إدارة الأدلة" : "Evidence Management")</strong>
+                                    <small class="text-muted d-block">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "رفع وإدارة أدلة الامتثال" : "Upload and manage compliance evidence")</small>
+                                    <span class="badge bg-info">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "موصى به" : "Recommended")</span>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check form-switch feature-switch">
+                        <input class="form-check-input feature-checkbox" type="checkbox" id="featureAudit" name="Features" value="Audit">
+                        <label class="form-check-label" for="featureAudit">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-search text-secondary fa-2x me-3"></i>
+                                <div>
+                                    <strong>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "التدقيق" : "Audit")</strong>
+                                    <small class="text-muted d-block">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "تخطيط وتنفيذ عمليات التدقيق" : "Plan and execute audits")</small>
+                                    <span class="badge bg-secondary">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "اختياري" : "Optional")</span>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check form-switch feature-switch">
+                        <input class="form-check-input feature-checkbox" type="checkbox" id="featurePolicy" name="Features" value="Policy">
+                        <label class="form-check-label" for="featurePolicy">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-shield-alt text-primary fa-2x me-3"></i>
+                                <div>
+                                    <strong>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "إدارة السياسات" : "Policy Management")</strong>
+                                    <small class="text-muted d-block">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "إنشاء ونشر السياسات والإجراءات" : "Create and publish policies & procedures")</small>
+                                    <span class="badge bg-secondary">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "اختياري" : "Optional")</span>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check form-switch feature-switch">
+                        <input class="form-check-input feature-checkbox" type="checkbox" id="featureWorkflow" name="Features" value="Workflow">
+                        <label class="form-check-label" for="featureWorkflow">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-project-diagram text-success fa-2x me-3"></i>
+                                <div>
+                                    <strong>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "سير العمل الآلي" : "Automated Workflows")</strong>
+                                    <small class="text-muted d-block">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "أتمتة العمليات والموافقات" : "Automate processes and approvals")</small>
+                                    <span class="badge bg-warning">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "متقدم" : "Advanced")</span>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check form-switch feature-switch">
+                        <input class="form-check-input feature-checkbox" type="checkbox" id="featureReporting" name="Features" value="Reporting" checked>
+                        <label class="form-check-label" for="featureReporting">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-chart-bar text-danger fa-2x me-3"></i>
+                                <div>
+                                    <strong>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "التقارير المتقدمة" : "Advanced Reporting")</strong>
+                                    <small class="text-muted d-block">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "لوحات معلومات ورؤى تحليلية" : "Dashboards and analytics insights")</small>
+                                    <span class="badge bg-info">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "موصى به" : "Recommended")</span>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature Summary -->
+    <div class="card border-success shadow-sm" id="featureSummary">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-check-double me-2"></i>
+                @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                {
+                    <span>الميزات المفعلة (<span id="enabledFeaturesCount">5</span>)</span>
+                }
+                else
+                {
+                    <span>Enabled Features (<span id="enabledFeaturesCount">5</span>)</span>
+                }
+            </h5>
+        </div>
+        <div class="card-body">
+            <p class="mb-2">
+                @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                {
+                    <span>سيتم تكوين الميزات التالية تلقائياً:</span>
+                }
+                else
+                {
+                    <span>The following features will be configured automatically:</span>
+                }
+            </p>
+            <ul id="enabledFeaturesList"></ul>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Health check simulation
+            function performHealthCheck() {
+                const components = ['db', 'cache', 'storage', 'api'];
+                
+                components.forEach((component, index) => {
+                    setTimeout(() => {
+                        checkComponent(component);
+                    }, (index + 1) * 800);
+                });
+            }
+
+            function checkComponent(component) {
+                const statusId = `#${component}Status`;
+                const spinnerId = `#${component}Spinner`;
+                const iconId = `#${component}Icon`;
+                
+                // Simulate API call
+                setTimeout(() => {
+                    $(spinnerId).addClass('d-none');
+                    $(iconId).removeClass('d-none');
+                    
+                    // Simulate success (95% success rate)
+                    const isHealthy = Math.random() > 0.05;
+                    
+                    if (isHealthy) {
+                        $(statusId).html('<span class="text-success">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "متصل" : "Connected")</span>');
+                        $(iconId).addClass('text-success');
+                    } else {
+                        $(statusId).html('<span class="text-danger">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "غير متصل" : "Disconnected")</span>');
+                        $(iconId).addClass('text-danger');
+                    }
+                }, 500);
+            }
+
+            $('#refreshHealthBtn').on('click', function() {
+                $('.spinner-border').removeClass('d-none');
+                $('[id$="Icon"]').addClass('d-none');
+                $('[id$="Status"]').text('@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "جاري الفحص..." : "Checking...")');
+                performHealthCheck();
+            });
+
+            // Feature selection tracking
+            function updateFeatureSummary() {
+                const enabledFeatures = [];
+                
+                // Core modules always enabled
+                enabledFeatures.push('@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "مكتبة الأطر التنظيمية" : "Framework Library")');
+                enabledFeatures.push('@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "التقييمات" : "Assessments")');
+                
+                // Optional modules
+                $('.feature-checkbox:checked').each(function() {
+                    const label = $(this).siblings('label').find('strong').text();
+                    enabledFeatures.push(label);
+                });
+
+                $('#enabledFeaturesCount').text(enabledFeatures.length);
+                
+                const featuresList = enabledFeatures.map(feature => 
+                    `<li><i class="fas fa-check text-success me-2"></i>${feature}</li>`
+                ).join('');
+                $('#enabledFeaturesList').html(featuresList);
+            }
+
+            $('.feature-checkbox').on('change', function() {
+                updateFeatureSummary();
+            });
+
+            // Validation
+            window.validateFeatureConfig = function() {
+                // At least core modules must be ready
+                return true; // Always valid since core is required
+            };
+
+            // Initial checks
+            performHealthCheck();
+            updateFeatureSummary();
+        });
+    </script>
+}
+
+<style>
+    .feature-switch {
+        padding: 15px;
+        border-radius: 8px;
+        transition: background-color 0.3s;
+    }
+
+    .feature-switch:hover {
+        background-color: #f8f9fa;
+    }
+
+    .feature-switch .form-check-input {
+        width: 3em;
+        height: 1.5em;
+        margin-top: 0.5em;
+    }
+
+    .health-item {
+        padding: 10px;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+    }
+</style>

@@ -1,0 +1,12 @@
+#AssessmentsTable tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+#AssessmentsTable tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.assessment-actions {
+    white-space: nowrap;
+}
+

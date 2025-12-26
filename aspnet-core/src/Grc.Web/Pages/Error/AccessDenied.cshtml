@@ -1,0 +1,128 @@
+@page
+@using Grc.Permissions
+@using Microsoft.AspNetCore.Authorization
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@inject IPageLayout PageLayout
+@{
+    PageLayout.Content.Title = "Access Denied | الوصول مرفوض";
+    PageLayout.Content.BreadCrumb.Items.Clear();
+}
+
+<div class="container-fluid" style="min-height: 70vh; display: flex; align-items: center; justify-content: center;">
+    <div class="row justify-content-center w-100">
+        <div class="col-lg-6 col-md-8">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-5 text-center">
+                    <!-- Icon -->
+                    <div class="mb-4">
+                        <i class="fas fa-lock text-warning" style="font-size: 80px;"></i>
+                    </div>
+                    
+                    <!-- English Message -->
+                    <h2 class="text-dark mb-3">Access Denied</h2>
+                    <p class="text-muted mb-4">
+                        You don't have permission to access this page or feature.
+                    </p>
+                    
+                    <!-- Arabic Message -->
+                    <h2 class="text-dark mb-3" dir="rtl">الوصول مرفوض</h2>
+                    <p class="text-muted mb-4" dir="rtl">
+                        ليس لديك صلاحية للوصول إلى هذه الصفحة أو الميزة.
+                    </p>
+                    
+                    <hr class="my-4">
+                    
+                    <!-- Instructions -->
+                    <div class="alert alert-info text-start" role="alert">
+                        <h5 class="alert-heading">
+                            <i class="fas fa-info-circle"></i> What you can do:
+                        </h5>
+                        <ul class="mb-0">
+                            <li>Check if you're logged in with the correct account</li>
+                            <li>Contact your administrator to request access</li>
+                            <li>Return to the homepage and try a different section</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="alert alert-info text-end" role="alert" dir="rtl">
+                        <h5 class="alert-heading">
+                            <i class="fas fa-info-circle"></i> ما يمكنك فعله:
+                        </h5>
+                        <ul class="mb-0" style="list-style-position: inside;">
+                            <li>تحقق من تسجيل الدخول بالحساب الصحيح</li>
+                            <li>اتصل بالمسؤول لطلب الوصول</li>
+                            <li>ارجع إلى الصفحة الرئيسية وجرب قسمًا آخر</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="mt-4">
+                        <a href="/" class="btn btn-primary btn-lg me-2">
+                            <i class="fas fa-home"></i> Go to Homepage
+                        </a>
+                        <a href="/Account/Manage" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-user"></i> My Profile
+                        </a>
+                    </div>
+                    
+                    <!-- Request Access -->
+                    <div class="mt-4">
+                        <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#requestAccessModal">
+                            <i class="fas fa-envelope"></i> Request Access
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Request Access Modal -->
+<div class="modal fade" id="requestAccessModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Request Access | طلب الوصول</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="requestAccessForm">
+                    <div class="mb-3">
+                        <label class="form-label">Page/Feature Requested</label>
+                        <input type="text" class="form-control" id="requestedPage" readonly value="@HttpContext.Request.Path">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Reason for Access</label>
+                        <textarea class="form-control" id="requestReason" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3" dir="rtl">
+                        <label class="form-label">سبب الطلب</label>
+                        <textarea class="form-control" id="requestReasonAr" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitAccessRequest()">
+                    <i class="fas fa-paper-plane"></i> Submit Request
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        function submitAccessRequest() {
+            const reason = document.getElementById('requestReason').value;
+            if (!reason) {
+                alert('Please provide a reason for your access request.');
+                return;
+            }
+            
+            // TODO: Implement actual access request submission
+            alert('Your access request has been submitted to the administrator.');
+            bootstrap.Modal.getInstance(document.getElementById('requestAccessModal')).hide();
+        }
+    </script>
+}

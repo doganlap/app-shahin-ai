@@ -1,0 +1,50 @@
+@page
+@model Grc.Web.Pages.SecurityLogs.IndexModel
+@inject IHtmlLocalizer<Grc.Localization.GrcResource> L
+@{
+    ViewBag.Title = L["Menu:SecurityLogs"];
+}
+
+<abp-card>
+    <abp-card-header>
+        <h2><i class="fas fa-user-shield"></i> @L["Menu:SecurityLogs"]</h2>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>IP Address</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var log in Model.SecurityLogs)
+                {
+                    <tr>
+                        <td>@log.CreationTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                        <td>@(log.UserName ?? "Anonymous")</td>
+                        <td><span class="badge bg-secondary">@log.Action</span></td>
+                        <td>@log.ClientIpAddress</td>
+                        <td>
+                            <span class="badge bg-success">
+                                Logged
+                            </span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </abp-table>
+        
+        @if (!Model.SecurityLogs.Any())
+        {
+            <div class="text-center text-muted p-5">
+                <i class="fas fa-shield-alt fa-3x mb-3"></i>
+                <p>No security events logged yet</p>
+            </div>
+        }
+    </abp-card-body>
+</abp-card>
+

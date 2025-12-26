@@ -1,0 +1,168 @@
+@page
+@using Microsoft.Extensions.Localization
+@using Grc.Localization
+@model Grc.Web.Pages.FrameworkLibrary.DetailsModel
+@inject IStringLocalizer<GrcResource> L
+@section styles {
+    <abp-style-bundle>
+        <abp-style src="/Pages/FrameworkLibrary/Details.css" />
+    </abp-style-bundle>
+}
+
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">@L["Home"]</a></li>
+        <li class="breadcrumb-item"><a href="/FrameworkLibrary">@L["Menu:FrameworkLibrary"]</a></li>
+        <li class="breadcrumb-item active">@Model.Framework.Code</li>
+    </ol>
+</nav>
+
+<!-- Framework Header -->
+<abp-card class="mb-3">
+    <abp-card-body>
+        <abp-row>
+            <abp-column size-md="_9">
+                <h1>
+                    <i class="fas fa-book text-primary"></i>
+                    @Model.Framework.Title?.En
+                </h1>
+                <p class="lead text-muted">@Model.Framework.Description?.En</p>
+                
+                <div class="mt-3">
+                    <span class="badge bg-primary me-2">
+                        <i class="fas fa-tag"></i> @Model.Framework.Code v@Model.Framework.Version
+                    </span>
+                    <span class="badge bg-@(Model.Framework.Status == Grc.Enums.FrameworkStatus.Active ? "success" : "warning") me-2">
+                        @Model.Framework.Status
+                    </span>
+                    @if (Model.Framework.IsMandatory)
+                    {
+                        <span class="badge bg-danger me-2">
+                            <i class="fas fa-exclamation-circle"></i> @L["Mandatory"]
+                        </span>
+                    }
+                    <span class="badge bg-info me-2">
+                        @L["Category:" + Model.Framework.Category]
+                    </span>
+                </div>
+            </abp-column>
+            <abp-column size-md="_3" class="text-end">
+                <abp-button button-type="Primary" icon="fas fa-tasks" text="@L["StartAssessment"]" size="Large" />
+                @if (!string.IsNullOrEmpty(Model.Framework.OfficialDocumentUrl))
+                {
+                    <abp-button button-type="Info" icon="fas fa-file-pdf" text="@L["OfficialDocument"]" 
+                               href="@Model.Framework.OfficialDocumentUrl" target="_blank" />
+                }
+            </abp-column>
+        </abp-row>
+    </abp-card-body>
+</abp-card>
+
+<!-- Framework Information -->
+<abp-row class="mb-3">
+    <abp-column size-md="_6">
+        <abp-card>
+            <abp-card-header>
+                <h4><i class="fas fa-info-circle me-2"></i>@L["FrameworkInformation"]</h4>
+            </abp-card-header>
+            <abp-card-body>
+                <dl class="row">
+                    <dt class="col-sm-5">@L["Regulator"]:</dt>
+                    <dd class="col-sm-7">@Model.Framework.Regulator?.Name?.En</dd>
+                    
+                    <dt class="col-sm-5">@L["Category"]:</dt>
+                    <dd class="col-sm-7">@L["Category:" + Model.Framework.Category]</dd>
+                    
+                    <dt class="col-sm-5">@L["EffectiveDate"]:</dt>
+                    <dd class="col-sm-7">@Model.Framework.EffectiveDate.ToString("MMM dd, yyyy")</dd>
+                    
+                    @if (Model.Framework.SunsetDate.HasValue)
+                    {
+                        <dt class="col-sm-5">@L["SunsetDate"]:</dt>
+                        <dd class="col-sm-7">@Model.Framework.SunsetDate.Value.ToString("MMM dd, yyyy")</dd>
+                    }
+                    
+                    <dt class="col-sm-5">@L["TotalControls"]:</dt>
+                    <dd class="col-sm-7"><strong>@Model.Framework.TotalControls</strong></dd>
+                    
+                    <dt class="col-sm-5">@L["Status"]:</dt>
+                    <dd class="col-sm-7">
+                        <span class="badge bg-@(Model.Framework.Status == Grc.Enums.FrameworkStatus.Active ? "success" : "warning")">
+                            @Model.Framework.Status
+                        </span>
+                    </dd>
+                </dl>
+            </abp-card-body>
+        </abp-card>
+    </abp-column>
+
+    <abp-column size-md="_6">
+        <abp-card>
+            <abp-card-header>
+                <h4><i class="fas fa-building me-2"></i>@L["RegulatorDetails"]</h4>
+            </abp-card-header>
+            <abp-card-body>
+                <dl class="row">
+                    <dt class="col-sm-5">@L["Name"]:</dt>
+                    <dd class="col-sm-7">@Model.Framework.Regulator?.Name?.En</dd>
+                    
+                    <dt class="col-sm-5">@L["Code"]:</dt>
+                    <dd class="col-sm-7">@Model.Framework.Regulator?.Code</dd>
+                    
+                    <dt class="col-sm-5">@L["Jurisdiction"]:</dt>
+                    <dd class="col-sm-7">@Model.Framework.Regulator?.Jurisdiction?.En</dd>
+                    
+                    @if (!string.IsNullOrEmpty(Model.Framework.Regulator?.Website))
+                    {
+                        <dt class="col-sm-5">@L["Website"]:</dt>
+                        <dd class="col-sm-7">
+                            <a href="@Model.Framework.Regulator.Website" target="_blank">
+                                @Model.Framework.Regulator.Website <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </dd>
+                    }
+                </dl>
+            </abp-card-body>
+        </abp-card>
+    </abp-column>
+</abp-row>
+
+<!-- Controls Section -->
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_8">
+                <h4><i class="fas fa-list-check me-2"></i>@L["Controls"]</h4>
+            </abp-column>
+            <abp-column size-md="_4" class="text-end">
+                <abp-button button-type="Primary" icon="fas fa-search" id="SearchControlsButton" text="@L["SearchControls"]" />
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="ControlsTable" class="nowrap">
+            <thead>
+                <tr>
+                    <th>@L["ControlNumber"]</th>
+                    <th>@L["Title"]</th>
+                    <th>@L["Domain"]</th>
+                    <th>@L["Type"]</th>
+                    <th>@L["Priority"]</th>
+                    <th>@L["MaturityLevel"]</th>
+                    <th>@L["Actions"]</th>
+                </tr>
+            </thead>
+        </abp-table>
+    </abp-card-body>
+</abp-card>
+
+@section scripts {
+    <abp-script-bundle>
+        <abp-script src="/Pages/FrameworkLibrary/Details.js" />
+    </abp-script-bundle>
+    <script>
+        var frameworkId = '@Model.Framework.Id';
+    </script>
+}
+

@@ -1,0 +1,83 @@
+@page
+@model Grc.Web.Pages.MyNotifications.IndexModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Grc.Localization.GrcResource> L
+@{
+    ViewBag.Title = L["Menu:MyNotifications"];
+}
+
+@section scripts {
+    <abp-script src="/Pages/MyNotifications/Index.js" />
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_8">
+                <h2><i class="fas fa-bell"></i> @L["Menu:MyNotifications"]</h2>
+            </abp-column>
+            <abp-column size-md="_4" class="text-end">
+                <abp-button id="MarkAllReadBtn" button-type="Primary" size="Small">
+                    <i class="fas fa-check-double"></i> @L["MarkAllAsRead"]
+                </abp-button>
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="NotificationsTable" class="nowrap">
+            <thead>
+                <tr>
+                    <th>@L["Notification"]</th>
+                    <th>@L["Date"]</th>
+                    <th>@L["Status"]</th>
+                    <th>@L["Actions"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var notification in Model.Notifications)
+                {
+                    <tr class="@(notification.IsRead ? "" : "table-info")">
+                        <td>
+                            @if (!notification.IsRead)
+                            {
+                                <strong>@notification.Message</strong>
+                            }
+                            else
+                            {
+                                @notification.Message
+                            }
+                        </td>
+                        <td>@notification.CreatedDate.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>
+                            @if (notification.IsRead)
+                            {
+                                <span class="badge bg-secondary">@L["Read"]</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-primary">@L["Unread"]</span>
+                            }
+                        </td>
+                        <td>
+                            @if (!notification.IsRead)
+                            {
+                                <button class="btn btn-sm btn-outline-primary mark-read-btn" data-id="@notification.Id">
+                                    <i class="fas fa-check"></i> @L["MarkAsRead"]
+                                </button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </abp-table>
+        
+        @if (!Model.Notifications.Any())
+        {
+            <div class="text-center text-muted p-5">
+                <i class="fas fa-bell-slash fa-3x mb-3"></i>
+                <p>@L["NoNotifications"]</p>
+            </div>
+        }
+    </abp-card-body>
+</abp-card>
+

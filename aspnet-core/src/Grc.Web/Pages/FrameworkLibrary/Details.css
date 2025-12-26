@@ -1,0 +1,24 @@
+/* Framework Details Styles */
+
+.control-title {
+    max-width: 400px;
+}
+
+dl.row dt {
+    font-weight: 600;
+    color: #6c757d;
+}
+
+dl.row dd {
+    margin-bottom: 1rem;
+}
+
+.badge {
+    font-size: 0.85em;
+    padding: 0.35em 0.65em;
+}
+
+.fa-star {
+    font-size: 0.9em;
+}
+
