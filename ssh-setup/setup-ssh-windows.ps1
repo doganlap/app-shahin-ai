@@ -1,8 +1,9 @@
-# Setup SSH configuration for dogan-ai server
+# Setup SSH configuration for Hetzner servers
+# Servers: dogan-ai (GEX44) and shahin-ai (EX63)
 
 $sshDir = "$env:USERPROFILE\.ssh"
 $configFile = "$sshDir\config"
-$serverDetailsFile = "$sshDir\dogan-ai-details.txt"
+$serverDetailsFile = "$sshDir\hetzner-servers.txt"
 
 # Ensure .ssh directory exists
 if (!(Test-Path $sshDir)) {
@@ -12,8 +13,12 @@ if (!(Test-Path $sshDir)) {
 # Save server details
 $details = @"
 ========================================
-dogan-ai Server Details
+HETZNER SERVERS - DOGAN AI
 ========================================
+
+----------------------------------------
+SERVER 1: dogan-ai (GEX44)
+----------------------------------------
 Server: GEX44 #2882091
 Order: B20251215-3317950-2894183
 Date: 15/12/2025
@@ -23,20 +28,31 @@ IPv6: 2a01:4f8:192:8342::2
 Username: root
 Initial Password: h?7cQcK6r6veF_
 
-Host Key Fingerprints:
+Host Keys:
 - RSA 3072: d4BgU4AmPRRSbTut44VTSdsULzJ4gpzpoysUd/vCvuQ
 - ECDSA 256: BXvwHZM3aJDI/AVIRNsVDipUcqGpZjlMPHNBQf1VjOM
 - ED25519 256: CBd5Vwiz6lF8XMO8TLHVxCVQPlGFDxJfsmz8/T4p6Mw
 
-========================================
-Connection Commands:
-========================================
-ssh dogan-ai
-ssh dogan-ai-root
+Connection: ssh dogan-ai
 
-Or:
-ssh root@148.251.246.221
-ssh dogan@148.251.246.221
+----------------------------------------
+SERVER 2: shahin-ai (EX63) - MAIN SERVER
+----------------------------------------
+Server: EX63 #2818891
+Order: B20251231-3328645-2904066
+Date: 31/12/2025
+
+IPv4: 157.180.105.48
+IPv6: 2a01:4f9:3090:23b0::2
+Username: root
+Auth: SSH Key (DOGAN-ED25519-WIN) - NO PASSWORD NEEDED!
+
+Host Keys:
+- RSA 3072: eSmijJaEYlGj0lrYFdwWvNcVyVDwCuV6rW/Ux3QWFUA
+- ECDSA 256: 1JPBGY4CMh09i11MN8FiH0PTpwGCB4TFABDXWiD3WI
+- ED25519 256: zu9QS+m6QBP5XGuJjQpWnckwSmNOFjtnJLRF4a2fZg
+
+Connection: ssh shahin-ai
 
 ========================================
 "@
@@ -47,7 +63,11 @@ Write-Host "Server details saved to: $serverDetailsFile" -ForegroundColor Green
 # Create/update SSH config
 $sshConfig = @"
 
-# dogan-ai Server (Hetzner GEX44)
+# ==========================================
+# DOGAN AI - HETZNER SERVERS
+# ==========================================
+
+# SERVER 1: dogan-ai (GEX44) - 148.251.246.221
 Host dogan-ai
     HostName 148.251.246.221
     User dogan
@@ -60,16 +80,52 @@ Host dogan-ai-root
     Port 22
     IdentityFile ~/.ssh/id_ed25519
 
+# SERVER 2: shahin-ai (EX63) - 157.180.105.48 [MAIN]
+Host shahin-ai
+    HostName 157.180.105.48
+    User root
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+
+Host shahin
+    HostName 157.180.105.48
+    User root
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+
 "@
 
 if (Test-Path $configFile) {
-    # Check if config already has dogan-ai entry
     $content = Get-Content $configFile -Raw
+
+    # Add dogan-ai if not exists
     if ($content -notmatch "Host dogan-ai") {
         Add-Content -Path $configFile -Value $sshConfig
-        Write-Host "SSH config updated: $configFile" -ForegroundColor Green
+        Write-Host "SSH config updated with all servers: $configFile" -ForegroundColor Green
+    }
+    # Add shahin-ai if not exists
+    elseif ($content -notmatch "Host shahin-ai") {
+        # Add only shahin-ai config
+        $shahinConfig = @"
+
+# SERVER 2: shahin-ai (EX63) - 157.180.105.48 [MAIN]
+Host shahin-ai
+    HostName 157.180.105.48
+    User root
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+
+Host shahin
+    HostName 157.180.105.48
+    User root
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+
+"@
+        Add-Content -Path $configFile -Value $shahinConfig
+        Write-Host "SSH config updated with shahin-ai: $configFile" -ForegroundColor Green
     } else {
-        Write-Host "SSH config already contains dogan-ai entry" -ForegroundColor Yellow
+        Write-Host "SSH config already contains all server entries" -ForegroundColor Yellow
     }
 } else {
     $sshConfig | Out-File -FilePath $configFile -Encoding UTF8
@@ -81,7 +137,7 @@ $sshKeyPath = "$sshDir\id_ed25519"
 if (!(Test-Path $sshKeyPath)) {
     Write-Host ""
     Write-Host "No SSH key found. Generating one..." -ForegroundColor Yellow
-    ssh-keygen -t ed25519 -C "dogan@dogan-ai" -f $sshKeyPath -N '""'
+    ssh-keygen -t ed25519 -C "dogan@shahin-ai" -f $sshKeyPath -N '""'
     Write-Host "SSH key generated: $sshKeyPath" -ForegroundColor Green
 } else {
     Write-Host "SSH key already exists: $sshKeyPath" -ForegroundColor Green
@@ -89,19 +145,24 @@ if (!(Test-Path $sshKeyPath)) {
 
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "Next Steps:" -ForegroundColor Cyan
+Write-Host "Your Servers:" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "1. Connect to server:" -ForegroundColor White
-Write-Host "   ssh dogan-ai-root" -ForegroundColor Yellow
-Write-Host "   (Password: h?7cQcK6r6veF_)" -ForegroundColor Gray
 Write-Host ""
-Write-Host "2. Upload and run setup script:" -ForegroundColor White
-Write-Host "   scp initial-setup.sh dogan-ai-root:/root/" -ForegroundColor Yellow
-Write-Host "   ssh dogan-ai-root 'chmod +x /root/initial-setup.sh && /root/initial-setup.sh'" -ForegroundColor Yellow
+Write-Host "SHAHIN-AI (EX63) - Main Server [SSH Key Ready!]" -ForegroundColor Green
+Write-Host "  ssh shahin-ai" -ForegroundColor Yellow
+Write-Host "  IP: 157.180.105.48" -ForegroundColor Gray
 Write-Host ""
-Write-Host "3. Copy SSH key to server:" -ForegroundColor White
-Write-Host "   type `$env:USERPROFILE\.ssh\id_ed25519.pub | ssh dogan-ai-root 'mkdir -p /home/dogan/.ssh && cat >> /home/dogan/.ssh/authorized_keys'" -ForegroundColor Yellow
+Write-Host "DOGAN-AI (GEX44)" -ForegroundColor White
+Write-Host "  ssh dogan-ai-root" -ForegroundColor Yellow
+Write-Host "  IP: 148.251.246.221" -ForegroundColor Gray
 Write-Host ""
-Write-Host "4. After setup, connect as dogan:" -ForegroundColor White
-Write-Host "   ssh dogan-ai" -ForegroundColor Yellow
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host "Quick Start for shahin-ai:" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host "1. Connect now (no password needed!):" -ForegroundColor White
+Write-Host "   ssh shahin-ai" -ForegroundColor Yellow
+Write-Host ""
+Write-Host "2. Install Claude Code:" -ForegroundColor White
+Write-Host "   scp install-claude-code.sh shahin-ai:/root/" -ForegroundColor Yellow
+Write-Host "   ssh shahin-ai 'chmod +x /root/install-claude-code.sh && /root/install-claude-code.sh'" -ForegroundColor Yellow
 Write-Host ""

@@ -1,58 +1,57 @@
-# SSH Setup for dogan-ai Server
+# SSH Setup for Hetzner Servers
 
-## Server Details
+## Your Servers
 
-| Field | Value |
-|-------|-------|
-| Server | GEX44 #2882091 (Hetzner) |
-| IPv4 | 148.251.246.221 |
-| IPv6 | 2a01:4f8:192:8342::2 |
-| Username | root / dogan |
+| Name | Server | IP | Auth |
+|------|--------|-----|------|
+| **shahin-ai** | EX63 #2818891 | 157.180.105.48 | SSH Key (ready!) |
+| dogan-ai | GEX44 #2882091 | 148.251.246.221 | Password |
 
-## Quick Start
+## Quick Start (shahin-ai - Main Server)
 
-### Step 1: Configure SSH on Windows
+Your SSH key is already configured on shahin-ai! Just connect:
 
-Run the PowerShell script on your local Windows machine:
+### Step 1: Update SSH Config (Windows)
 
 ```powershell
 .\setup-ssh-windows.ps1
 ```
 
-This will:
-- Create SSH config entries for easy connection
-- Generate an SSH key if you don't have one
-- Save server details for reference
-
 ### Step 2: Connect to Server
 
 ```bash
-ssh dogan-ai-root
-# Password: (initial password from server details)
+ssh shahin-ai
 ```
 
-### Step 3: Run Server Setup
+No password needed - your SSH key is already authorized!
 
-Upload and run the initial setup script:
+### Step 3: Install Claude Code
 
 ```bash
-# From Windows PowerShell
-scp ssh-setup/initial-setup.sh dogan-ai-root:/root/
-ssh dogan-ai-root "chmod +x /root/initial-setup.sh && /root/initial-setup.sh"
+# Upload the script
+scp ssh-setup/install-claude-code.sh shahin-ai:/root/
+
+# Run it
+ssh shahin-ai "chmod +x /root/install-claude-code.sh && /root/install-claude-code.sh"
 ```
 
-### Step 4: Add SSH Key
-
-Copy your public key to the server for passwordless login:
-
-```powershell
-type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh dogan-ai-root "cat >> /home/dogan/.ssh/authorized_keys"
-```
-
-### Step 5: Connect as dogan
+Or run directly:
 
 ```bash
-ssh dogan-ai
+ssh shahin-ai "curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs && npm install -g @anthropic-ai/claude-code"
+```
+
+### Step 4: Authenticate Claude
+
+```bash
+ssh shahin-ai
+
+# Option 1: Interactive login
+claude
+
+# Option 2: Use API key
+export ANTHROPIC_API_KEY='your-api-key'
+echo 'export ANTHROPIC_API_KEY="your-api-key"' >> ~/.bashrc
 ```
 
 ## Files
@@ -60,13 +59,16 @@ ssh dogan-ai
 | File | Description |
 |------|-------------|
 | `setup-ssh-windows.ps1` | Windows PowerShell script to configure local SSH |
-| `initial-setup.sh` | Linux script to run on the server for initial setup |
+| `install-claude-code.sh` | Script to install Claude Code CLI on server |
+| `initial-setup.sh` | Linux script for initial server setup |
 
-## What initial-setup.sh Does
+## Claude Code Commands
 
-1. Updates system packages
-2. Creates `dogan` user with sudo access
-3. Sets up SSH directory structure
-4. Installs essential packages (git, curl, htop, etc.)
-5. Configures UFW firewall
-6. Secures SSH configuration
+After installation:
+
+```bash
+claude                  # Start interactive mode
+claude -p "prompt"      # One-shot prompt
+claude config           # Configure settings
+claude --help           # Show all options
+```
