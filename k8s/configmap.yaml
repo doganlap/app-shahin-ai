@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grc-config
+  namespace: grc-platform
+data:
+  App__SelfUrl: "https://api.grc-platform.com"
+  App__CorsOrigins: "https://grc-platform.com,https://www.grc-platform.com"
+  ConnectionStrings__Default: "Host=postgresql;Port=5432;Database=grc;Username=grc_user;Password=CHANGE_ME"
+  MinIO__Endpoint: "minio:9000"
+  MinIO__AccessKey: "CHANGE_ME"
+  MinIO__SecretKey: "CHANGE_ME"
+  Redis__Configuration: "redis:6379"
+  RabbitMQ__Connections__Default__HostName: "rabbitmq"
+  RabbitMQ__Connections__Default__Port: "5672"
+  RabbitMQ__Connections__Default__UserName: "guest"
+  RabbitMQ__Connections__Default__Password: "guest"
+

@@ -1,0 +1,159 @@
+@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Grc.Localization
+@model Grc.Web.Pages.Subscriptions.IndexModel
+@inject IHtmlLocalizer<GrcResource> L
+@{
+    ViewBag.Title = L["Menu:Subscriptions"].Value;
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="page-header">
+                <i class="fas fa-credit-card"></i> @L["Menu:Subscriptions"]
+            </h1>
+            <p class="text-muted">@L["Subscriptions:Description"]</p>
+        </div>
+    </div>
+
+    <!-- Current Subscription -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card shadow border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-star me-2"></i>@L["CurrentSubscription"]</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h3>@Model.CurrentSubscription.PlanName</h3>
+                            <p><span class="badge bg-success">@Model.CurrentSubscription.Status</span></p>
+                            <p class="text-muted">
+                                @L["StartedOn"]: @Model.CurrentSubscription.StartDate.ToString("MMMM dd, yyyy")
+                            </p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <h2 class="text-primary">@Model.CurrentSubscription.MonthlyPrice.ToString("N0") @Model.CurrentSubscription.Currency</h2>
+                            <p class="text-muted">@L["PerMonth"]</p>
+                            <p><small>@L["NextBilling"]: @Model.CurrentSubscription.NextBillingDate.ToString("MMMM dd, yyyy")</small></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-file-invoice me-2"></i>@L["BillingActions"]</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary">
+                            <i class="fas fa-download me-1"></i>@L["DownloadInvoice"]
+                        </button>
+                        <button class="btn btn-outline-secondary">
+                            <i class="fas fa-credit-card me-1"></i>@L["UpdatePaymentMethod"]
+                        </button>
+                        <button class="btn btn-outline-danger">
+                            <i class="fas fa-times me-1"></i>@L["CancelSubscription"]
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Usage Statistics -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>@L["CurrentUsage"]</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label>@L["Assessments"]</label>
+                            <div class="progress" style="height: 25px;">
+                                <div class="progress-bar @(Model.CurrentUsage.AssessmentsPercentage > 80 ? "bg-warning" : "bg-success")"
+                                     style="width: @Model.CurrentUsage.AssessmentsPercentage%">
+                                    @Model.CurrentUsage.AssessmentsUsed / @Model.CurrentUsage.AssessmentsLimit
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label>@L["Users"]</label>
+                            <div class="progress" style="height: 25px;">
+                                <div class="progress-bar @(Model.CurrentUsage.UsersPercentage > 80 ? "bg-warning" : "bg-info")"
+                                     style="width: @Model.CurrentUsage.UsersPercentage%">
+                                    @Model.CurrentUsage.UsersUsed / @Model.CurrentUsage.UsersLimit
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label>@L["Storage"]</label>
+                            <div class="progress" style="height: 25px;">
+                                <div class="progress-bar @(Model.CurrentUsage.StoragePercentage > 80 ? "bg-danger" : "bg-primary")"
+                                     style="width: @Model.CurrentUsage.StoragePercentage%">
+                                    @(Model.CurrentUsage.StorageUsedMB / 1000.0) / @(Model.CurrentUsage.StorageLimitMB / 1000.0) GB
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label>@L["ApiCalls"]</label>
+                            <div class="progress" style="height: 25px;">
+                                <div class="progress-bar bg-secondary" style="width: @Model.CurrentUsage.ApiCallsPercentage%">
+                                    @Model.CurrentUsage.ApiCallsUsed.ToString("N0") / @Model.CurrentUsage.ApiCallsLimit.ToString("N0")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Available Plans -->
+    <div class="row">
+        <div class="col-12">
+            <h4 class="mb-3">@L["AvailablePlans"]</h4>
+        </div>
+        @foreach (var plan in Model.AvailablePlans)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card shadow h-100 @(plan.IsCurrentPlan ? "border-primary" : "")">
+                    @if (plan.IsCurrentPlan)
+                    {
+                        <div class="card-header bg-primary text-white text-center">
+                            <strong>@L["CurrentPlan"]</strong>
+                        </div>
+                    }
+                    <div class="card-body text-center">
+                        <h4>@plan.Name</h4>
+                        <p class="text-muted">@plan.Description</p>
+                        <h2 class="my-3">@plan.MonthlyPrice.ToString("N0") SAR<small class="text-muted">/mo</small></h2>
+                        <ul class="list-unstyled text-start">
+                            @foreach (var feature in plan.Features)
+                            {
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>@feature
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        @if (plan.IsCurrentPlan)
+                        {
+                            <button class="btn btn-secondary w-100" disabled>@L["CurrentPlan"]</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-primary w-100">@L["Upgrade"]</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

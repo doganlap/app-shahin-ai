@@ -1,0 +1,164 @@
+@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Grc.Localization
+@model Grc.Web.Pages.Admin.SeedDataModel
+@inject IHtmlLocalizer<GrcResource> L
+@{
+    ViewBag.Title = L["Admin:SeedFrameworkLibrary"].Value;
+}
+
+@section styles {
+    <style>
+        .seed-card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .seed-button {
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .results-table {
+            margin-top: 24px;
+        }
+        .result-success {
+            color: #28a745;
+        }
+        .result-error {
+            color: #dc3545;
+        }
+        .loading-spinner {
+            display: none;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .loading-spinner.active {
+            display: block;
+        }
+    </style>
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="seed-card">
+                <h2>@L["Admin:SeedFrameworkLibrary"]</h2>
+                <p class="text-muted">
+                    This will seed the database with comprehensive GRC data including Regulators, Frameworks, and Controls.
+                    Existing data will be preserved (no duplicates).
+                </p>
+                
+                <button id="btnStartSeeding" class="btn btn-primary seed-button">
+                    <i class="fas fa-database"></i>
+                    @L["Admin:StartSeeding"]
+                </button>
+                
+                <div class="loading-spinner" id="loadingSpinner">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">@L["Admin:SeedingInProgress"]</span>
+                    </div>
+                    <p class="mt-2">@L["Admin:SeedingInProgress"]</p>
+                </div>
+                
+                <div id="resultsContainer" style="display: none;">
+                    <h4 class="mt-4">@L["Admin:SeedingComplete"]</h4>
+                    <div class="results-table">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Entity</th>
+                                    <th>@L["Admin:TotalInserted"]</th>
+                                    <th>@L["Admin:TotalSkipped"]</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultsBody">
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-info">
+                                    <th>Total</th>
+                                    <th id="totalInserted">0</th>
+                                    <th id="totalSkipped">0</th>
+                                    <th id="totalRecords">0</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <p class="mt-2">
+                            <strong>@L["Admin:DurationMs"]:</strong> <span id="duration">0</span> ms
+                        </p>
+                    </div>
+                </div>
+                
+                <div id="errorContainer" class="alert alert-danger mt-4" style="display: none;">
+                    <h5>@L["Admin:SeedingFailed"]</h5>
+                    <p id="errorMessage"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        (function() {
+            var l = abp.localization.getResource('Grc');
+            
+            $('#btnStartSeeding').click(function() {
+                var btn = $(this);
+                btn.prop('disabled', true);
+                $('#loadingSpinner').addClass('active');
+                $('#resultsContainer').hide();
+                $('#errorContainer').hide();
+                
+                abp.ajax({
+                    url: '/api/admin/seed-framework-library',
+                    type: 'POST',
+                    contentType: 'application/json'
+                }).done(function(result) {
+                    btn.prop('disabled', false);
+                    $('#loadingSpinner').removeClass('active');
+                    
+                    if (result.success) {
+                        // Display results
+                        var html = '';
+                        html += '<tr><td>' + l('Admin:Regulators') + '</td>' +
+                               '<td class="result-success">' + result.regulators.inserted + '</td>' +
+                               '<td>' + result.regulators.skipped + '</td>' +
+                               '<td>' + result.regulators.total + '</td></tr>';
+                        html += '<tr><td>' + l('Admin:Frameworks') + '</td>' +
+                               '<td class="result-success">' + result.frameworks.inserted + '</td>' +
+                               '<td>' + result.frameworks.skipped + '</td>' +
+                               '<td>' + result.frameworks.total + '</td></tr>';
+                        html += '<tr><td>' + l('Admin:Controls') + '</td>' +
+                               '<td class="result-success">' + result.controls.inserted + '</td>' +
+                               '<td>' + result.controls.skipped + '</td>' +
+                               '<td>' + result.controls.total + '</td></tr>';
+                        
+                        $('#resultsBody').html(html);
+                        $('#totalInserted').text(result.totalInserted);
+                        $('#totalSkipped').text(result.totalSkipped);
+                        $('#totalRecords').text(result.totalRecords);
+                        $('#duration').text(result.durationMs);
+                        $('#resultsContainer').show();
+                        
+                        abp.notify.success(abp.localization.localize('Admin:SeedingSuccess', 'Grc', result.totalInserted));
+                    } else {
+                        $('#errorMessage').text(result.message);
+                        $('#errorContainer').show();
+                    }
+                }).fail(function(xhr, status, error) {
+                    btn.prop('disabled', false);
+                    $('#loadingSpinner').removeClass('active');
+                    $('#errorMessage').text(error || 'Unknown error occurred');
+                    $('#errorContainer').show();
+                    abp.notify.error(l('Admin:SeedingFailed') + ': ' + error);
+                });
+            });
+        })();
+    </script>
+}
+

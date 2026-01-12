@@ -1,0 +1,30 @@
+@page
+@using Microsoft.Extensions.Localization
+@using Grc.Localization
+@model Grc.Web.Pages.Vendors.IndexModel
+@inject IStringLocalizer<GrcResource> L
+
+<abp-card>
+    <abp-card-header>
+        <h2><i class="fas fa-building text-warning"></i> @L["Menu:VendorManagement"]</h2>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="VendorsTable">
+            <thead>
+                <tr>
+                    <th>@L["VendorName"]</th>
+                    <th>@L["Category"]</th>
+                    <th>@L["RiskScore"]</th>
+                    <th>@L["Status"]</th>
+                    <th>@L["Actions"]</th>
+                </tr>
+            </thead>
+        </abp-table>
+    </abp-card-body>
+</abp-card>
+
+@section scripts
+{
+    <script src="~/Pages/Vendors/Index.js"></script>
+}
+

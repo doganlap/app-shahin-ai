@@ -1,0 +1,28 @@
+/* Framework Library Styles */
+
+.framework-title {
+    max-width: 300px;
+}
+
+.regulator-cell {
+    min-width: 150px;
+}
+
+#FrameworksTable {
+    width: 100% !important;
+}
+
+#FrameworksTable td {
+    vertical-align: middle;
+}
+
+.badge {
+    font-size: 0.85em;
+    padding: 0.35em 0.65em;
+}
+
+.btn-group-sm .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+

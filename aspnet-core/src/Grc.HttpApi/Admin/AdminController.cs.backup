@@ -1,0 +1,69 @@
+using System;
+using System.Threading.Tasks;
+using Grc.FrameworkLibrary.Domain.Data;
+using Grc.Permissions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Volo.Abp.AspNetCore.Mvc;
+
+namespace Grc.HttpApi.Admin;
+
+[ApiController]
+[Route("api/admin")]
+[Authorize(GrcPermissions.Admin.Default)]
+public class AdminController : AbpControllerBase
+{
+    private readonly FrameworkLibraryDataSeeder _frameworkLibrarySeeder;
+
+    public AdminController(FrameworkLibraryDataSeeder frameworkLibrarySeeder)
+    {
+        _frameworkLibrarySeeder = frameworkLibrarySeeder;
+    }
+
+    /// <summary>
+    /// Seed Framework Library data (Regulators, Frameworks, Controls)
+    /// </summary>
+    /// <returns>Seeding summary</returns>
+    [HttpPost("seed-framework-library")]
+    [Authorize(GrcPermissions.Admin.SeedData)]
+    public async Task<ActionResult<FrameworkLibrarySeedingSummary>> SeedFrameworkLibraryAsync()
+    {
+        try
+        {
+            var result = await _frameworkLibrarySeeder.SeedAllAsync();
+            
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return StatusCode(500, result);
+            }
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new
+            {
+                Success = false,
+                Message = $"Seeding failed: {ex.Message}",
+                Error = ex.ToString()
+            });
+        }
+    }
+
+    /// <summary>
+    /// Get seeding status (for future use)
+    /// </summary>
+    [HttpGet("seed-status")]
+    public ActionResult<object> GetSeedStatus()
+    {
+        return Ok(new
+        {
+            Message = "Seeding endpoint is available",
+            Endpoint = "/api/admin/seed-framework-library",
+            Method = "POST"
+        });
+    }
+}
+

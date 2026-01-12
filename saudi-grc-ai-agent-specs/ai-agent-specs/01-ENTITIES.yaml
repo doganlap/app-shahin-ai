@@ -1,0 +1,1078 @@
+# ============================================================
+# DOMAIN ENTITIES SPECIFICATION
+# AI Agent: Use this to generate C# entity classes
+# ============================================================
+
+namespace: "Grc"
+base_classes:
+  aggregate_root: "FullAuditedAggregateRoot<Guid>"
+  entity: "FullAuditedEntity<Guid>"
+  multi_tenant: "IMultiTenant"
+
+# ============================================================
+# SHARED KERNEL - Value Objects
+# ============================================================
+value_objects:
+  - name: "LocalizedString"
+    properties:
+      - { name: "En", type: "string", max_length: 2000 }
+      - { name: "Ar", type: "string", max_length: 2000 }
+    code: |
+      public class LocalizedString
+      {
+          public string En { get; set; }
+          public string Ar { get; set; }
+          
+          public LocalizedString() { }
+          public LocalizedString(string en, string ar) { En = en; Ar = ar; }
+          
+          public string Get(string culture) => culture == "ar" ? Ar : En;
+      }
+
+  - name: "ContactInfo"
+    properties:
+      - { name: "Email", type: "string" }
+      - { name: "Phone", type: "string" }
+      - { name: "Address", type: "string" }
+
+  - name: "DateRange"
+    properties:
+      - { name: "StartDate", type: "DateTime" }
+      - { name: "EndDate", type: "DateTime?" }
+
+# ============================================================
+# SHARED KERNEL - Enums
+# ============================================================
+enums:
+  - name: "IndustrySector"
+    values:
+      - { name: "Banking", value: 1 }
+      - { name: "Insurance", value: 2 }
+      - { name: "CapitalMarkets", value: 3 }
+      - { name: "Healthcare", value: 4 }
+      - { name: "Pharmaceutical", value: 5 }
+      - { name: "Government", value: 6 }
+      - { name: "Telecommunications", value: 7 }
+      - { name: "Energy", value: 8 }
+      - { name: "Retail", value: 9 }
+      - { name: "Manufacturing", value: 10 }
+      - { name: "Technology", value: 11 }
+      - { name: "Education", value: 12 }
+      - { name: "RealEstate", value: 13 }
+      - { name: "Tourism", value: 14 }
+      - { name: "Other", value: 99 }
+
+  - name: "LegalEntityType"
+    values:
+      - { name: "Listed", value: 1 }
+      - { name: "Government", value: 2 }
+      - { name: "SemiGovernment", value: 3 }
+      - { name: "Private", value: 4 }
+      - { name: "SME", value: 5 }
+      - { name: "Startup", value: 6 }
+      - { name: "NonProfit", value: 7 }
+
+  - name: "SubscriptionTier"
+    values:
+      - { name: "Trial", value: 0 }
+      - { name: "Standard", value: 1 }
+      - { name: "Professional", value: 2 }
+      - { name: "Enterprise", value: 3 }
+
+  - name: "DatabaseStrategy"
+    values:
+      - { name: "Shared", value: 1 }
+      - { name: "Schema", value: 2 }
+      - { name: "Separate", value: 3 }
+
+  - name: "ControlType"
+    values:
+      - { name: "Preventive", value: 1 }
+      - { name: "Detective", value: 2 }
+      - { name: "Corrective", value: 3 }
+
+  - name: "ControlCategory"
+    values:
+      - { name: "Technical", value: 1 }
+      - { name: "Administrative", value: 2 }
+      - { name: "Physical", value: 3 }
+
+  - name: "Priority"
+    values:
+      - { name: "Critical", value: 1 }
+      - { name: "High", value: 2 }
+      - { name: "Medium", value: 3 }
+      - { name: "Low", value: 4 }
+
+  - name: "FrameworkStatus"
+    values:
+      - { name: "Draft", value: 0 }
+      - { name: "Active", value: 1 }
+      - { name: "Deprecated", value: 2 }
+      - { name: "Archived", value: 3 }
+
+  - name: "AssessmentType"
+    values:
+      - { name: "Initial", value: 1 }
+      - { name: "Annual", value: 2 }
+      - { name: "Continuous", value: 3 }
+      - { name: "Targeted", value: 4 }
+      - { name: "Regulatory", value: 5 }
+
+  - name: "AssessmentStatus"
+    values:
+      - { name: "Draft", value: 0 }
+      - { name: "Planning", value: 1 }
+      - { name: "InProgress", value: 2 }
+      - { name: "UnderReview", value: 3 }
+      - { name: "Completed", value: 4 }
+      - { name: "Cancelled", value: 5 }
+
+  - name: "ControlAssessmentStatus"
+    values:
+      - { name: "NotStarted", value: 0 }
+      - { name: "InProgress", value: 1 }
+      - { name: "PendingReview", value: 2 }
+      - { name: "Verified", value: 3 }
+      - { name: "Rejected", value: 4 }
+      - { name: "NotApplicable", value: 5 }
+
+  - name: "EvidenceType"
+    values:
+      - { name: "Policy", value: 1 }
+      - { name: "Procedure", value: 2 }
+      - { name: "Screenshot", value: 3 }
+      - { name: "Log", value: 4 }
+      - { name: "Report", value: 5 }
+      - { name: "Certificate", value: 6 }
+      - { name: "Configuration", value: 7 }
+      - { name: "Contract", value: 8 }
+      - { name: "Training", value: 9 }
+      - { name: "Other", value: 99 }
+
+  - name: "RiskLevel"
+    values:
+      - { name: "VeryLow", value: 1 }
+      - { name: "Low", value: 2 }
+      - { name: "Medium", value: 3 }
+      - { name: "High", value: 4 }
+      - { name: "Critical", value: 5 }
+
+  - name: "WorkflowStatus"
+    values:
+      - { name: "Pending", value: 0 }
+      - { name: "InProgress", value: 1 }
+      - { name: "Approved", value: 2 }
+      - { name: "Rejected", value: 3 }
+      - { name: "Cancelled", value: 4 }
+
+# ============================================================
+# MODULE: Framework Library
+# ============================================================
+entities:
+
+  # --- REGULATOR ---
+  - name: "Regulator"
+    module: "FrameworkLibrary"
+    base: "FullAuditedAggregateRoot<Guid>"
+    table: "grc_regulators"
+    description: "Regulatory authority that issues compliance frameworks"
+    properties:
+      - name: "Code"
+        type: "string"
+        max_length: 20
+        required: true
+        unique: true
+        index: true
+        description: "Unique code (SAMA, NCA, CMA, MOH)"
+        
+      - name: "Name"
+        type: "LocalizedString"
+        required: true
+        description: "Bilingual name"
+        
+      - name: "Jurisdiction"
+        type: "LocalizedString"
+        description: "Regulatory jurisdiction"
+        
+      - name: "Website"
+        type: "string"
+        max_length: 500
+        
+      - name: "Category"
+        type: "RegulatorCategory"
+        required: true
+        
+      - name: "LogoUrl"
+        type: "string"
+        max_length: 500
+        
+      - name: "Contact"
+        type: "ContactInfo"
+        
+    collections:
+      - name: "Frameworks"
+        type: "Framework"
+        relationship: "one-to-many"
+        
+    code: |
+      public class Regulator : FullAuditedAggregateRoot<Guid>
+      {
+          public string Code { get; private set; }
+          public LocalizedString Name { get; private set; }
+          public LocalizedString Jurisdiction { get; private set; }
+          public string Website { get; private set; }
+          public RegulatorCategory Category { get; private set; }
+          public string LogoUrl { get; private set; }
+          public ContactInfo Contact { get; private set; }
+          
+          public ICollection<Framework> Frameworks { get; private set; }
+          
+          protected Regulator() { }
+          
+          public Regulator(Guid id, string code, LocalizedString name, RegulatorCategory category)
+              : base(id)
+          {
+              Code = Check.NotNullOrWhiteSpace(code, nameof(code), maxLength: 20);
+              Name = Check.NotNull(name, nameof(name));
+              Category = category;
+              Frameworks = new Collection<Framework>();
+          }
+          
+          public void SetWebsite(string website) => Website = website;
+          public void SetLogo(string logoUrl) => LogoUrl = logoUrl;
+          public void SetContact(ContactInfo contact) => Contact = contact;
+      }
+
+  # --- FRAMEWORK ---
+  - name: "Framework"
+    module: "FrameworkLibrary"
+    base: "FullAuditedAggregateRoot<Guid>"
+    table: "grc_frameworks"
+    description: "Regulatory compliance framework"
+    properties:
+      - name: "RegulatorId"
+        type: "Guid"
+        required: true
+        foreign_key: "Regulator"
+        index: true
+        
+      - name: "Code"
+        type: "string"
+        max_length: 30
+        required: true
+        description: "Framework code (NCA-ECC, SAMA-CSF)"
+        
+      - name: "Version"
+        type: "string"
+        max_length: 20
+        required: true
+        description: "Version (v2.0, v1.0)"
+        
+      - name: "Title"
+        type: "LocalizedString"
+        required: true
+        
+      - name: "Description"
+        type: "LocalizedString"
+        
+      - name: "Category"
+        type: "FrameworkCategory"
+        required: true
+        
+      - name: "IsMandatory"
+        type: "bool"
+        default: true
+        
+      - name: "EffectiveDate"
+        type: "DateTime"
+        required: true
+        
+      - name: "SunsetDate"
+        type: "DateTime?"
+        
+      - name: "Status"
+        type: "FrameworkStatus"
+        default: "Active"
+        
+      - name: "OfficialDocumentUrl"
+        type: "string"
+        max_length: 500
+        
+    collections:
+      - name: "Domains"
+        type: "FrameworkDomain"
+        relationship: "one-to-many"
+        
+      - name: "Controls"
+        type: "Control"
+        relationship: "one-to-many"
+        
+      - name: "ApplicabilityCriteria"
+        type: "ApplicabilityCriteria"
+        relationship: "one-to-many"
+        
+    computed_properties:
+      - name: "TotalControls"
+        type: "int"
+        expression: "Controls?.Count ?? 0"
+        
+      - name: "IsActive"
+        type: "bool"
+        expression: "Status == FrameworkStatus.Active && EffectiveDate <= DateTime.UtcNow && (SunsetDate == null || SunsetDate > DateTime.UtcNow)"
+        
+    unique_constraints:
+      - ["Code", "Version"]
+      
+    code: |
+      public class Framework : FullAuditedAggregateRoot<Guid>
+      {
+          public Guid RegulatorId { get; private set; }
+          public string Code { get; private set; }
+          public string Version { get; private set; }
+          public LocalizedString Title { get; private set; }
+          public LocalizedString Description { get; private set; }
+          public FrameworkCategory Category { get; private set; }
+          public bool IsMandatory { get; private set; }
+          public DateTime EffectiveDate { get; private set; }
+          public DateTime? SunsetDate { get; private set; }
+          public FrameworkStatus Status { get; private set; }
+          public string OfficialDocumentUrl { get; private set; }
+          
+          public ICollection<FrameworkDomain> Domains { get; private set; }
+          public ICollection<Control> Controls { get; private set; }
+          public ICollection<ApplicabilityCriteria> ApplicabilityCriteria { get; private set; }
+          
+          public int TotalControls => Controls?.Count ?? 0;
+          public bool IsActive => Status == FrameworkStatus.Active && 
+                                 EffectiveDate <= DateTime.UtcNow && 
+                                 (SunsetDate == null || SunsetDate > DateTime.UtcNow);
+          
+          protected Framework() { }
+          
+          public Framework(Guid id, Guid regulatorId, string code, string version, 
+                          LocalizedString title, FrameworkCategory category, DateTime effectiveDate)
+              : base(id)
+          {
+              RegulatorId = regulatorId;
+              Code = Check.NotNullOrWhiteSpace(code, nameof(code), maxLength: 30);
+              Version = Check.NotNullOrWhiteSpace(version, nameof(version), maxLength: 20);
+              Title = Check.NotNull(title, nameof(title));
+              Category = category;
+              EffectiveDate = effectiveDate;
+              Status = FrameworkStatus.Active;
+              IsMandatory = true;
+              Domains = new Collection<FrameworkDomain>();
+              Controls = new Collection<Control>();
+              ApplicabilityCriteria = new Collection<ApplicabilityCriteria>();
+          }
+          
+          public Control AddControl(string controlNumber, string domainCode, LocalizedString title, 
+                                   LocalizedString requirement, ControlType type)
+          {
+              var control = new Control(GuidGenerator.Create(), Id, controlNumber, domainCode, 
+                                        title, requirement, type);
+              Controls.Add(control);
+              return control;
+          }
+          
+          public void Deprecate()
+          {
+              Status = FrameworkStatus.Deprecated;
+              SunsetDate = DateTime.UtcNow;
+          }
+      }
+
+  # --- CONTROL ---
+  - name: "Control"
+    module: "FrameworkLibrary"
+    base: "FullAuditedEntity<Guid>"
+    table: "grc_controls"
+    description: "Individual compliance control/requirement"
+    properties:
+      - name: "FrameworkId"
+        type: "Guid"
+        required: true
+        foreign_key: "Framework"
+        index: true
+        on_delete: "CASCADE"
+        
+      - name: "ParentControlId"
+        type: "Guid?"
+        foreign_key: "Control"
+        description: "For hierarchical controls"
+        
+      - name: "ControlNumber"
+        type: "string"
+        max_length: 30
+        required: true
+        description: "Official number (1-1-1, A.5.1)"
+        
+      - name: "DomainCode"
+        type: "string"
+        max_length: 50
+        required: true
+        index: true
+        
+      - name: "Title"
+        type: "LocalizedString"
+        required: true
+        
+      - name: "Requirement"
+        type: "LocalizedString"
+        required: true
+        
+      - name: "ImplementationGuidance"
+        type: "LocalizedString"
+        
+      - name: "Type"
+        type: "ControlType"
+        required: true
+        
+      - name: "Category"
+        type: "ControlCategory"
+        
+      - name: "MaturityLevel"
+        type: "int"
+        default: 1
+        validation: "BETWEEN 1 AND 5"
+        
+      - name: "Priority"
+        type: "Priority"
+        default: "Medium"
+        
+      - name: "EvidenceTypes"
+        type: "List<string>"
+        description: "Required evidence types"
+        
+      - name: "EstimatedEffortHours"
+        type: "int"
+        default: 0
+        
+      - name: "MappingISO27001"
+        type: "string"
+        max_length: 50
+        
+      - name: "MappingNIST"
+        type: "string"
+        max_length: 50
+        
+      - name: "MappingCOBIT"
+        type: "string"
+        max_length: 50
+        
+      - name: "Tags"
+        type: "List<string>"
+        
+      - name: "Status"
+        type: "FrameworkStatus"
+        default: "Active"
+        
+    collections:
+      - name: "Mappings"
+        type: "ControlMapping"
+        relationship: "one-to-many"
+        
+      - name: "ChildControls"
+        type: "Control"
+        relationship: "one-to-many"
+        foreign_key: "ParentControlId"
+        
+    code: |
+      public class Control : FullAuditedEntity<Guid>
+      {
+          public Guid FrameworkId { get; private set; }
+          public Guid? ParentControlId { get; private set; }
+          public string ControlNumber { get; private set; }
+          public string DomainCode { get; private set; }
+          public LocalizedString Title { get; private set; }
+          public LocalizedString Requirement { get; private set; }
+          public LocalizedString ImplementationGuidance { get; private set; }
+          public ControlType Type { get; private set; }
+          public ControlCategory? Category { get; private set; }
+          public int MaturityLevel { get; private set; }
+          public Priority Priority { get; private set; }
+          public List<string> EvidenceTypes { get; private set; }
+          public int EstimatedEffortHours { get; private set; }
+          public string MappingISO27001 { get; private set; }
+          public string MappingNIST { get; private set; }
+          public string MappingCOBIT { get; private set; }
+          public List<string> Tags { get; private set; }
+          public FrameworkStatus Status { get; private set; }
+          
+          public ICollection<ControlMapping> Mappings { get; private set; }
+          public ICollection<Control> ChildControls { get; private set; }
+          
+          protected Control() { }
+          
+          public Control(Guid id, Guid frameworkId, string controlNumber, string domainCode,
+                        LocalizedString title, LocalizedString requirement, ControlType type)
+              : base(id)
+          {
+              FrameworkId = frameworkId;
+              ControlNumber = Check.NotNullOrWhiteSpace(controlNumber, nameof(controlNumber));
+              DomainCode = Check.NotNullOrWhiteSpace(domainCode, nameof(domainCode));
+              Title = Check.NotNull(title, nameof(title));
+              Requirement = Check.NotNull(requirement, nameof(requirement));
+              Type = type;
+              MaturityLevel = 1;
+              Priority = Priority.Medium;
+              Status = FrameworkStatus.Active;
+              EvidenceTypes = new List<string>();
+              Tags = new List<string>();
+              Mappings = new Collection<ControlMapping>();
+              ChildControls = new Collection<Control>();
+          }
+          
+          public void SetMaturityLevel(int level)
+          {
+              if (level < 1 || level > 5)
+                  throw new ArgumentOutOfRangeException(nameof(level), "Must be between 1 and 5");
+              MaturityLevel = level;
+          }
+          
+          public void AddMapping(string framework, string controlNumber, string strength)
+          {
+              Mappings.Add(new ControlMapping(Id, framework, controlNumber, strength));
+          }
+      }
+
+  # --- ASSESSMENT ---
+  - name: "Assessment"
+    module: "Assessment"
+    base: "FullAuditedAggregateRoot<Guid>"
+    interfaces: ["IMultiTenant"]
+    table: "grc_assessments"
+    description: "Compliance assessment instance"
+    properties:
+      - name: "TenantId"
+        type: "Guid?"
+        required: false
+        index: true
+        
+      - name: "Name"
+        type: "string"
+        max_length: 200
+        required: true
+        
+      - name: "Description"
+        type: "string"
+        max_length: 2000
+        
+      - name: "Type"
+        type: "AssessmentType"
+        required: true
+        
+      - name: "Status"
+        type: "AssessmentStatus"
+        default: "Draft"
+        
+      - name: "StartDate"
+        type: "DateTime"
+        required: true
+        
+      - name: "TargetEndDate"
+        type: "DateTime"
+        required: true
+        
+      - name: "ActualEndDate"
+        type: "DateTime?"
+        
+      - name: "OwnerUserId"
+        type: "Guid?"
+        
+      - name: "Scope"
+        type: "AssessmentScope"
+        description: "JSON scope definition"
+        
+    collections:
+      - name: "Frameworks"
+        type: "AssessmentFramework"
+        relationship: "one-to-many"
+        
+      - name: "ControlAssessments"
+        type: "ControlAssessment"
+        relationship: "one-to-many"
+        
+    computed_properties:
+      - name: "TotalControls"
+        expression: "ControlAssessments?.Count ?? 0"
+        
+      - name: "CompletedControls"
+        expression: "ControlAssessments?.Count(c => c.IsComplete) ?? 0"
+        
+      - name: "CompletionPercentage"
+        expression: "TotalControls > 0 ? (CompletedControls * 100m / TotalControls) : 0"
+        
+      - name: "OverallScore"
+        expression: "CalculateOverallScore()"
+        
+    domain_events:
+      - "AssessmentCreatedEvent"
+      - "AssessmentStartedEvent"
+      - "AssessmentCompletedEvent"
+      
+    code: |
+      public class Assessment : FullAuditedAggregateRoot<Guid>, IMultiTenant
+      {
+          public Guid? TenantId { get; set; }
+          public string Name { get; private set; }
+          public string Description { get; private set; }
+          public AssessmentType Type { get; private set; }
+          public AssessmentStatus Status { get; private set; }
+          public DateTime StartDate { get; private set; }
+          public DateTime TargetEndDate { get; private set; }
+          public DateTime? ActualEndDate { get; private set; }
+          public Guid? OwnerUserId { get; private set; }
+          public AssessmentScope Scope { get; private set; }
+          
+          public ICollection<AssessmentFramework> Frameworks { get; private set; }
+          public ICollection<ControlAssessment> ControlAssessments { get; private set; }
+          
+          public int TotalControls => ControlAssessments?.Count ?? 0;
+          public int CompletedControls => ControlAssessments?.Count(c => c.IsComplete) ?? 0;
+          public decimal CompletionPercentage => TotalControls > 0 
+              ? Math.Round((CompletedControls * 100m / TotalControls), 2) : 0;
+          public decimal OverallScore => CalculateOverallScore();
+          
+          protected Assessment() { }
+          
+          public Assessment(Guid id, string name, AssessmentType type, 
+                           DateTime startDate, DateTime targetEndDate)
+              : base(id)
+          {
+              Name = Check.NotNullOrWhiteSpace(name, nameof(name), maxLength: 200);
+              Type = type;
+              StartDate = startDate;
+              TargetEndDate = targetEndDate;
+              Status = AssessmentStatus.Draft;
+              Frameworks = new Collection<AssessmentFramework>();
+              ControlAssessments = new Collection<ControlAssessment>();
+              
+              AddDistributedEvent(new AssessmentCreatedEto { AssessmentId = id, Name = name });
+          }
+          
+          public void Start()
+          {
+              if (Status != AssessmentStatus.Draft)
+                  throw new BusinessException("Assessment must be in Draft status to start");
+              Status = AssessmentStatus.InProgress;
+              AddDistributedEvent(new AssessmentStartedEto { AssessmentId = Id });
+          }
+          
+          public void Complete()
+          {
+              Status = AssessmentStatus.Completed;
+              ActualEndDate = DateTime.UtcNow;
+              AddDistributedEvent(new AssessmentCompletedEto 
+              { 
+                  AssessmentId = Id, 
+                  OverallScore = OverallScore 
+              });
+          }
+          
+          public ControlAssessment AddControlAssessment(Guid controlId)
+          {
+              var ca = new ControlAssessment(GuidGenerator.Create(), Id, controlId);
+              ControlAssessments.Add(ca);
+              return ca;
+          }
+          
+          private decimal CalculateOverallScore()
+          {
+              var scored = ControlAssessments?.Where(c => c.VerifiedScore.HasValue).ToList();
+              if (scored == null || !scored.Any()) return 0;
+              return Math.Round(scored.Average(c => c.VerifiedScore!.Value), 2);
+          }
+      }
+
+  # --- CONTROL ASSESSMENT ---
+  - name: "ControlAssessment"
+    module: "Assessment"
+    base: "FullAuditedEntity<Guid>"
+    interfaces: ["IMultiTenant"]
+    table: "grc_control_assessments"
+    description: "Assessment of a single control"
+    properties:
+      - name: "TenantId"
+        type: "Guid?"
+        index: true
+        
+      - name: "AssessmentId"
+        type: "Guid"
+        required: true
+        foreign_key: "Assessment"
+        index: true
+        on_delete: "CASCADE"
+        
+      - name: "ControlId"
+        type: "Guid"
+        required: true
+        foreign_key: "Control"
+        index: true
+        
+      - name: "AssignedToUserId"
+        type: "Guid?"
+        index: true
+        
+      - name: "AssignedToDepartmentId"
+        type: "Guid?"
+        
+      - name: "Status"
+        type: "ControlAssessmentStatus"
+        default: "NotStarted"
+        index: true
+        
+      - name: "SelfScore"
+        type: "decimal?"
+        validation: "BETWEEN 0 AND 100"
+        
+      - name: "VerifiedScore"
+        type: "decimal?"
+        validation: "BETWEEN 0 AND 100"
+        
+      - name: "VerifiedByUserId"
+        type: "Guid?"
+        
+      - name: "VerificationDate"
+        type: "DateTime?"
+        
+      - name: "ImplementationNotes"
+        type: "string"
+        max_length: 4000
+        
+      - name: "RejectionReason"
+        type: "string"
+        max_length: 2000
+        
+      - name: "DueDate"
+        type: "DateTime?"
+        
+      - name: "Priority"
+        type: "Priority"
+        default: "Medium"
+        
+    collections:
+      - name: "Evidences"
+        type: "Evidence"
+        relationship: "one-to-many"
+        
+      - name: "Comments"
+        type: "ControlAssessmentComment"
+        relationship: "one-to-many"
+        
+      - name: "History"
+        type: "ControlAssessmentHistory"
+        relationship: "one-to-many"
+        
+    computed_properties:
+      - name: "IsComplete"
+        expression: "Status == ControlAssessmentStatus.Verified"
+        
+      - name: "IsOverdue"
+        expression: "DueDate.HasValue && DueDate.Value < DateTime.UtcNow && !IsComplete"
+        
+    domain_events:
+      - "ControlAssignedEvent"
+      - "SelfScoreSubmittedEvent"
+      - "ControlVerifiedEvent"
+      - "ControlRejectedEvent"
+      
+    code: |
+      public class ControlAssessment : FullAuditedEntity<Guid>, IMultiTenant
+      {
+          public Guid? TenantId { get; set; }
+          public Guid AssessmentId { get; private set; }
+          public Guid ControlId { get; private set; }
+          public Guid? AssignedToUserId { get; private set; }
+          public Guid? AssignedToDepartmentId { get; private set; }
+          public ControlAssessmentStatus Status { get; private set; }
+          public decimal? SelfScore { get; private set; }
+          public decimal? VerifiedScore { get; private set; }
+          public Guid? VerifiedByUserId { get; private set; }
+          public DateTime? VerificationDate { get; private set; }
+          public string ImplementationNotes { get; private set; }
+          public string RejectionReason { get; private set; }
+          public DateTime? DueDate { get; private set; }
+          public Priority Priority { get; private set; }
+          
+          public ICollection<Evidence> Evidences { get; private set; }
+          public ICollection<ControlAssessmentComment> Comments { get; private set; }
+          public ICollection<ControlAssessmentHistory> History { get; private set; }
+          
+          public bool IsComplete => Status == ControlAssessmentStatus.Verified;
+          public bool IsOverdue => DueDate.HasValue && DueDate.Value < DateTime.UtcNow && !IsComplete;
+          
+          protected ControlAssessment() { }
+          
+          public ControlAssessment(Guid id, Guid assessmentId, Guid controlId)
+              : base(id)
+          {
+              AssessmentId = assessmentId;
+              ControlId = controlId;
+              Status = ControlAssessmentStatus.NotStarted;
+              Priority = Priority.Medium;
+              Evidences = new Collection<Evidence>();
+              Comments = new Collection<ControlAssessmentComment>();
+              History = new Collection<ControlAssessmentHistory>();
+          }
+          
+          public void AssignTo(Guid userId, DateTime? dueDate = null)
+          {
+              AssignedToUserId = userId;
+              DueDate = dueDate;
+              AddHistory("Assigned", $"Assigned to user {userId}");
+              AddDistributedEvent(new ControlAssignedEto 
+              { 
+                  ControlAssessmentId = Id, 
+                  UserId = userId 
+              });
+          }
+          
+          public void SubmitSelfScore(decimal score, string notes)
+          {
+              if (score < 0 || score > 100)
+                  throw new ArgumentOutOfRangeException(nameof(score));
+              SelfScore = score;
+              ImplementationNotes = notes;
+              Status = ControlAssessmentStatus.PendingReview;
+              AddHistory("SelfScored", $"Self-score: {score}");
+              AddDistributedEvent(new SelfScoreSubmittedEto { ControlAssessmentId = Id, Score = score });
+          }
+          
+          public void Verify(Guid verifierId, decimal score)
+          {
+              VerifiedScore = score;
+              VerifiedByUserId = verifierId;
+              VerificationDate = DateTime.UtcNow;
+              Status = ControlAssessmentStatus.Verified;
+              RejectionReason = null;
+              AddHistory("Verified", $"Verified with score: {score}");
+              AddDistributedEvent(new ControlVerifiedEto 
+              { 
+                  ControlAssessmentId = Id, 
+                  VerifierId = verifierId, 
+                  Score = score 
+              });
+          }
+          
+          public void Reject(Guid verifierId, string reason)
+          {
+              VerifiedByUserId = verifierId;
+              RejectionReason = reason;
+              Status = ControlAssessmentStatus.Rejected;
+              AddHistory("Rejected", reason);
+              AddDistributedEvent(new ControlRejectedEto 
+              { 
+                  ControlAssessmentId = Id, 
+                  Reason = reason 
+              });
+          }
+          
+          private void AddHistory(string action, string details)
+          {
+              History.Add(new ControlAssessmentHistory(Id, action, details));
+          }
+      }
+
+  # --- EVIDENCE ---
+  - name: "Evidence"
+    module: "Evidence"
+    base: "FullAuditedEntity<Guid>"
+    interfaces: ["IMultiTenant"]
+    table: "grc_evidences"
+    description: "Supporting evidence document"
+    properties:
+      - name: "TenantId"
+        type: "Guid?"
+        index: true
+        
+      - name: "ControlAssessmentId"
+        type: "Guid?"
+        foreign_key: "ControlAssessment"
+        index: true
+        
+      - name: "FileName"
+        type: "string"
+        max_length: 500
+        required: true
+        
+      - name: "BlobName"
+        type: "string"
+        max_length: 1000
+        required: true
+        
+      - name: "ContainerName"
+        type: "string"
+        max_length: 100
+        required: true
+        
+      - name: "FileSize"
+        type: "long"
+        
+      - name: "MimeType"
+        type: "string"
+        max_length: 100
+        
+      - name: "EvidenceType"
+        type: "EvidenceType"
+        
+      - name: "Description"
+        type: "string"
+        max_length: 2000
+        
+      - name: "AiClassification"
+        type: "JsonDocument"
+        description: "AI auto-classification results"
+        
+      - name: "ExtractedText"
+        type: "string"
+        description: "OCR extracted text"
+        
+      - name: "HashSha256"
+        type: "string"
+        max_length: 64
+        description: "File integrity hash"
+        
+      - name: "UploadedByUserId"
+        type: "Guid"
+        required: true
+        
+      - name: "UploadTime"
+        type: "DateTime"
+        default: "DateTime.UtcNow"
+        
+      - name: "VersionNumber"
+        type: "int"
+        default: 1
+        
+      - name: "IsCurrentVersion"
+        type: "bool"
+        default: true
+        
+    code: |
+      public class Evidence : FullAuditedEntity<Guid>, IMultiTenant
+      {
+          public Guid? TenantId { get; set; }
+          public Guid? ControlAssessmentId { get; private set; }
+          public string FileName { get; private set; }
+          public string BlobName { get; private set; }
+          public string ContainerName { get; private set; }
+          public long FileSize { get; private set; }
+          public string MimeType { get; private set; }
+          public EvidenceType? EvidenceType { get; private set; }
+          public string Description { get; private set; }
+          public JsonDocument AiClassification { get; private set; }
+          public string ExtractedText { get; private set; }
+          public string HashSha256 { get; private set; }
+          public Guid UploadedByUserId { get; private set; }
+          public DateTime UploadTime { get; private set; }
+          public int VersionNumber { get; private set; }
+          public bool IsCurrentVersion { get; private set; }
+          
+          protected Evidence() { }
+          
+          public Evidence(Guid id, Guid uploadedBy, string fileName, string blobName, 
+                         string containerName, long fileSize, string mimeType)
+              : base(id)
+          {
+              UploadedByUserId = uploadedBy;
+              FileName = fileName;
+              BlobName = blobName;
+              ContainerName = containerName;
+              FileSize = fileSize;
+              MimeType = mimeType;
+              UploadTime = DateTime.UtcNow;
+              VersionNumber = 1;
+              IsCurrentVersion = true;
+          }
+          
+          public void LinkToControlAssessment(Guid controlAssessmentId)
+          {
+              ControlAssessmentId = controlAssessmentId;
+          }
+          
+          public void SetAiClassification(JsonDocument classification)
+          {
+              AiClassification = classification;
+          }
+          
+          public void SetExtractedText(string text)
+          {
+              ExtractedText = text;
+          }
+          
+          public void ComputeHash(Stream fileStream)
+          {
+              using var sha256 = SHA256.Create();
+              HashSha256 = Convert.ToHexString(sha256.ComputeHash(fileStream));
+          }
+      }
+
+  # --- RISK ---
+  - name: "Risk"
+    module: "Risk"
+    base: "FullAuditedAggregateRoot<Guid>"
+    interfaces: ["IMultiTenant"]
+    table: "grc_risks"
+    description: "Risk register entry"
+    properties:
+      - name: "TenantId"
+        type: "Guid?"
+        index: true
+        
+      - name: "RiskCode"
+        type: "string"
+        max_length: 30
+        required: true
+        
+      - name: "Title"
+        type: "LocalizedString"
+        required: true
+        
+      - name: "Description"
+        type: "LocalizedString"
+        
+      - name: "Category"
+        type: "RiskCategory"
+        required: true
+        
+      - name: "InherentProbability"
+        type: "int"
+        validation: "BETWEEN 1 AND 5"
+        
+      - name: "InherentImpact"
+        type: "int"
+        validation: "BETWEEN 1 AND 5"
+        
+      - name: "InherentRiskLevel"
+        type: "RiskLevel"
+        
+      - name: "ResidualProbability"
+        type: "int?"
+        
+      - name: "ResidualImpact"
+        type: "int?"
+        
+      - name: "ResidualRiskLevel"
+        type: "RiskLevel?"
+        
+      - name: "RiskOwnerId"
+        type: "Guid?"
+        
+      - name: "Status"
+        type: "RiskStatus"
+        default: "Identified"
+        
+    collections:
+      - name: "Treatments"
+        type: "RiskTreatment"
+        relationship: "one-to-many"
+        
+      - name: "LinkedControls"
+        type: "RiskControlLink"
+        relationship: "one-to-many"
+
+# ============================================================
+# END OF ENTITIES SPECIFICATION
+# ============================================================

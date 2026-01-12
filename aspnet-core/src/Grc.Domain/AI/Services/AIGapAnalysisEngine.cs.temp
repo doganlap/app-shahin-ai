@@ -1,0 +1,373 @@
+using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Volo.Abp;
+using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Domain.Services;
+using Volo.Abp.Uow;
+using Grc.ValueObjects;
+
+namespace Grc.AI.Services;
+
+/// <summary>
+/// AI Gap Analysis Engine Implementation
+/// Uses AI to analyze compliance gaps and generate recommendations
+/// </summary>
+public class AIGapAnalysisEngine : DomainService, IAIGapAnalysisEngine
+{
+    private readonly IRepository<AIGapAnalysis, Guid> _gapAnalysisRepository;
+    private readonly IRepository<Assessment, Guid> _assessmentRepository;
+    private readonly IRepository<Framework, Guid> _frameworkRepository;
+    private readonly IRepository<Control, Guid> _controlRepository;
+    private readonly IAIIntegrationService _aiService;
+    private readonly ILogger<AIGapAnalysisEngine> _logger;
+    
+    public AIGapAnalysisEngine(
+        IRepository<AIGapAnalysis, Guid> gapAnalysisRepository,
+        IRepository<Assessment, Guid> assessmentRepository,
+        IRepository<Framework, Guid> frameworkRepository,
+        IRepository<Control, Guid> controlRepository,
+        IAIIntegrationService aiService,
+        ILogger<AIGapAnalysisEngine> logger)
+    {
+        _gapAnalysisRepository = gapAnalysisRepository;
+        _assessmentRepository = assessmentRepository;
+        _frameworkRepository = frameworkRepository;
+        _controlRepository = controlRepository;
+        _aiService = aiService;
+        _logger = logger;
+    }
+    
+    /// <summary>
+    /// معالجة تحليل الفجوات - Process gap analysis using AI
+    /// </summary>
+    [UnitOfWork]
+    public virtual async Task ProcessGapAnalysisAsync(Guid analysisId)
+    {
+        var stopwatch = Stopwatch.StartNew();
+        
+        try
+        {
+            _logger.LogInformation("Processing gap analysis: {AnalysisId}", analysisId);
+            
+            var analysis = await _gapAnalysisRepository.GetAsync(analysisId);
+            
+            // Start analysis
+            analysis.Start(_aiService.ModelName, _aiService.ModelVersion);
+            await _gapAnalysisRepository.UpdateAsync(analysis, autoSave: true);
+            
+            AIGapAnalysisResult result;
+            
+            // Analyze based on type
+            if (analysis.AssessmentId.HasValue)
+            {
+                result = await AnalyzeAssessmentAsync(analysis.AssessmentId.Value);
+            }
+            else if (analysis.FrameworkId.HasValue)
+            {
+                result = await AnalyzeFrameworkAsync(analysis.FrameworkId.Value);
+            }
+            else
+            {
+                throw new BusinessException("Analysis must have either AssessmentId or FrameworkId");
+            }
+            
+            // Add gaps to analysis
+            foreach (var gap in result.Gaps)
+            {
+                analysis.AddGap(gap);
+            }
+            
+            // Generate recommendations
+            var recommendations = await GenerateRecommendationsAsync(analysisId);
+            foreach (var recommendation in recommendations.Recommendations)
+            {
+                analysis.AddRecommendation(recommendation);
+            }
+            
+            // Complete analysis
+            stopwatch.Stop();
+            analysis.Complete(
+                result.CompliancePercentage,
+                result.ConfidenceScore,
+                (int)stopwatch.Elapsed.TotalSeconds
+            );
+            
+            await _gapAnalysisRepository.UpdateAsync(analysis, autoSave: true);
+            
+            _logger.LogInformation(
+                "Gap analysis completed: {AnalysisId} - Compliance: {Compliance}%, Gaps: {GapCount}, Processing Time: {ProcessingTime}s",
+                analysisId,
+                result.CompliancePercentage,
+                result.Gaps.Length,
+                stopwatch.Elapsed.TotalSeconds
+            );
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to process gap analysis: {AnalysisId}", analysisId);
+            
+            var analysis = await _gapAnalysisRepository.GetAsync(analysisId);
+            analysis.MarkAsFailed($"Processing error: {ex.Message}");
+            await _gapAnalysisRepository.UpdateAsync(analysis, autoSave: true);
+            
+            throw;
+        }
+    }
+    
+    /// <summary>
+    /// تحليل التقييم - Analyze an assessment for gaps
+    /// </summary>
+    public virtual async Task<AIGapAnalysisResult> AnalyzeAssessmentAsync(Guid assessmentId)
+    {
+        _logger.LogInformation("Analyzing assessment: {AssessmentId}", assessmentId);
+        
+        var assessment = await _assessmentRepository.GetAsync(assessmentId);
+        
+        // Get framework and controls
+        var framework = await _frameworkRepository.GetAsync(assessment.FrameworkId);
+        var controls = await _controlRepository.GetListAsync(c => c.FrameworkId == framework.Id);
+        
+        _logger.LogDebug(
+            "Assessment: {AssessmentName}, Framework: {FrameworkName}, Controls: {ControlCount}",
+            assessment.Name,
+            framework.Title.GetCurrent(),
+            controls.Count
+        );
+        
+        // Build AI prompt
+        var prompt = BuildAssessmentAnalysisPrompt(assessment, framework, controls);
+        
+        // Call AI service
+        var aiResponse = await _aiService.AnalyzeComplianceGapsAsync(prompt);
+        
+        // Parse AI response
+        var gaps = ParseGapsFromAIResponse(aiResponse, controls);
+        
+        // Calculate compliance percentage
+        var compliancePercentage = CalculateCompliancePercentage(gaps, controls.Count);
+        
+        return new AIGapAnalysisResult
+        {
+            CompliancePercentage = compliancePercentage,
+            ConfidenceScore = 85m, // TODO: Calculate from AI response
+            ProcessingTimeSeconds = 0,
+            ControlsAnalyzed = controls.Count,
+            Gaps = gaps
+        };
+    }
+    
+    /// <summary>
+    /// تحليل الإطار - Analyze a framework for compliance gaps
+    /// </summary>
+    public virtual async Task<AIGapAnalysisResult> AnalyzeFrameworkAsync(Guid frameworkId)
+    {
+        _logger.LogInformation("Analyzing framework: {FrameworkId}", frameworkId);
+        
+        var framework = await _frameworkRepository.GetAsync(frameworkId);
+        var controls = await _controlRepository.GetListAsync(c => c.FrameworkId == frameworkId);
+        
+        _logger.LogDebug(
+            "Framework: {FrameworkName}, Controls: {ControlCount}",
+            framework.Title.GetCurrent(),
+            controls.Count
+        );
+        
+        // Build AI prompt
+        var prompt = BuildFrameworkAnalysisPrompt(framework, controls);
+        
+        // Call AI service
+        var aiResponse = await _aiService.AnalyzeComplianceGapsAsync(prompt);
+        
+        // Parse AI response
+        var gaps = ParseGapsFromAIResponse(aiResponse, controls);
+        
+        // Calculate compliance percentage
+        var compliancePercentage = CalculateCompliancePercentage(gaps, controls.Count);
+        
+        return new AIGapAnalysisResult
+        {
+            CompliancePercentage = compliancePercentage,
+            ConfidenceScore = 80m, // TODO: Calculate from AI response
+            ProcessingTimeSeconds = 0,
+            ControlsAnalyzed = controls.Count,
+            Gaps = gaps
+        };
+    }
+    
+    /// <summary>
+    /// توليد توصيات - Generate AI recommendations
+    /// </summary>
+    public virtual async Task<AIRecommendations> GenerateRecommendationsAsync(Guid analysisId)
+    {
+        _logger.LogInformation("Generating recommendations for analysis: {AnalysisId}", analysisId);
+        
+        var analysis = await _gapAnalysisRepository.GetAsync(analysisId);
+        
+        // Build AI prompt for recommendations
+        var prompt = BuildRecommendationsPrompt(analysis);
+        
+        // Call AI service
+        var aiResponse = await _aiService.GenerateRecommendationsAsync(prompt);
+        
+        // Parse recommendations from AI response
+        var recommendations = ParseRecommendationsFromAIResponse(aiResponse);
+        
+        return new AIRecommendations
+        {
+            Recommendations = recommendations,
+            ConfidenceScore = 85m
+        };
+    }
+    
+    private string BuildAssessmentAnalysisPrompt(
+        Assessment assessment,
+        Framework framework,
+        System.Collections.Generic.List<Control> controls)
+    {
+        return $@"
+Analyze compliance gaps for the following assessment in both Arabic and English:
+
+Assessment: {assessment.Name}
+Framework: {framework.Title.En} / {framework.Title.Ar}
+Controls: {controls.Count}
+Current Status: {assessment.Status}
+
+Please identify:
+1. Controls with compliance gaps
+2. Current compliance level vs target
+3. Priority of each gap (Critical, High, Medium, Low)
+4. Estimated effort to close each gap
+5. Risk if gap is not addressed
+
+Provide results in bilingual format (English/Arabic).
+";
+    }
+    
+    private string BuildFrameworkAnalysisPrompt(
+        Framework framework,
+        System.Collections.Generic.List<Control> controls)
+    {
+        return $@"
+Analyze compliance framework for potential gaps:
+
+Framework: {framework.Title.En} / {framework.Title.Ar}
+Description: {framework.Description?.En} / {framework.Description?.Ar}
+Controls: {controls.Count}
+
+Please identify typical compliance gaps for this framework and provide recommendations.
+Results should be bilingual (English/Arabic).
+";
+    }
+    
+    private string BuildRecommendationsPrompt(AIGapAnalysis analysis)
+    {
+        var gapsSummary = string.Join("\n", analysis.Gaps.Select(g => 
+            $"- {g.ControlNumber}: {g.Title.En} (Priority: {g.Priority}, Gap: {g.GapSize:F1}%)"));
+        
+        return $@"
+Generate actionable recommendations for closing the following compliance gaps:
+
+Analysis: {analysis.Title.En} / {analysis.Title.Ar}
+Total Gaps: {analysis.TotalGapsIdentified}
+Critical Gaps: {analysis.CriticalGaps}
+Compliance: {analysis.CompliancePercentage:F1}%
+
+Gaps:
+{gapsSummary}
+
+For each recommendation, provide:
+1. Title (bilingual)
+2. Detailed recommendation (bilingual)
+3. Priority
+4. Implementation steps (bilingual)
+5. Expected impact (bilingual)
+6. Estimated time and cost
+7. Confidence level
+";
+    }
+    
+    private GapDetail[] ParseGapsFromAIResponse(string aiResponse, System.Collections.Generic.List<Control> controls)
+    {
+        // TODO: Implement actual AI response parsing
+        // For now, return mock gaps for demonstration
+        
+        var gaps = new System.Collections.Generic.List<GapDetail>();
+        
+        // Mock: Create gap for first 5 controls
+        foreach (var control in controls.Take(5))
+        {
+            gaps.Add(new GapDetail
+            {
+                ControlId = control.Id,
+                ControlNumber = control.ControlNumber,
+                Title = new LocalizedString(
+                    $"Gap in {control.Title.En}",
+                    $"فجوة في {control.Title.Ar}"
+                ),
+                Description = new LocalizedString(
+                    "Implementation gap identified by AI analysis",
+                    "فجوة تنفيذ محددة من قبل تحليل الذكاء الاصطناعي"
+                ),
+                Priority = RecommendationPriority.High,
+                CurrentComplianceLevel = 40m,
+                TargetComplianceLevel = 100m,
+                EstimatedEffortHours = 40,
+                RiskIfUnaddressed = new LocalizedString(
+                    "Compliance violation risk",
+                    "خطر انتهاك الامتثال"
+                ),
+                Confidence = 85m
+            });
+        }
+        
+        return gaps.ToArray();
+    }
+    
+    private AIRecommendation[] ParseRecommendationsFromAIResponse(string aiResponse)
+    {
+        // TODO: Implement actual AI response parsing
+        // For now, return mock recommendations
+        
+        return new[]
+        {
+            new AIRecommendation
+            {
+                Title = new LocalizedString(
+                    "Implement Access Control Policy",
+                    "تنفيذ سياسة التحكم في الوصول"
+                ),
+                Recommendation = new LocalizedString(
+                    "Develop and implement comprehensive access control policy",
+                    "تطوير وتنفيذ سياسة شاملة للتحكم في الوصول"
+                ),
+                Priority = RecommendationPriority.Critical,
+                Category = "Policy",
+                ImplementationSteps = new System.Collections.Generic.List<LocalizedString>
+                {
+                    new LocalizedString("Draft policy document", "صياغة وثيقة السياسة"),
+                    new LocalizedString("Review with stakeholders", "مراجعة مع أصحاب المصلحة"),
+                    new LocalizedString("Implement technical controls", "تنفيذ الضوابط التقنية")
+                },
+                ExpectedImpact = new LocalizedString(
+                    "Significantly improve security posture",
+                    "تحسين الوضع الأمني بشكل كبير"
+                ),
+                EstimatedDays = 30,
+                EstimatedCost = 50000m,
+                Confidence = 90m,
+                Reasoning = "Critical security control required by NCA ECC"
+            }
+        };
+    }
+    
+    private decimal CalculateCompliancePercentage(GapDetail[] gaps, int totalControls)
+    {
+        if (totalControls == 0) return 100m;
+        
+        var compliantControls = totalControls - gaps.Length;
+        return (decimal)compliantControls / totalControls * 100m;
+    }
+}

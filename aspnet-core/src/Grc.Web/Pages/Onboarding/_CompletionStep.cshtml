@@ -1,0 +1,270 @@
+@page
+@model Grc.Web.Pages.Onboarding.IndexModel
+
+<div class="completion-step text-center">
+    <div class="mb-5">
+        <div class="success-icon mb-4">
+            <i class="fas fa-check-circle fa-5x text-success"></i>
+        </div>
+        <h2 class="mb-3">
+            @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+            {
+                <span>🎉 مرحباً بك في منصة Shahin GRC!</span>
+            }
+            else
+            {
+                <span>🎉 Welcome to Shahin GRC Platform!</span>
+            }
+        </h2>
+        <p class="lead text-muted">
+            @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+            {
+                <span>تم إكمال عملية الإعداد بنجاح - نظامك جاهز الآن!</span>
+            }
+            else
+            {
+                <span>Your setup is complete - your system is ready now!</span>
+            }
+        </p>
+    </div>
+
+    <!-- Setup Summary -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-check fa-3x text-primary mb-3"></i>
+                    <h5>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "الملف الشخصي" : "Profile")</h5>
+                    <p class="text-muted small mb-0">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "مكتمل 100%" : "100% Complete")</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-shield-alt fa-3x text-success mb-3"></i>
+                    <h5>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "الأدوار" : "Roles")</h5>
+                    <p class="text-muted small mb-0" id="assignedRolesCount">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "مُعيّن" : "Assigned")</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-puzzle-piece fa-3x text-info mb-3"></i>
+                    <h5>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "الميزات" : "Features")</h5>
+                    <p class="text-muted small mb-0" id="enabledFeaturesCount">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "مُفعّلة" : "Enabled")</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-key fa-3x text-warning mb-3"></i>
+                    <h5>@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "الصلاحيات" : "Permissions")</h5>
+                    <p class="text-muted small mb-0" id="totalPermissionsCount">@(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "مُمنوحة" : "Granted")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- What's Next -->
+    <div class="card border-primary shadow mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-route me-2"></i>
+                @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                {
+                    <span>ماذا بعد؟</span>
+                }
+                else
+                {
+                    <span>What's Next?</span>
+                }
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="next-step-item">
+                        <div class="d-flex align-items-start">
+                            <div class="step-number bg-primary text-white rounded-circle me-3">1</div>
+                            <div>
+                                <h6>
+                                    @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                                    {
+                                        <span>استكشف لوحة المعلومات</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Explore Dashboard</span>
+                                    }
+                                </h6>
+                                <p class="small text-muted mb-0">
+                                    @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                                    {
+                                        <span>احصل على نظرة عامة على حالة الامتثال</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Get an overview of your compliance status</span>
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="next-step-item">
+                        <div class="d-flex align-items-start">
+                            <div class="step-number bg-success text-white rounded-circle me-3">2</div>
+                            <div>
+                                <h6>
+                                    @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                                    {
+                                        <span>ابدأ تقييم جديد</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Start a New Assessment</span>
+                                    }
+                                </h6>
+                                <p class="small text-muted mb-0">
+                                    @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                                    {
+                                        <span>اختر إطاراً تنظيمياً وابدأ التقييم</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Choose a framework and begin assessment</span>
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="next-step-item">
+                        <div class="d-flex align-items-start">
+                            <div class="step-number bg-info text-white rounded-circle me-3">3</div>
+                            <div>
+                                <h6>
+                                    @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                                    {
+                                        <span>دعوة فريقك</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Invite Your Team</span>
+                                    }
+                                </h6>
+                                <p class="small text-muted mb-0">
+                                    @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                                    {
+                                        <span>أضف أعضاء الفريق وعيّن المسؤوليات</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Add team members and assign responsibilities</span>
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <a href="/Dashboard" class="btn btn-lg btn-primary w-100">
+                <i class="fas fa-tachometer-alt me-2"></i>
+                @(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "انتقل إلى لوحة المعلومات" : "Go to Dashboard")
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="/Assessments" class="btn btn-lg btn-outline-success w-100">
+                <i class="fas fa-clipboard-check me-2"></i>
+                @(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "ابدأ تقييماً" : "Start Assessment")
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="/FrameworkLibrary" class="btn btn-lg btn-outline-info w-100">
+                <i class="fas fa-book me-2"></i>
+                @(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "تصفح الأطر" : "Browse Frameworks")
+            </a>
+        </div>
+    </div>
+
+    <!-- Help & Resources -->
+    <div class="card border-0 bg-light">
+        <div class="card-body text-center">
+            <h6 class="mb-3">
+                @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                {
+                    <span>هل تحتاج إلى مساعدة؟</span>
+                }
+                else
+                {
+                    <span>Need Help?</span>
+                }
+            </h6>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="/Help/Documentation" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-book-open me-1"></i>
+                    @(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "الوثائق" : "Documentation")
+                </a>
+                <a href="/Help/Videos" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-video me-1"></i>
+                    @(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "فيديوهات تعليمية" : "Video Tutorials")
+                </a>
+                <a href="/Help/Support" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-headset me-1"></i>
+                    @(System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar") ? "الدعم الفني" : "Support")
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .success-icon i {
+        animation: checkmark 0.6s ease-in-out;
+    }
+
+    @@keyframes checkmark {
+        0% {
+            transform: scale(0);
+            opacity: 0;
+        }
+        50% {
+            transform: scale(1.2);
+        }
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .step-number {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        flex-shrink: 0;
+    }
+
+    .next-step-item {
+        padding: 15px;
+        border-radius: 8px;
+        transition: background-color 0.3s;
+    }
+
+    .next-step-item:hover {
+        background-color: #f8f9fa;
+    }
+</style>

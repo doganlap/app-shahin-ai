@@ -1,0 +1,180 @@
+@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Grc.Localization
+@model Grc.Web.Pages.Admin.TestSeedModel
+@inject IHtmlLocalizer<GrcResource> L
+@{
+    ViewBag.Title = "Framework Library Seeding (Test)";
+}
+
+@section styles {
+    <style>
+        .seed-card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .seed-button {
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .results-table {
+            margin-top: 24px;
+        }
+        .result-success {
+            color: #28a745;
+        }
+        .result-error {
+            color: #dc3545;
+        }
+        .loading-spinner {
+            display: none;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .loading-spinner.active {
+            display: block;
+        }
+    </style>
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="seed-card">
+                <h2>🌱 Framework Library Seeding</h2>
+                <p class="text-muted">
+                    This will seed comprehensive GRC data including Regulators, Frameworks, and Controls.
+                    <br/>
+                    <strong>Note:</strong> This is a test page without permission requirements.
+                </p>
+                
+                <button id="btnStartSeeding" class="btn btn-primary seed-button">
+                    <i class="fas fa-database"></i>
+                    Start Seeding (205 Regulators + 200 Frameworks + 3500 Controls)
+                </button>
+                
+                <div class="loading-spinner" id="loadingSpinner">
+                    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                        <span class="sr-only">Seeding in progress...</span>
+                    </div>
+                    <p class="mt-2"><strong>⏳ Seeding in progress...</strong></p>
+                    <p class="text-muted">This may take 30-60 seconds. Please wait...</p>
+                </div>
+                
+                <div id="resultsContainer" style="display: none;">
+                    <h4 class="mt-4">✅ Seeding Complete!</h4>
+                    <div class="results-table">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Entity</th>
+                                    <th>Inserted</th>
+                                    <th>Skipped</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultsBody">
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-info">
+                                    <th>Total</th>
+                                    <th id="totalInserted">0</th>
+                                    <th id="totalSkipped">0</th>
+                                    <th id="totalRecords">0</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <p class="mt-2">
+                            <strong>Duration:</strong> <span id="duration">0</span> ms (<span id="durationSec">0</span> seconds)
+                        </p>
+                    </div>
+                </div>
+                
+                <div id="errorContainer" class="alert alert-danger mt-4" style="display: none;">
+                    <h5>❌ Seeding Failed</h5>
+                    <p id="errorMessage"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        (function() {
+            $('#btnStartSeeding').click(function() {
+                var btn = $(this);
+                btn.prop('disabled', true);
+                $('#loadingSpinner').addClass('active');
+                $('#resultsContainer').hide();
+                $('#errorContainer').hide();
+                
+                $.ajax({
+                    url: '/api/admin/seed-framework-library',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function(result) {
+                        btn.prop('disabled', false);
+                        $('#loadingSpinner').removeClass('active');
+                        
+                        if (result.success) {
+                            // Display results
+                            var html = '';
+                            html += '<tr><td>📚 Regulators</td>' +
+                                   '<td class="result-success">' + result.regulators.inserted + '</td>' +
+                                   '<td>' + result.regulators.skipped + '</td>' +
+                                   '<td>' + result.regulators.total + '</td></tr>';
+                            html += '<tr><td>📖 Frameworks</td>' +
+                                   '<td class="result-success">' + result.frameworks.inserted + '</td>' +
+                                   '<td>' + result.frameworks.skipped + '</td>' +
+                                   '<td>' + result.frameworks.total + '</td></tr>';
+                            html += '<tr><td>🎯 Controls</td>' +
+                                   '<td class="result-success">' + result.controls.inserted + '</td>' +
+                                   '<td>' + result.controls.skipped + '</td>' +
+                                   '<td>' + result.controls.total + '</td></tr>';
+                            
+                            $('#resultsBody').html(html);
+                            $('#totalInserted').text(result.totalInserted);
+                            $('#totalSkipped').text(result.totalSkipped);
+                            $('#totalRecords').text(result.totalRecords);
+                            $('#duration').text(result.durationMs);
+                            $('#durationSec').text((result.durationMs/1000).toFixed(2));
+                            $('#resultsContainer').show();
+                            
+                            abp.notify.success('Successfully seeded ' + result.totalInserted + ' records!');
+                        } else {
+                            $('#errorMessage').text(result.message);
+                            $('#errorContainer').show();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        btn.prop('disabled', false);
+                        $('#loadingSpinner').removeClass('active');
+                        
+                        var errorMsg = 'Unknown error occurred';
+                        if (xhr.responseJSON && xhr.responseJSON.error) {
+                            errorMsg = xhr.responseJSON.error.message || xhr.responseJSON.error;
+                        } else if (xhr.responseText) {
+                            errorMsg = xhr.responseText;
+                        } else {
+                            errorMsg = error || status;
+                        }
+                        
+                        $('#errorMessage').text(errorMsg);
+                        $('#errorContainer').show();
+                        abp.notify.error('Seeding failed: ' + errorMsg);
+                    }
+                });
+            });
+        })();
+    </script>
+}
+

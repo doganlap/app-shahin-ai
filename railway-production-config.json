@@ -1,0 +1,39 @@
+{
+  "App": {
+    "SelfUrl": "https://your-api-domain.railway.app",
+    "CorsOrigins": "https://your-web-domain.railway.app",
+    "RedirectAllowedUrls": "https://your-web-domain.railway.app"
+  },
+  "ConnectionStrings": {
+    "Default": "Host=YOUR_RAILWAY_POSTGRES_HOST;Port=YOUR_RAILWAY_POSTGRES_PORT;Database=railway;Username=postgres;Password=YOUR_RAILWAY_POSTGRES_PASSWORD;SSL Mode=Require"
+  },
+  "Redis": {
+    "Configuration": "YOUR_RAILWAY_REDIS_HOST:YOUR_RAILWAY_REDIS_PORT,password=YOUR_RAILWAY_REDIS_PASSWORD,ssl=true"
+  },
+  "S3": {
+    "Endpoint": "https://storage.railway.app",
+    "Region": "auto",
+    "BucketName": "optimized-bin-yvjb9vxnhq1",
+    "AccessKeyId": "tid_NjtZXPqCgdJPDgZIwAdsFThHeqPwtBIrRyIetsqjHHCuMnwiCD",
+    "SecretAccessKey": "tsec_KnsFqr0JZOsYqQl1LRMMo46kqAbGVcHgR-vADqBcGxAbQzmt44MakhvpYceOi3Z7ggUnC9",
+    "UseVirtualHostStyle": true
+  },
+  "RabbitMQ": {
+    "Connections": {
+      "Default": {
+        "HostName": "YOUR_RAILWAY_RABBITMQ_HOST",
+        "Port": 5672,
+        "UserName": "guest",
+        "Password": "YOUR_RAILWAY_RABBITMQ_PASSWORD"
+      }
+    }
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  }
+}
+

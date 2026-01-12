@@ -1,0 +1,26 @@
+@page
+@using Microsoft.Extensions.Localization
+@using Grc.Localization
+@model Grc.Web.Pages.ControlAssessments.IndexModel
+@inject IStringLocalizer<GrcResource> L
+
+<abp-card>
+    <abp-card-header>
+        <h2><i class="fas fa-list-check text-primary"></i> @L["Menu:ControlAssessments"]</h2>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="ControlAssessmentsTable">
+            <thead>
+                <tr>
+                    <th>@L["ControlNumber"]</th>
+                    <th>@L["Title"]</th>
+                    <th>@L["Assessment"]</th>
+                    <th>@L["Status"]</th>
+                    <th>@L["Score"]</th>
+                    <th>@L["Actions"]</th>
+                </tr>
+            </thead>
+        </abp-table>
+    </abp-card-body>
+</abp-card>
+

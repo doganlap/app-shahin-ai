@@ -1,0 +1,440 @@
+# ============================================================
+# SAUDI GRC PLATFORM - AI AGENT IMPLEMENTATION SPECIFICATION
+# ============================================================
+# This file is designed for AI coding agents to read and implement
+# Format: YAML for maximum readability and parseability
+# ============================================================
+
+project:
+  name: "Saudi GRC Compliance Platform"
+  codename: "grc-platform"
+  version: "1.0.0"
+  description: "Multi-tenant GRC platform for Saudi regulatory compliance"
+  
+framework:
+  name: "ABP.io"
+  type: "Open Source"
+  version: "8.3+"
+  license: "LGPL-3.0"
+  dotnet_version: "8.0"
+  
+architecture:
+  pattern: "Domain-Driven Design (DDD)"
+  style: "Modular Monolith (Microservices-ready)"
+  multi_tenancy: true
+  tenant_resolution: "domain-based"
+  
+# ============================================================
+# TECHNOLOGY STACK - ALL OPEN SOURCE
+# ============================================================
+tech_stack:
+  backend:
+    framework: "ABP.io Open Source"
+    runtime: ".NET 8.0 LTS"
+    web_framework: "ASP.NET Core 8.0"
+    orm: "Entity Framework Core 8.0"
+    
+  frontend:
+    framework: "Angular 17+"
+    ui_library: "PrimeNG"
+    state_management: "NgRx"
+    
+  database:
+    primary: "PostgreSQL 16+"
+    search: "Elasticsearch 8.x"
+    cache: "Redis 7.2+"
+    
+  messaging:
+    queue: "RabbitMQ 3.13+"
+    realtime: "SignalR"
+    
+  storage:
+    files: "MinIO"
+    protocol: "S3-compatible"
+    
+  identity:
+    server: "OpenIddict"
+    protocols: ["OAuth2", "OpenID Connect"]
+    
+  infrastructure:
+    containers: "Docker"
+    orchestration: "Kubernetes"
+    ci_cd: "GitHub Actions"
+    monitoring: "Prometheus + Grafana"
+    logging: "Seq / Loki"
+
+# ============================================================
+# SOLUTION STRUCTURE
+# ============================================================
+solution_structure:
+  root: "Grc"
+  projects:
+    - name: "Grc.Domain.Shared"
+      type: "classlib"
+      description: "Shared constants, enums, localization"
+      
+    - name: "Grc.Domain"
+      type: "classlib"
+      description: "Domain entities, aggregates, domain services"
+      
+    - name: "Grc.Application.Contracts"
+      type: "classlib"
+      description: "DTOs, application service interfaces"
+      
+    - name: "Grc.Application"
+      type: "classlib"
+      description: "Application services implementation"
+      
+    - name: "Grc.EntityFrameworkCore"
+      type: "classlib"
+      description: "EF Core DbContext, repositories, migrations"
+      
+    - name: "Grc.HttpApi"
+      type: "classlib"
+      description: "API controllers"
+      
+    - name: "Grc.HttpApi.Host"
+      type: "webapi"
+      description: "API host application"
+      
+    - name: "Grc.Web"
+      type: "angular"
+      description: "Angular frontend application"
+      
+    - name: "Grc.BackgroundWorker"
+      type: "worker"
+      description: "Background job processing"
+
+# ============================================================
+# DOMAIN MODULES (16 MODULES)
+# ============================================================
+modules:
+  - code: "FrameworkLibrary"
+    name: "Framework Library"
+    description: "Master regulatory framework repository"
+    entities: ["Regulator", "Framework", "Control", "Domain", "ControlMapping"]
+    priority: 1
+    
+  - code: "Assessment"
+    name: "Assessment Management"
+    description: "Assessment lifecycle management"
+    entities: ["Assessment", "ControlAssessment", "AssessmentTemplate"]
+    priority: 1
+    
+  - code: "GapAnalysis"
+    name: "Gap Analysis"
+    description: "Automated gap identification engine"
+    entities: ["Gap", "Recommendation", "MaturityScore"]
+    priority: 2
+    
+  - code: "Evidence"
+    name: "Evidence Management"
+    description: "Document management and versioning"
+    entities: ["Evidence", "EvidenceVersion", "EvidenceLink"]
+    priority: 1
+    
+  - code: "Risk"
+    name: "Risk Management"
+    description: "Risk register and treatment"
+    entities: ["Risk", "RiskAssessment", "RiskTreatment", "RiskCategory"]
+    priority: 2
+    
+  - code: "ActionPlan"
+    name: "Action Plans"
+    description: "Remediation planning and tracking"
+    entities: ["ActionPlan", "ActionItem", "Milestone"]
+    priority: 2
+    
+  - code: "Workflow"
+    name: "Workflow Engine"
+    description: "BPMN workflow engine"
+    entities: ["WorkflowDefinition", "WorkflowInstance", "WorkflowTask"]
+    priority: 3
+    
+  - code: "Audit"
+    name: "Audit Management"
+    description: "Internal/external audit management"
+    entities: ["Audit", "AuditFinding", "AuditResponse"]
+    priority: 2
+    
+  - code: "Reporting"
+    name: "Reporting & Analytics"
+    description: "Reports, dashboards, analytics"
+    entities: ["Report", "Dashboard", "Widget", "ReportSchedule"]
+    priority: 2
+    
+  - code: "Policy"
+    name: "Policy Management"
+    description: "Policy lifecycle and attestation"
+    entities: ["Policy", "PolicyVersion", "PolicyAttestation"]
+    priority: 3
+    
+  - code: "Notification"
+    name: "Notification System"
+    description: "Multi-channel notifications"
+    entities: ["Notification", "NotificationTemplate", "NotificationChannel"]
+    priority: 3
+    
+  - code: "Integration"
+    name: "Integration Hub"
+    description: "External system connectors"
+    entities: ["Connector", "IntegrationMapping", "SyncLog"]
+    priority: 4
+    
+  - code: "AI"
+    name: "AI Engine"
+    description: "AI/ML recommendation engine"
+    entities: ["Recommendation", "Classification", "Prediction"]
+    priority: 4
+    
+  - code: "Calendar"
+    name: "Compliance Calendar"
+    description: "Compliance calendar and deadlines"
+    entities: ["CalendarEvent", "Deadline", "Reminder"]
+    priority: 3
+    
+  - code: "Vendor"
+    name: "Vendor Management"
+    description: "Third-party risk management"
+    entities: ["Vendor", "VendorAssessment", "VendorContract"]
+    priority: 4
+    
+  - code: "Product"
+    name: "Subscription Products"
+    description: "Product catalog and subscription management"
+    entities: ["Product", "ProductFeature", "ProductQuota", "PricingPlan", "TenantSubscription", "QuotaUsage"]
+    priority: 2
+
+# ============================================================
+# USER ROLES & PERMISSIONS
+# ============================================================
+roles:
+  - code: "SystemAdmin"
+    name: "System Administrator"
+    level: "platform"
+    permissions: ["*"]
+    
+  - code: "TenantAdmin"
+    name: "Tenant Administrator"
+    level: "tenant"
+    permissions: ["Grc.*"]
+    
+  - code: "ComplianceManager"
+    name: "Compliance Manager"
+    level: "tenant"
+    permissions:
+      - "Grc.Frameworks.View"
+      - "Grc.Assessments.*"
+      - "Grc.ControlAssessments.ViewAll"
+      - "Grc.ControlAssessments.Verify"
+      - "Grc.Reports.*"
+      
+  - code: "DepartmentHead"
+    name: "Department Head"
+    level: "tenant"
+    permissions:
+      - "Grc.Frameworks.View"
+      - "Grc.Assessments.View"
+      - "Grc.ControlAssessments.ViewDepartment"
+      - "Grc.ControlAssessments.AssignDepartment"
+      
+  - code: "ControlOwner"
+    name: "Control Owner"
+    level: "tenant"
+    permissions:
+      - "Grc.Frameworks.View"
+      - "Grc.ControlAssessments.ViewOwn"
+      - "Grc.ControlAssessments.UpdateOwn"
+      - "Grc.ControlAssessments.UploadEvidence"
+      
+  - code: "RiskManager"
+    name: "Risk Manager"
+    level: "tenant"
+    permissions:
+      - "Grc.Risks.*"
+      - "Grc.Assessments.View"
+      
+  - code: "InternalAuditor"
+    name: "Internal Auditor"
+    level: "tenant"
+    permissions:
+      - "Grc.*.View"
+      - "Grc.Audits.*"
+      
+  - code: "ExternalAuditor"
+    name: "External Auditor"
+    level: "tenant"
+    permissions:
+      - "Grc.Assessments.View"
+      - "Grc.ControlAssessments.View"
+      - "Grc.Evidence.View"
+      
+  - code: "Executive"
+    name: "Executive"
+    level: "tenant"
+    permissions:
+      - "Grc.Dashboards.View"
+      - "Grc.Reports.View"
+      
+  - code: "Viewer"
+    name: "Viewer"
+    level: "tenant"
+    permissions:
+      - "Grc.*.View"
+
+# ============================================================
+# REGULATORY FRAMEWORKS DATA
+# ============================================================
+frameworks_data:
+  total_regulators: 76
+  total_frameworks: 135
+  total_controls: 3500
+  
+  key_frameworks:
+    - code: "NCA-ECC"
+      regulator: "NCA"
+      name: "Essential Cybersecurity Controls"
+      controls: 114
+      mandatory: true
+      
+    - code: "SAMA-CSF"
+      regulator: "SAMA"
+      name: "Cyber Security Framework"
+      controls: 156
+      mandatory: true
+      sector: "Financial"
+      
+    - code: "PDPL"
+      regulator: "SDAIA"
+      name: "Personal Data Protection Law"
+      controls: 45
+      mandatory: true
+      
+    - code: "ZATCA-EI"
+      regulator: "ZATCA"
+      name: "E-Invoicing"
+      controls: 35
+      mandatory: true
+      
+    - code: "ISO27001"
+      regulator: "ISO"
+      name: "ISO 27001:2022"
+      controls: 93
+      mandatory: false
+      
+    - code: "NIST-CSF"
+      regulator: "NIST"
+      name: "Cybersecurity Framework"
+      controls: 108
+      mandatory: false
+      
+    - code: "PCI-DSS"
+      regulator: "PCI"
+      name: "PCI DSS v4.0"
+      controls: 123
+      mandatory: false
+
+# ============================================================
+# IMPLEMENTATION PHASES
+# ============================================================
+implementation:
+  total_weeks: 20
+  
+  phases:
+    - phase: 1
+      name: "Foundation"
+      weeks: "1-4"
+      tasks:
+        - "Create ABP solution structure"
+        - "Configure multi-tenancy with domain resolver"
+        - "Setup PostgreSQL with tenant strategies"
+        - "Implement OpenIddict authentication"
+        - "Create base domain entities"
+        - "Setup localization (AR/EN)"
+        - "Configure Redis and RabbitMQ"
+        - "Setup CI/CD pipeline"
+        - "Docker containerization"
+        
+    - phase: 2
+      name: "Core Modules"
+      weeks: "5-8"
+      tasks:
+        - "Framework Library module"
+        - "Import 135+ frameworks data"
+        - "Assessment module with generator"
+        - "Gap Analysis engine"
+        - "Evidence Management with MinIO"
+        - "Control assignment workflow"
+        - "Angular frontend core"
+        - "GraphQL API"
+        
+    - phase: 3
+      name: "Advanced Features"
+      weeks: "9-12"
+      tasks:
+        - "Workflow Engine (BPMN)"
+        - "AI Compliance Engine"
+        - "SignalR real-time"
+        - "Event Sourcing"
+        - "Document OCR"
+        - "Elasticsearch search"
+        - "Background jobs"
+        
+    - phase: 4
+      name: "Extended Modules"
+      weeks: "13-16"
+      tasks:
+        - "Risk Management"
+        - "Audit Management"
+        - "Reporting & Analytics"
+        - "Integration Hub"
+        - "Notification system"
+        - "Mobile PWA"
+        - "Policy Management"
+        - "Compliance Calendar"
+        
+    - phase: 5
+      name: "Production"
+      weeks: "17-20"
+      tasks:
+        - "End-to-end testing"
+        - "Performance testing"
+        - "Security audit"
+        - "Kubernetes deployment"
+        - "Monitoring setup"
+        - "Documentation"
+        - "Training"
+
+# ============================================================
+# FILE REFERENCES FOR AI AGENT
+# ============================================================
+specification_files:
+  - file: "01-ENTITIES.yaml"
+    description: "All domain entity definitions"
+    
+  - file: "02-DATABASE-SCHEMA.sql"
+    description: "Complete PostgreSQL schema"
+    
+  - file: "03-API-SPEC.yaml"
+    description: "OpenAPI specification"
+    
+  - file: "04-GRAPHQL-SCHEMA.graphql"
+    description: "GraphQL schema definition"
+    
+  - file: "05-PERMISSIONS.yaml"
+    description: "Permission definitions"
+    
+  - file: "06-WORKFLOWS.yaml"
+    description: "Workflow definitions"
+    
+  - file: "07-EVENTS.yaml"
+    description: "Domain events specification"
+    
+  - file: "08-FRONTEND-SPEC.yaml"
+    description: "Angular component specifications"
+    
+  - file: "09-DOCKER-COMPOSE.yaml"
+    description: "Container configuration"
+    
+  - file: "10-KUBERNETES.yaml"
+    description: "K8s deployment specs"

@@ -1,0 +1,81 @@
+@page
+@model Grc.Web.Pages.BackgroundJobs.IndexModel
+@inject IHtmlLocalizer<Grc.Localization.GrcResource> L
+@{
+    ViewBag.Title = L["Menu:BackgroundJobs"];
+}
+
+<abp-card>
+    <abp-card-header>
+        <h2><i class="fas fa-cog"></i> @L["Menu:BackgroundJobs"]</h2>
+    </abp-card-header>
+    <abp-card-body>
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body text-center">
+                        <h3>@Model.CompletedJobs</h3>
+                        <small>Completed</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body text-center">
+                        <h3>@Model.RunningJobs</h3>
+                        <small>Running</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body text-center">
+                        <h3>@Model.QueuedJobs</h3>
+                        <small>Queued</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-danger text-white">
+                    <div class="card-body text-center">
+                        <h3>@Model.FailedJobs</h3>
+                        <small>Failed</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h4>Recent Jobs</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Job Name</th>
+                    <th>Status</th>
+                    <th>Started</th>
+                    <th>Duration</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Data Synchronization</td>
+                    <td><span class="badge bg-success">Completed</span></td>
+                    <td>2025-12-22 19:00</td>
+                    <td>2.5s</td>
+                </tr>
+                <tr>
+                    <td>Email Notifications</td>
+                    <td><span class="badge bg-success">Completed</span></td>
+                    <td>2025-12-22 18:30</td>
+                    <td>1.2s</td>
+                </tr>
+                <tr>
+                    <td>Report Generation</td>
+                    <td><span class="badge bg-warning">Running</span></td>
+                    <td>2025-12-22 19:15</td>
+                    <td>-</td>
+                </tr>
+            </tbody>
+        </table>
+    </abp-card-body>
+</abp-card>
+

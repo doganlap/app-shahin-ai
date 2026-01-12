@@ -1,0 +1,71 @@
+@page
+@{
+    ViewData["Title"] = "Upload Evidence";
+}
+
+<div class="container-fluid">
+    <h3 class="mb-3">Upload Evidence</h3>
+
+    <div class="card">
+        <div class="card-body">
+            <form id="EvidenceUploadForm" enctype="multipart/form-data">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">File</label>
+                        <input type="file" class="form-control" id="File" required />
+                        <div class="form-text">POST /api/app/evidence/upload</div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Evidence Type</label>
+                        <select class="form-select" id="EvidenceType">
+                            <option value="Policy" selected>Policy</option>
+                            <option value="Procedure">Procedure</option>
+                            <option value="Screenshot">Screenshot</option>
+                            <option value="Log">Log</option>
+                            <option value="Report">Report</option>
+                            <option value="Certificate">Certificate</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Related To (optional)</label>
+                        <select class="form-select" id="RelatedType">
+                            <option value="">(None)</option>
+                            <option value="Assessment">Assessment</option>
+                            <option value="ControlAssessment">ControlAssessment</option>
+                            <option value="Risk">Risk</option>
+                            <option value="Audit">Audit</option>
+                            <option value="Policy">Policy</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label">Related Id (optional GUID)</label>
+                        <input class="form-control" id="RelatedId" placeholder="e.g., 3fa85f64-5717-4562-b3fc-2c963f66afa6" />
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" id="Description" rows="3"></textarea>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                    <a class="btn btn-outline-secondary" href="/Evidence">Back</a>
+                </div>
+
+                <div class="alert alert-warning mt-3 mb-0">
+                    If your upload endpoint expects different form keys, adjust them in <strong>Upload.js</strong>.
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="/Pages/Evidence/Upload.js"></script>
+}

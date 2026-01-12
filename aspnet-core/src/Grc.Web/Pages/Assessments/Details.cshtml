@@ -1,0 +1,68 @@
+@page "{id?}"
+@{
+    ViewData["Title"] = "Assessment Details";
+    var id = (string?)RouteData.Values["id"] ?? "";
+}
+
+<div class="container-fluid">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h3 class="mb-0">Assessment Details</h3>
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-secondary" href="/Assessments">Back</a>
+            <a class="btn btn-primary" id="EditBtn" href="/Assessments/Edit/@id">Edit</a>
+        </div>
+    </div>
+
+    <input type="hidden" id="Id" value="@id" />
+
+    <div class="row">
+        <div class="col-lg-6 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="mb-2"><strong>Name:</strong> <span data-field="name">-</span></div>
+                    <div class="mb-2"><strong>Type:</strong> <span data-field="type">-</span></div>
+                    <div class="mb-2"><strong>Status:</strong> <span data-field="status">-</span></div>
+                    <div class="mb-2"><strong>Start Date:</strong> <span data-field="startDate">-</span></div>
+                    <div class="mb-2"><strong>Target End Date:</strong> <span data-field="targetEndDate">-</span></div>
+
+                    <div class="d-flex gap-2 mt-3">
+                        <button class="btn btn-outline-primary" id="StartBtn">Start</button>
+                        <button class="btn btn-outline-success" id="CompleteBtn">Complete</button>
+                    </div>
+
+                    <div class="alert alert-info mt-3 mb-0">
+                        Actions: POST /api/app/assessment/{id}/start and /complete
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="mb-3">Controls</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-striped" id="ControlsTable">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Control</th>
+                                    <th>Status</th>
+                                    <th>Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="4">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="form-text">Source: GET /api/app/assessment/{id}/controls</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="/Pages/Assessments/Details.js"></script>
+}

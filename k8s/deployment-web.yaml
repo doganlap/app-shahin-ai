@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grc-web
+  namespace: grc-platform
+  labels:
+    app: grc-web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: grc-web
+  template:
+    metadata:
+      labels:
+        app: grc-web
+    spec:
+      containers:
+      - name: grc-web
+        image: grc-platform/web:latest
+        ports:
+        - containerPort: 80
+          name: http
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 5
+

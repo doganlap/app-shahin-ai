@@ -1,0 +1,638 @@
+@page
+@using Microsoft.Extensions.Localization
+@using Grc.Localization
+@using Volo.Abp.Users
+@model Grc.Web.Pages.IndexModel
+@inject IStringLocalizer<GrcResource> L
+@inject ICurrentUser CurrentUser
+@{
+    Layout = null;
+    var isRtl = System.Globalization.CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft;
+    var lang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+}
+
+<!DOCTYPE html>
+<html lang="@lang" dir="@(isRtl ? "rtl" : "ltr")">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Saudi GRC - Governance, Risk & Compliance Platform</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #1a56db;
+            --secondary-color: #0e7490;
+            --accent-color: #f59e0b;
+            --success-color: #059669;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --saudi-green: #165a3a;
+        }
+
+        body {
+            font-family: @(isRtl ? "'Cairo', sans-serif" : "'Inter', sans-serif");
+            line-height: 1.6;
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        /* Fixed Top Navigation Bar */
+        .top-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            padding: 1rem 2rem;
+        }
+
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .navbar-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .login-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background: #1e40af;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(26, 86, 219, 0.4);
+        }
+
+        .login-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 80px; /* Account for fixed navbar */
+        }
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            padding: 2rem 0;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') bottom center / cover no-repeat;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 3vw, 1.5rem);
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 2.5rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInUp 1s ease-out 0.2s backwards;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.4s backwards;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-3px);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 6rem 2rem;
+            background: var(--bg-light);
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 4rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            border-radius: 20px;
+            background: var(--gradient-1);
+            color: white;
+        }
+
+        .feature-card:nth-child(2) .feature-icon {
+            background: var(--gradient-2);
+        }
+
+        .feature-card:nth-child(3) .feature-icon {
+            background: var(--gradient-3);
+        }
+
+        .feature-card:nth-child(4) .feature-icon {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .feature-card:nth-child(5) .feature-icon {
+            background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+        }
+
+        .feature-card:nth-child(6) .feature-icon {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .feature-card p {
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 6rem 2rem;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+        }
+
+        .stats-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            text-align: center;
+        }
+
+        .stat-item h2 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-item p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 6rem 2rem;
+            background: var(--text-dark);
+            color: white;
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-section p {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 3rem 2rem;
+            background: #0f172a;
+            color: rgba(255,255,255,0.7);
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* Animations */
+        @@keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @@media (max-width: 768px) {
+            .cta-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+        }
+
+        /* RTL Support */
+        [dir="rtl"] .hero h1,
+        [dir="rtl"] .hero p {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Fixed Navigation Bar -->
+    <nav class="top-navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-brand">
+                <i class="fas fa-shield-alt" style="margin-inline-end: 0.5rem;"></i>
+                @(isRtl ? "منصة الحوكمة السعودية" : "Saudi GRC Platform")
+            </a>
+            <div class="navbar-actions">
+                @if (CurrentUser.IsAuthenticated)
+                {
+                    <a href="/Dashboard" class="login-btn">
+                        <i class="fas fa-tachometer-alt login-icon"></i>
+                        <span>@(isRtl ? "لوحة التحكم" : "Dashboard")</span>
+                    </a>
+                }
+                else
+                {
+                    <a href="/Account/Login" class="login-btn">
+                        <i class="fas fa-sign-in-alt login-icon"></i>
+                        <span>@(isRtl ? "تسجيل الدخول" : "Login")</span>
+                    </a>
+                }
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            @if (isRtl)
+            {
+                <h1>منصة الحوكمة والمخاطر والامتثال</h1>
+                <p>حل متكامل لإدارة الحوكمة والمخاطر والامتثال التنظيمي للمملكة العربية السعودية</p>
+            }
+            else
+            {
+                <h1>Saudi GRC Platform</h1>
+                <p>Comprehensive Governance, Risk & Compliance Management Solution</p>
+            }
+
+            <div class="cta-buttons">
+                @if (CurrentUser.IsAuthenticated)
+                {
+                    <a href="/Dashboard" class="btn btn-primary">
+                        <i class="fas fa-chart-line"></i>
+                        @(isRtl ? "لوحة التحكم" : "Go to Dashboard")
+                    </a>
+                    <a href="/FrameworkLibrary" class="btn btn-secondary">
+                        <i class="fas fa-book"></i>
+                        @(isRtl ? "مكتبة الأطر" : "Framework Library")
+                    </a>
+                }
+                else
+                {
+                    <a href="/Account/Login" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i>
+                        @(isRtl ? "تسجيل الدخول" : "Login")
+                    </a>
+                    <a href="/Account/Register" class="btn btn-secondary">
+                        <i class="fas fa-user-plus"></i>
+                        @(isRtl ? "إنشاء حساب" : "Sign Up")
+                    </a>
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="features-container">
+            <h2 class="section-title">
+                @(isRtl ? "مميزات المنصة" : "Platform Features")
+            </h2>
+            <p class="section-subtitle">
+                @(isRtl ? "حلول شاملة لإدارة الحوكمة والمخاطر والامتثال" : "Comprehensive solutions for your GRC needs")
+            </p>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>@(isRtl ? "الامتثال التنظيمي" : "Regulatory Compliance")</h3>
+                    <p>@(isRtl ? "تتبع وإدارة متطلبات الامتثال للأنظمة السعودية" : "Track and manage Saudi regulatory compliance requirements")</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3>@(isRtl ? "إدارة المخاطر" : "Risk Management")</h3>
+                    <p>@(isRtl ? "تقييم ومعالجة المخاطر بشكل استباقي" : "Identify, assess and treat risks proactively")</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>@(isRtl ? "إدارة الأدلة" : "Evidence Management")</h3>
+                    <p>@(isRtl ? "تخزين وتنظيم المستندات والأدلة الداعمة" : "Store and organize supporting documents and evidence")</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <h3>@(isRtl ? "التقييمات" : "Assessments")</h3>
+                    <p>@(isRtl ? "إجراء تقييمات شاملة للضوابط الأمنية" : "Conduct comprehensive control assessments")</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3>@(isRtl ? "التقارير والتحليلات" : "Reports & Analytics")</h3>
+                    <p>@(isRtl ? "لوحات معلومات تفاعلية وتقارير مفصلة" : "Interactive dashboards and detailed reports")</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>@(isRtl ? "الذكاء الاصطناعي" : "AI-Powered")</h3>
+                    <p>@(isRtl ? "تحليل ذكي ومساعد AI للمساعدة في اتخاذ القرارات" : "Smart analysis and AI assistant for decision making")</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="stats-container">
+            <div class="stat-item">
+                <h2>500+</h2>
+                <p>@(isRtl ? "متطلبات تنظيمية" : "Regulatory Requirements")</p>
+            </div>
+            <div class="stat-item">
+                <h2>50+</h2>
+                <p>@(isRtl ? "إطار عمل" : "Frameworks")</p>
+            </div>
+            <div class="stat-item">
+                <h2>24/7</h2>
+                <p>@(isRtl ? "المراقبة" : "Monitoring")</p>
+            </div>
+            <div class="stat-item">
+                <h2>99.9%</h2>
+                <p>@(isRtl ? "وقت التشغيل" : "Uptime")</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <h2>@(isRtl ? "ابدأ رحلتك نحو الامتثال الكامل" : "Start Your Compliance Journey Today")</h2>
+        <p>@(isRtl ? "انضم إلى المؤسسات الرائدة في المملكة" : "Join leading organizations in Saudi Arabia")</p>
+        <div class="cta-buttons">
+            @if (!CurrentUser.IsAuthenticated)
+            {
+                <a href="/Account/Register" class="btn btn-primary">
+                    <i class="fas fa-rocket"></i>
+                    @(isRtl ? "ابدأ الآن" : "Get Started Now")
+                </a>
+                <a href="/Account/Login" class="btn btn-secondary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    @(isRtl ? "تسجيل الدخول" : "Login")
+                </a>
+            }
+            else
+            {
+                <a href="/Dashboard" class="btn btn-primary">
+                    <i class="fas fa-chart-line"></i>
+                    @(isRtl ? "عرض لوحة التحكم" : "View Dashboard")
+                </a>
+            }
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="/About">@(isRtl ? "عن المنصة" : "About")</a>
+                <a href="/Privacy">@(isRtl ? "الخصوصية" : "Privacy")</a>
+                <a href="/Terms">@(isRtl ? "الشروط" : "Terms")</a>
+                <a href="/Contact">@(isRtl ? "اتصل بنا" : "Contact")</a>
+                <a href="/Help">@(isRtl ? "المساعدة" : "Help")</a>
+            </div>
+            <p>&copy; 2025 Saudi GRC Platform. @(isRtl ? "جميع الحقوق محفوظة" : "All rights reserved").</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .stat-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

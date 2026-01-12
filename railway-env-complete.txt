@@ -1,0 +1,88 @@
+# GRC Platform - Complete Railway Environment Variables
+# Copy these to your Railway service environment variables
+# ==============================================================
+
+# ASP.NET Configuration
+# ==============================================================
+ASPNETCORE_ENVIRONMENT=Production
+ASPNETCORE_URLS=http://0.0.0.0:$PORT
+
+# PRIMARY DATABASE - PostgreSQL (Recommended)
+# ==============================================================
+DATABASE_URL=postgresql://postgres:sXJTPaceKDGfCkpejiurbDCWjSBmAHnQ@mainline.proxy.rlwy.net:46662/railway
+ConnectionStrings__Default=Host=mainline.proxy.rlwy.net;Port=46662;Database=railway;Username=postgres;Password=sXJTPaceKDGfCkpejiurbDCWjSBmAHnQ;SSL Mode=Require;Trust Server Certificate=true
+
+# ALTERNATIVE DATABASES (Choose one as primary)
+# ==============================================================
+
+# PostgreSQL (Secondary)
+ConnectionStrings__PostgresSecondary=Host=shortline.proxy.rlwy.net;Port=11220;Database=railway;Username=postgres;Password=CGZRNJUmAgXhBrnbbREVhvSMflfJWQay;SSL Mode=Require;Trust Server Certificate=true
+
+# MySQL (if you prefer MySQL over PostgreSQL)
+# ConnectionStrings__Default=Server=yamabiko.proxy.rlwy.net;Port=57981;Database=railway;User=root;Password=YLOWkrmOEyoOLXYVHcDpPWMhvVHMxwkx;SslMode=Required
+ConnectionStrings__MySQL=Server=yamabiko.proxy.rlwy.net;Port=57981;Database=railway;User=root;Password=YLOWkrmOEyoOLXYVHcDpPWMhvVHMxwkx;SslMode=Required
+
+# MongoDB (NoSQL - optional)
+ConnectionStrings__MongoDB=mongodb://mongo:PoDrVaTRkDBGaQbeaTpjELWkWPIbxvMz@interchange.proxy.rlwy.net:20886
+
+# CACHE - Redis
+# ==============================================================
+REDIS_URL=redis://default:ySTCqQpbNuYVFfJwIIIeqkRgkTvIrslB@caboose.proxy.rlwy.net:26002
+Redis__Configuration=caboose.proxy.rlwy.net:26002,password=ySTCqQpbNuYVFfJwIIIeqkRgkTvIrslB,ssl=true,abortConnect=false
+
+# OBJECT STORAGE - S3 (Railway optimized-bin)
+# ==============================================================
+S3__Endpoint=https://storage.railway.app
+S3__Region=auto
+S3__BucketName=optimized-bin-yvjb9vxnhq1
+S3__AccessKeyId=tid_NjtZXPqCgdJPDgZIwAdsFThHeqPwtBIrRyIetsqjHHCuMnwiCD
+S3__SecretAccessKey=tsec_KnsFqr0JZOsYqQl1LRMMo46kqAbGVcHgR-vADqBcGxAbQzmt44MakhvpYceOi3Z7ggUnC9
+S3__UseVirtualHostStyle=true
+
+# MinIO Configuration (using Railway S3)
+MinIO__Endpoint=storage.railway.app
+MinIO__AccessKey=tid_NjtZXPqCgdJPDgZIwAdsFThHeqPwtBIrRyIetsqjHHCuMnwiCD
+MinIO__SecretKey=tsec_KnsFqr0JZOsYqQl1LRMMo46kqAbGVcHgR-vADqBcGxAbQzmt44MakhvpYceOi3Z7ggUnC9
+MinIO__BucketName=optimized-bin-yvjb9vxnhq1
+MinIO__UseSSL=true
+
+# APP CONFIGURATION
+# ==============================================================
+# Update these after getting your Railway domains
+App__SelfUrl=https://grc-api.up.railway.app
+App__CorsOrigins=https://grc-web.up.railway.app,https://grc-platform.com
+App__RedirectAllowedUrls=https://grc-web.up.railway.app
+
+# SECURITY - JWT
+# ==============================================================
+# Generate a strong random string (at least 32 characters)
+Jwt__SecretKey=CHANGE_THIS_TO_STRONG_RANDOM_SECRET_KEY_AT_LEAST_32_CHARS_LONG
+
+# OPTIONAL - Email Configuration
+# ==============================================================
+Email__DefaultFromAddress=noreply@grc-platform.com
+Email__DefaultFromName=GRC Platform
+# Email__SmtpHost=smtp.sendgrid.net
+# Email__SmtpPort=587
+# Email__SmtpUserName=apikey
+# Email__SmtpPassword=YOUR_SENDGRID_API_KEY
+
+# OPTIONAL - SMS Configuration
+# ==============================================================
+# Sms__Provider=Twilio
+# Sms__AccountSid=YOUR_TWILIO_ACCOUNT_SID
+# Sms__AuthToken=YOUR_TWILIO_AUTH_TOKEN
+# Sms__FromNumber=+1234567890
+
+# ==============================================================
+# NOTES:
+# ==============================================================
+# 
+# 1. Copy all required variables to Railway service environment
+# 2. Choose ONE database as primary (PostgreSQL recommended)
+# 3. Update App__SelfUrl and App__CorsOrigins after deployment
+# 4. Generate strong JWT secret key
+# 5. DO NOT commit this file to Git
+# 
+# ==============================================================
+

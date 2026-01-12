@@ -1,0 +1,17 @@
+@page
+@using Microsoft.Extensions.Localization
+@using Grc.Localization
+@model Grc.Web.Pages.Calendar.IndexModel
+@inject IStringLocalizer<GrcResource> L
+
+<abp-card>
+    <abp-card-header>
+        <h2><i class="fas fa-calendar-alt text-warning"></i> @L["Menu:ComplianceCalendar"]</h2>
+    </abp-card-header>
+    <abp-card-body>
+        <div id="calendar" style="min-height: 600px;">
+            <p class="text-center text-muted">@L["Calendar:LoadingMessage"]</p>
+        </div>
+    </abp-card-body>
+</abp-card>
+

@@ -1,0 +1,57 @@
+@page
+@using Microsoft.Extensions.Localization
+@using Grc.Localization
+@model Grc.Web.Pages.Risks.IndexModel
+@inject IStringLocalizer<GrcResource> L
+@section styles {
+    <abp-style-bundle>
+        <abp-style src="/Pages/Risks/Index.css" />
+    </abp-style-bundle>
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_8">
+                <h2><i class="fas fa-exclamation-triangle text-warning"></i> @L["Menu:RiskManagement"]</h2>
+                <p class="text-muted">@L["RiskManagement:Description"]</p>
+            </abp-column>
+            <abp-column size-md="_4" class="text-end">
+                <abp-button button-type="Primary" icon="fas fa-plus" id="CreateRiskButton" text="@L["CreateRisk"]" />
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <!-- Risk Matrix -->
+        <abp-row class="mb-4">
+            <abp-column>
+                <h4><i class="fas fa-th me-2"></i>@L["RiskMatrix"]</h4>
+                <div id="RiskMatrix" class="risk-matrix"></div>
+            </abp-column>
+        </abp-row>
+
+        <!-- Risks Table -->
+        <abp-table striped-rows="true" id="RisksTable" class="nowrap">
+            <thead>
+                <tr>
+                    <th>@L["RiskCode"]</th>
+                    <th>@L["Title"]</th>
+                    <th>@L["Category"]</th>
+                    <th>@L["Likelihood"]</th>
+                    <th>@L["Impact"]</th>
+                    <th>@L["RiskLevel"]</th>
+                    <th>@L["Treatment"]</th>
+                    <th>@L["Owner"]</th>
+                    <th>@L["Actions"]</th>
+                </tr>
+            </thead>
+        </abp-table>
+    </abp-card-body>
+</abp-card>
+
+@section scripts {
+    <abp-script-bundle>
+        <abp-script src="/Pages/Risks/Index.js" />
+    </abp-script-bundle>
+}
+

@@ -1,0 +1,280 @@
+@page
+@using Microsoft.Extensions.Localization
+@using Grc.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Badge
+@model Grc.Web.Pages.Assessments.IndexModel
+@inject IStringLocalizer<GrcResource> L
+
+@section styles {
+    <abp-style-bundle name="@typeof(IndexModel).FullName">
+        <abp-style src="/Pages/Assessments/Index.css" />
+    </abp-style-bundle>
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column>
+                <h2>
+                    <i class="fas fa-tasks text-primary me-2"></i>
+                    @L["Menu:Assessments"]
+                </h2>
+                <p class="text-muted">@L["Assessments:Description"]</p>
+            </abp-column>
+            <abp-column size-md="Auto" class="text-end">
+                <abp-button id="NewAssessmentButton"
+                           button-type="Primary"
+                           icon="fas fa-plus"
+                           text="@L["NewAssessment"]" />
+                <abp-button id="ExportButton"
+                           button-type="Secondary"
+                           icon="fas fa-download"
+                           text="@L["Export"]" />
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <!-- Advanced Filters -->
+        <abp-row class="mb-3">
+            <abp-column size-md="_3" size="_12">
+                <div class="mb-3">
+                    <label class="form-label">@L["Status"]</label>
+                    <select class="form-select" id="StatusFilter">
+                        <option value="">@L["All"]</option>
+                        <option value="NotStarted">@L["NotStarted"]</option>
+                        <option value="InProgress">@L["InProgress"]</option>
+                        <option value="Completed">@L["Completed"]</option>
+                    </select>
+                </div>
+            </abp-column>
+            <abp-column size-md="_3" size="_12">
+                <div class="mb-3">
+                    <label class="form-label">@L["Framework"]</label>
+                    <select class="form-select" id="FrameworkFilter">
+                        <option value="">@L["All"]</option>
+                        <option value="NCA-ECC">NCA-ECC</option>
+                        <option value="SAMA-CSF">SAMA-CSF</option>
+                        <option value="PDPL">PDPL</option>
+                        <option value="ISO27001">ISO 27001</option>
+                        <option value="NIST-CSF">NIST CSF</option>
+                    </select>
+                </div>
+            </abp-column>
+            <abp-column size-md="_3" size="_12">
+                <div class="mb-3">
+                    <label class="form-label">@L["DateRange"]</label>
+                    <input type="date" class="form-control" id="DateFromFilter" />
+                </div>
+            </abp-column>
+            <abp-column size-md="_3" size="_12" class="text-end">
+                <label class="form-label">&nbsp;</label>
+                <div>
+                    <abp-button id="SearchButton"
+                               button-type="Primary"
+                               icon="fas fa-search"
+                               text="@L["Search"]" />
+                    <abp-button id="ResetButton"
+                               button-type="Secondary"
+                               icon="fas fa-redo"
+                               text="@L["Reset"]" />
+                </div>
+            </abp-column>
+        </abp-row>
+
+        <!-- Assessment DataTable -->
+        <abp-table striped-rows="true" hoverable-rows="true" responsive-sm="true" id="AssessmentsTable">
+            <thead>
+                <tr>
+                    <th>
+                        <input type="checkbox" id="SelectAll" />
+                    </th>
+                    <th>@L["Name"]</th>
+                    <th>@L["Framework"]</th>
+                    <th>@L["Type"]</th>
+                    <th>@L["Status"]</th>
+                    <th style="min-width: 120px;">@L["Progress"]</th>
+                    <th>@L["Owner"]</th>
+                    <th>@L["StartDate"]</th>
+                    <th>@L["TargetEndDate"]</th>
+                    <th>@L["Score"]</th>
+                    <th style="width: 150px;">@L["Actions"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var assessment in Model.Assessments)
+                {
+                    <tr data-id="@assessment.Id">
+                        <td>
+                            <input type="checkbox" class="assessment-checkbox" value="@assessment.Id" />
+                        </td>
+                        <td>
+                            <strong>@assessment.Name</strong>
+                            <br />
+                            <small class="text-muted">@assessment.Description</small>
+                        </td>
+                        <td>
+                            <abp-badge badge-type="Info">@assessment.FrameworkName</abp-badge>
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary">@assessment.Type</span>
+                        </td>
+                        <td>
+                            <abp-badge badge-type="@GetStatusBadgeType(assessment.Status)">
+                                @L[assessment.Status]
+                            </abp-badge>
+                        </td>
+                        <td>
+                            <div class="progress" style="height: 25px;">
+                                <div class="progress-bar @GetProgressBarClass(assessment.Progress)" 
+                                     role="progressbar" 
+                                     style="width: @assessment.Progress%"
+                                     aria-valuenow="@assessment.Progress" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                    @assessment.Progress%
+                                </div>
+                            </div>
+                            <small class="text-muted">@assessment.CompletedControls / @assessment.TotalControls</small>
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(assessment.OwnerName))
+                            {
+                                <i class="fas fa-user me-1"></i>@assessment.OwnerName
+                            }
+                            else
+                            {
+                                <span class="text-muted">@L["NotAssigned"]</span>
+                            }
+                        </td>
+                        <td>
+                            <i class="fas fa-calendar me-1"></i>
+                            @assessment.StartDate?.ToString("MMM dd, yyyy")
+                        </td>
+                        <td>
+                            <i class="fas fa-calendar-check me-1"></i>
+                            @assessment.EndDate?.ToString("MMM dd, yyyy")
+                        </td>
+                        <td>
+                            @if (assessment.Score > 0)
+                            {
+                                <span class="badge @GetScoreBadgeClass(assessment.Score)">
+                                    @assessment.Score.ToString("F1")%
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td>
+                            <abp-dropdown>
+                                <abp-dropdown-button button-type="Primary" size="Small" text="@L["Actions"]" icon="fas fa-ellipsis-v" />
+                                <abp-dropdown-menu>
+                                    <abp-dropdown-item href="/Assessments/Detail/@assessment.Id">
+                                        <i class="fas fa-eye me-2 text-info"></i>@L["View"]
+                                    </abp-dropdown-item>
+                                    <abp-dropdown-item href="/Assessments/Edit/@assessment.Id">
+                                        <i class="fas fa-edit me-2 text-primary"></i>@L["Edit"]
+                                    </abp-dropdown-item>
+                                    <abp-dropdown-item href="#" class="start-assessment" data-id="@assessment.Id">
+                                        <i class="fas fa-play me-2 text-success"></i>@L["Start"]
+                                    </abp-dropdown-item>
+                                    <abp-dropdown-item href="#" class="generate-report" data-id="@assessment.Id">
+                                        <i class="fas fa-file-pdf me-2 text-warning"></i>@L["GenerateReport"]
+                                    </abp-dropdown-item>
+                                    <abp-dropdown-divider />
+                                    <abp-dropdown-item href="#" class="delete-assessment" data-id="@assessment.Id">
+                                        <i class="fas fa-trash me-2 text-danger"></i>@L["Delete"]
+                                    </abp-dropdown-item>
+                                </abp-dropdown-menu>
+                            </abp-dropdown>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </abp-table>
+
+        <!-- Bulk Actions -->
+        @if (Model.Assessments.Any())
+        {
+            <abp-row class="mt-3">
+                <abp-column>
+                    <div id="BulkActionsPanel" style="display: none;">
+                        <abp-alert alert-type="Info" dismissible="false">
+                            <strong><span id="SelectedCount">0</span> @L["ItemsSelected"]</strong>
+                            <abp-button-group class="ms-3">
+                                <abp-button id="BulkDeleteButton" button-type="Danger" size="Small" text="@L["DeleteSelected"]" icon="fas fa-trash" />
+                                <abp-button id="BulkExportButton" button-type="Secondary" size="Small" text="@L["ExportSelected"]" icon="fas fa-download" />
+                            </abp-button-group>
+                        </abp-alert>
+                    </div>
+                </abp-column>
+            </abp-row>
+
+            <!-- Pagination -->
+            <abp-row class="mt-3">
+                <abp-column class="text-end">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted">@L["Showing"] @Model.Assessments.Count @L["of"] @Model.TotalCount @L["Items"]</small>
+                        </div>
+                        <nav>
+                            <ul class="pagination mb-0">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#"><i class="fas fa-angle-left"></i></a>
+                                </li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#"><i class="fas fa-angle-right"></i></a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </abp-column>
+            </abp-row>
+        }
+    </abp-card-body>
+</abp-card>
+
+@section scripts {
+    <abp-script-bundle name="@typeof(IndexModel).FullName">
+        <abp-script src="/Pages/Assessments/Index.js" />
+    </abp-script-bundle>
+}
+
+@functions {
+    private string GetStatusBadgeType(string status)
+    {
+        return status switch
+        {
+            "Completed" => "Success",
+            "InProgress" => "Warning",
+            "NotStarted" => "Secondary",
+            _ => "Info"
+        };
+    }
+
+    private string GetProgressBarClass(int progress)
+    {
+        return progress switch
+        {
+            >= 75 => "bg-success",
+            >= 50 => "bg-info",
+            >= 25 => "bg-warning",
+            _ => "bg-danger"
+        };
+    }
+
+    private string GetScoreBadgeClass(decimal score)
+    {
+        return score switch
+        {
+            >= 90 => "bg-success",
+            >= 70 => "bg-info",
+            >= 50 => "bg-warning",
+            _ => "bg-danger"
+        };
+    }
+}

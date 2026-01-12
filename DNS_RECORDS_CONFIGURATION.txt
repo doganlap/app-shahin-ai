@@ -1,0 +1,102 @@
+═══════════════════════════════════════════════════════════════════
+                  DNS CONFIGURATION - QUICK COPY
+═══════════════════════════════════════════════════════════════════
+
+SERVER IP ADDRESSES:
+═══════════════════════════════════════════════════════════════════
+IPv4: 37.27.139.173
+IPv6: 2a01:4f9:3100:1391::2
+
+
+CLOUDFLARE DNS RECORDS (Copy & Paste):
+═══════════════════════════════════════════════════════════════════
+
+A RECORD 1:
+────────────────────────────────────────────────────────────────────
+Type:     A
+Name:     grc
+Content:  37.27.139.173
+TTL:      Auto
+Proxy:    OFF (Grey Cloud - DNS Only)
+
+
+A RECORD 2:
+────────────────────────────────────────────────────────────────────
+Type:     A
+Name:     api-grc
+Content:  37.27.139.173
+TTL:      Auto
+Proxy:    OFF (Grey Cloud - DNS Only)
+
+
+AAAA RECORD 1 (Optional):
+────────────────────────────────────────────────────────────────────
+Type:     AAAA
+Name:     grc
+Content:  2a01:4f9:3100:1391::2
+TTL:      Auto
+Proxy:    OFF (Grey Cloud - DNS Only)
+
+
+AAAA RECORD 2 (Optional):
+────────────────────────────────────────────────────────────────────
+Type:     AAAA
+Name:     api-grc
+Content:  2a01:4f9:3100:1391::2
+TTL:      Auto
+Proxy:    OFF (Grey Cloud - DNS Only)
+
+
+ALTERNATIVE: CNAME CONFIGURATION (If preferred):
+═══════════════════════════════════════════════════════════════════
+
+PRIMARY A RECORD:
+────────────────────────────────────────────────────────────────────
+Type:     A
+Name:     server
+Content:  37.27.139.173
+TTL:      Auto
+Proxy:    OFF
+
+CNAME RECORD 1:
+────────────────────────────────────────────────────────────────────
+Type:     CNAME
+Name:     grc
+Content:  server.shahin-ai.com
+TTL:      Auto
+Proxy:    OFF
+
+CNAME RECORD 2:
+────────────────────────────────────────────────────────────────────
+Type:     CNAME
+Name:     api-grc
+Content:  server.shahin-ai.com
+TTL:      Auto
+Proxy:    OFF
+
+
+QUICK ACCESS URLS:
+═══════════════════════════════════════════════════════════════════
+Cloudflare Dashboard: https://dash.cloudflare.com
+DNS Propagation Check: https://dnschecker.org
+
+Domain to configure: shahin-ai.com
+
+Final URLs (after DNS update):
+  - Web: http://grc.shahin-ai.com
+  - API: http://api-grc.shahin-ai.com
+  - Swagger: http://api-grc.shahin-ai.com/swagger
+
+
+IMPORTANT REMINDERS:
+═══════════════════════════════════════════════════════════════════
+✓ Proxy MUST be OFF (Grey Cloud, not Orange)
+✓ Delete old records pointing to different IPs
+✓ Wait 5-60 minutes for DNS propagation
+✓ Clear browser cache after DNS update
+✓ Configure SSL after DNS is working
+
+
+═══════════════════════════════════════════════════════════════════
+                     Last Updated: Dec 21, 2024
+═══════════════════════════════════════════════════════════════════

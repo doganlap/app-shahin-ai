@@ -1,0 +1,488 @@
+// Dashboard Container
+.dashboard-container {
+  padding: 2rem;
+  background: #f5f7fa;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  
+  // RTL Support
+  &[dir="rtl"] {
+    text-align: right;
+    
+    .stat-icon {
+      margin-left: 0;
+      margin-right: 1rem;
+    }
+  }
+}
+
+// Header
+.dashboard-header {
+  margin-bottom: 2rem;
+  
+  .dashboard-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    
+    i {
+      color: #3498db;
+      margin-left: 0.5rem;
+    }
+  }
+  
+  .dashboard-subtitle {
+    font-size: 1.1rem;
+    color: #7f8c8d;
+    margin: 0;
+  }
+}
+
+// Loading
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  
+  .spinner-border {
+    width: 3rem;
+    height: 3rem;
+  }
+}
+
+// Statistics Cards
+.stats-cards {
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #3498db, #2980b9);
+  }
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+  
+  &.card-primary::before {
+    background: linear-gradient(90deg, #3498db, #2980b9);
+  }
+  
+  &.card-info::before {
+    background: linear-gradient(90deg, #17a2b8, #117a8b);
+  }
+  
+  &.card-success::before {
+    background: linear-gradient(90deg, #28a745, #20c997);
+  }
+  
+  &.card-danger::before {
+    background: linear-gradient(90deg, #dc3545, #c82333);
+  }
+  
+  .stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    margin-left: 1rem;
+  }
+  
+  &.card-primary .stat-icon {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+  
+  &.card-info .stat-icon {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+    color: white;
+  }
+  
+  &.card-success .stat-icon {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+  }
+  
+  &.card-danger .stat-icon {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+  }
+  
+  .stat-content {
+    flex: 1;
+  }
+  
+  .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    color: #2c3e50;
+  }
+  
+  .stat-label {
+    font-size: 0.95rem;
+    color: #7f8c8d;
+    margin: 0;
+  }
+  
+  .progress-bar-mini {
+    height: 4px;
+    background: #e9ecef;
+    border-radius: 2px;
+    margin-top: 0.5rem;
+    overflow: hidden;
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #28a745, #20c997);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+  }
+}
+
+// Cards
+.card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  .card-header {
+    background: white;
+    border-bottom: 1px solid #e9ecef;
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px 12px 0 0;
+    
+    .card-title {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #2c3e50;
+      
+      i {
+        color: #3498db;
+        margin-left: 0.5rem;
+      }
+    }
+  }
+  
+  .card-body {
+    padding: 1.5rem;
+  }
+}
+
+// Compliance Score Card
+.score-card {
+  .compliance-circle {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+    
+    svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(0deg);
+    }
+    
+    .score-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      
+      h2 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin: 0;
+      }
+      
+      p {
+        margin: 0.5rem 0 0;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.9rem;
+        border-radius: 20px;
+      }
+    }
+  }
+}
+
+// Framework Progress
+.framework-item {
+  margin-bottom: 1.5rem;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  .framework-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    
+    .framework-name {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1rem;
+    }
+    
+    .framework-percentage {
+      font-weight: 700;
+      color: #3498db;
+      font-size: 1.1rem;
+    }
+  }
+  
+  .framework-progress {
+    height: 24px;
+    border-radius: 12px;
+    background: #e9ecef;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+    
+    .progress-bar {
+      transition: width 0.3s ease;
+    }
+  }
+  
+  .framework-legend {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      
+      .legend-color {
+        width: 12px;
+        height: 12px;
+        border-radius: 3px;
+        display: inline-block;
+      }
+    }
+  }
+}
+
+// Table
+.table {
+  margin-bottom: 0;
+  
+  thead {
+    background: #f8f9fa;
+    
+    th {
+      border-bottom: 2px solid #dee2e6;
+      color: #2c3e50;
+      font-weight: 600;
+      padding: 1rem;
+    }
+  }
+  
+  tbody {
+    tr {
+      transition: background-color 0.2s ease;
+      
+      &:hover {
+        background-color: #f8f9fa;
+      }
+      
+      td {
+        padding: 1rem;
+        vertical-align: middle;
+        
+        .badge {
+          padding: 0.4rem 0.8rem;
+          font-weight: 500;
+        }
+        
+        i {
+          margin-left: 0.3rem;
+        }
+        
+        button {
+          padding: 0.3rem 0.7rem;
+          border-radius: 6px;
+          transition: all 0.2s ease;
+          
+          &:hover {
+            transform: scale(1.05);
+          }
+        }
+      }
+    }
+  }
+}
+
+// Deadline List
+.deadline-list {
+  .deadline-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 1rem;
+    border-bottom: 1px solid #e9ecef;
+    transition: background-color 0.2s ease;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    &:hover {
+      background-color: #f8f9fa;
+      border-radius: 8px;
+    }
+    
+    .deadline-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: #f8f9fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 1rem;
+      
+      i {
+        font-size: 1.2rem;
+      }
+    }
+    
+    .deadline-content {
+      flex: 1;
+      
+      .deadline-name {
+        font-weight: 600;
+        color: #2c3e50;
+        margin: 0 0 0.25rem;
+        font-size: 0.95rem;
+      }
+      
+      .deadline-date {
+        margin: 0;
+        font-size: 0.85rem;
+        color: #7f8c8d;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        
+        .deadline-remaining {
+          font-weight: 600;
+          padding: 0.2rem 0.5rem;
+          border-radius: 4px;
+          background: #e9ecef;
+        }
+      }
+    }
+  }
+}
+
+// Badges
+.badge {
+  border-radius: 6px;
+  padding: 0.35rem 0.65rem;
+  font-weight: 500;
+  
+  &.badge-success {
+    background-color: #28a745;
+  }
+  
+  &.badge-warning {
+    background-color: #ffc107;
+    color: #212529;
+  }
+  
+  &.badge-danger {
+    background-color: #dc3545;
+  }
+  
+  &.badge-info {
+    background-color: #17a2b8;
+  }
+  
+  &.badge-secondary {
+    background-color: #6c757d;
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 1rem;
+  }
+  
+  .dashboard-header {
+    .dashboard-title {
+      font-size: 1.5rem;
+    }
+    
+    .dashboard-subtitle {
+      font-size: 0.95rem;
+    }
+  }
+  
+  .stat-card {
+    padding: 1rem;
+    
+    .stat-icon {
+      width: 50px;
+      height: 50px;
+      font-size: 1.5rem;
+    }
+    
+    .stat-number {
+      font-size: 1.5rem;
+    }
+  }
+  
+  .framework-legend {
+    font-size: 0.75rem;
+  }
+  
+  .table-responsive {
+    font-size: 0.85rem;
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dashboard-content {
+  animation: fadeIn 0.5s ease;
+}
+

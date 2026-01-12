@@ -1,0 +1,83 @@
+@page
+@model Grc.Web.Pages.SystemHealth.IndexModel
+@inject IHtmlLocalizer<Grc.Localization.GrcResource> L
+@{
+    ViewBag.Title = L["Menu:SystemHealth"];
+    var dbHealthClass = Model.DatabaseStatus == "Healthy" ? "success" : "danger";
+    var apiHealthClass = Model.ApiStatus == "Healthy" ? "success" : "danger";
+    var memHealthClass = Model.MemoryPercentage < 70 ? "success" : Model.MemoryPercentage < 90 ? "warning" : "danger";
+    var cpuHealthClass = Model.CpuPercentage < 70 ? "success" : Model.CpuPercentage < 90 ? "warning" : "danger";
+}
+
+<abp-card>
+    <abp-card-header>
+        <h2><i class="fas fa-heartbeat"></i> @L["Menu:SystemHealth"]</h2>
+    </abp-card-header>
+    <abp-card-body>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card border-@dbHealthClass mb-3">
+                    <div class="card-header bg-@dbHealthClass text-white">
+                        <i class="fas fa-database"></i> Database Status
+                    </div>
+                    <div class="card-body">
+                        <h5 class="text-@dbHealthClass">
+                            <i class="fas fa-@(Model.DatabaseStatus == "Healthy" ? "check-circle" : "times-circle")"></i> 
+                            @Model.DatabaseStatus
+                        </h5>
+                        <small>PostgreSQL 16 - Local</small><br/>
+                        <small>Response Time: @Model.DatabaseResponseTime ms</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card border-@apiHealthClass mb-3">
+                    <div class="card-header bg-@apiHealthClass text-white">
+                        <i class="fas fa-server"></i> API Status
+                    </div>
+                    <div class="card-body">
+                        <h5 class="text-@apiHealthClass">
+                            <i class="fas fa-check-circle"></i> @Model.ApiStatus
+                        </h5>
+                        <small>Running on port 5000</small><br/>
+                        <small>Uptime: @Model.AppUptime</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card border-@memHealthClass mb-3">
+                    <div class="card-header bg-@memHealthClass text-white">
+                        <i class="fas fa-memory"></i> Memory Usage
+                    </div>
+                    <div class="card-body">
+                        <h5 class="text-@memHealthClass">
+                            <i class="fas fa-@(Model.MemoryPercentage < 70 ? "check-circle" : "exclamation-triangle")"></i> 
+                            @(Model.MemoryPercentage < 70 ? "Normal" : Model.MemoryPercentage < 90 ? "High" : "Critical")
+                        </h5>
+                        <div class="progress">
+                            <div class="progress-bar bg-@memHealthClass" role="progressbar" style="width: @Model.MemoryPercentage%" aria-valuenow="@Model.MemoryPercentage" aria-valuemin="0" aria-valuemax="100">@Model.MemoryPercentage%</div>
+                        </div>
+                        <small>@Model.MemoryUsageMB MB / @Model.MemoryTotalMB MB used</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card border-@cpuHealthClass mb-3">
+                    <div class="card-header bg-@cpuHealthClass text-white">
+                        <i class="fas fa-microchip"></i> CPU Usage
+                    </div>
+                    <div class="card-body">
+                        <h5 class="text-@cpuHealthClass">
+                            <i class="fas fa-@(Model.CpuPercentage < 70 ? "check-circle" : "exclamation-triangle")"></i> 
+                            @(Model.CpuPercentage < 70 ? "Normal" : Model.CpuPercentage < 90 ? "High" : "Critical")
+                        </h5>
+                        <div class="progress">
+                            <div class="progress-bar bg-@cpuHealthClass" role="progressbar" style="width: @((int)Model.CpuPercentage)%" aria-valuenow="@((int)Model.CpuPercentage)" aria-valuemin="0" aria-valuemax="100">@Model.CpuPercentage%</div>
+                        </div>
+                        <small>Average load</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </abp-card-body>
+</abp-card>
