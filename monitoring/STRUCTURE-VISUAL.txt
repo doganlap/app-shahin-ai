@@ -1,0 +1,236 @@
+================================================================================
+                    MONITORING INFRASTRUCTURE OVERVIEW
+================================================================================
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                        /home/monitoring/                                  │
+└──────────────────────────────────────────────────────────────────────────┘
+
+📦 DOCKER MONITORING STACK (8 Containers)
+═══════════════════════════════════════════════════════════════════════════
+
+┌─ Netdata ──────────────────────────────────────────┐
+│  📁 /home/monitoring/netdata/                      │
+│  🐳 Container: netdata                             │
+│  🌐 Port: 19999                                    │
+│  📊 Purpose: Real-time monitoring                  │
+│  💾 Volumes: config, lib, cache                    │
+└────────────────────────────────────────────────────┘
+
+┌─ Prometheus Stack ─────────────────────────────────┐
+│  📁 /home/monitoring/prometheus/                   │
+│  🐳 Container: prometheus                          │
+│  🌐 Port: 9090                                     │
+│  📊 Purpose: Metrics database & querying           │
+│  💾 Volumes: prometheus-data                       │
+│                                                     │
+│  🐳 Container: node-exporter                       │
+│  🌐 Port: 9100                                     │
+│  📊 Purpose: System metrics collection             │
+└────────────────────────────────────────────────────┘
+
+┌─ Grafana ──────────────────────────────────────────┐
+│  📁 /home/monitoring/grafana/                      │
+│  🐳 Container: grafana                             │
+│  🌐 Port: 3000                                     │
+│  📊 Purpose: Data visualization                    │
+│  🔐 Login: admin / admin                           │
+│  💾 Volumes: grafana-data                          │
+│  🔗 Connected to: Prometheus                       │
+└────────────────────────────────────────────────────┘
+
+┌─ Zabbix Stack ─────────────────────────────────────┐
+│  📁 /home/monitoring/zabbix/                       │
+│                                                     │
+│  🐳 Container: zabbix-web                          │
+│  🌐 Port: 8080                                     │
+│  🔐 Login: Admin / zabbix                          │
+│                                                     │
+│  🐳 Container: zabbix-server                       │
+│  🌐 Port: 10051                                    │
+│                                                     │
+│  🐳 Container: zabbix-agent                        │
+│  🌐 Port: 10050                                    │
+│                                                     │
+│  🐳 Container: zabbix-mysql                        │
+│  🌐 Port: 3306                                     │
+│  💾 Database: zabbix                               │
+└────────────────────────────────────────────────────┘
+
+================================================================================
+
+🎯 CUSTOM .NET APPLICATION
+═══════════════════════════════════════════════════════════════════════════
+
+📁 /home/monitoring/noc-hub/
+│
+├── 📄 Configuration
+│   ├── NocHub.csproj (.NET 8.0)
+│   ├── Program.cs
+│   ├── appsettings.json
+│   └── appsettings.Development.json
+│
+├── 🎮 Controllers
+│   └── MonitoringController.cs
+│
+├── ⚙️  Services
+│   └── MonitoringService.cs
+│
+├── 📄 Pages (Razor)
+│   ├── Index.cshtml (Home)
+│   ├── Dashboard.cshtml (Monitoring)
+│   ├── Privacy.cshtml
+│   ├── Error.cshtml
+│   └── Shared/
+│       ├── _Layout.cshtml
+│       └── _ValidationScriptsPartial.cshtml
+│
+├── 🌐 wwwroot (Static Assets)
+│   ├── css/site.css
+│   ├── js/site.js
+│   ├── favicon.ico
+│   └── lib/
+│       ├── bootstrap/
+│       ├── jquery/
+│       ├── jquery-validation/
+│       └── jquery-validation-unobtrusive/
+│
+├── 📦 bin/Debug/net8.0/ (Build Output)
+└── 🔧 obj/ (Build Artifacts)
+
+Status: ⚠️ NOT RUNNING (needs: dotnet build && dotnet run)
+
+================================================================================
+
+📚 DOCUMENTATION
+═══════════════════════════════════════════════════════════════════════════
+
+📖 README.md                 → Full guide with setup & troubleshooting
+📖 QUICK-START.md           → Quick access & one-liners
+📖 INSTALLATION-SUMMARY.md  → Installation log
+📖 COMPLETE-STRUCTURE.md    → Detailed structure reference
+📖 STRUCTURE-VISUAL.txt     → This file (ASCII visual)
+
+================================================================================
+
+🛠️  MANAGEMENT
+═══════════════════════════════════════════════════════════════════════════
+
+Script: /home/monitoring/manage-monitoring.sh
+
+Commands:
+  ./manage-monitoring.sh start     → Start all Docker services
+  ./manage-monitoring.sh stop      → Stop all Docker services
+  ./manage-monitoring.sh restart   → Restart all services
+  ./manage-monitoring.sh status    → Show container status
+  ./manage-monitoring.sh urls      → Display access URLs
+  ./manage-monitoring.sh logs      → View service logs
+  ./manage-monitoring.sh stats     → Show resource usage
+
+================================================================================
+
+🌐 ACCESS URLS
+═══════════════════════════════════════════════════════════════════════════
+
+Service          URL                            Credentials
+─────────────────────────────────────────────────────────────────────────────
+Netdata          http://localhost:19999         (None)
+Prometheus       http://localhost:9090          (None)
+Node Exporter    http://localhost:9100/metrics  (None)
+Grafana          http://localhost:3000          admin / admin
+Zabbix           http://localhost:8080          Admin / zabbix
+
+================================================================================
+
+🔌 PORT MAPPING
+═══════════════════════════════════════════════════════════════════════════
+
+Port   Service              Purpose
+─────────────────────────────────────────────────────────────────────────────
+19999  Netdata             → Web Interface
+9090   Prometheus          → Web Interface & API
+9100   Node Exporter       → Metrics Endpoint
+3000   Grafana             → Web Interface
+8080   Zabbix Web          → Web Interface
+10051  Zabbix Server       → Monitoring Server
+10050  Zabbix Agent        → Agent Communication
+3306   MySQL (Zabbix)      → Database
+
+================================================================================
+
+💾 DATA STORAGE
+═══════════════════════════════════════════════════════════════════════════
+
+Docker Volumes (Persistent):
+  netdata_netdataconfig       → Netdata configuration
+  netdata_netdatalib          → Netdata library data
+  netdata_netdatacache        → Netdata cache
+  prometheus_prometheus-data  → Time-series metrics
+  grafana_grafana-data        → Dashboards & settings
+  zabbix_mysql-data          → Zabbix database
+  zabbix_zabbix-server-data  → Zabbix server data
+
+Docker Networks:
+  netdata_default            → Netdata isolated network
+  prometheus_monitoring      → Prometheus + Grafana network
+  zabbix_zabbix-network     → Zabbix full stack network
+
+================================================================================
+
+📊 DATA FLOW
+═══════════════════════════════════════════════════════════════════════════
+
+          System Metrics (CPU, RAM, Disk, Network)
+                           │
+          ┌────────────────┼────────────────┐
+          │                │                │
+          ▼                ▼                ▼
+    ┌─────────┐      ┌─────────┐     ┌─────────┐
+    │ Netdata │      │  Node   │     │ Zabbix  │
+    │         │      │Exporter │     │  Agent  │
+    └────┬────┘      └────┬────┘     └────┬────┘
+         │                │                │
+         │                ▼                ▼
+         │          ┌──────────┐     ┌──────────┐
+         │          │Prometheus│     │  Zabbix  │
+         │          │          │     │  Server  │
+         │          └────┬─────┘     └────┬─────┘
+         │               │                │
+         │               ▼                ▼
+         │          ┌─────────┐     ┌──────────┐
+         │          │ Grafana │     │  Zabbix  │
+         │          │         │     │   Web    │
+         │          └─────────┘     └──────────┘
+         │               │                │
+         └───────────────┼────────────────┘
+                         ▼
+                    👁️  User Dashboard
+
+================================================================================
+
+🎯 RECOMMENDED WORKFLOW
+═══════════════════════════════════════════════════════════════════════════
+
+1. Quick Check      → Netdata (http://localhost:19999)
+                     ↳ Real-time, instant insights
+
+2. Custom Dashboards → Grafana (http://localhost:3000)
+                      ↳ Beautiful visualizations
+                      ↳ Import dashboard ID: 1860
+
+3. Query Metrics    → Prometheus (http://localhost:9090)
+                     ↳ PromQL queries
+                     ↳ API access
+
+4. Enterprise Setup → Zabbix (http://localhost:8080)
+                     ↳ Advanced alerting
+                     ↳ Templates & automation
+
+5. Custom Dev       → NOC Hub (build & run)
+                     ↳ Your custom monitoring app
+
+================================================================================
+
+Generated: 2026-01-11
+Location: /home/monitoring/
+Server: shahin-ai (Ubuntu 24.04.3 LTS)

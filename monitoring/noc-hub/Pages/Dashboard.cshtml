@@ -1,0 +1,540 @@
+@page "/dashboard"
+@model DashboardModel
+@{
+    ViewData["Title"] = "NOC Hub Dashboard - Professional Monitoring";
+}
+
+<div class="noc-container">
+    <!-- Header -->
+    <header class="noc-header">
+        <div class="header-content">
+            <h1 class="noc-title">🖥️ Network Operations Center</h1>
+            <p class="noc-subtitle">Professional Monitoring Dashboard</p>
+        </div>
+        <div class="header-info">
+            <div class="header-server">Server: <span id="server-name">@Model.ServerName</span></div>
+            <div class="header-time">
+                <span class="time-label">Current Time:</span>
+                <span id="current-time">--:--:--</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Tabs Navigation -->
+    <nav class="tabs-nav">
+        <button class="tab-btn active" data-tab="overview">Overview</button>
+        <button class="tab-btn" data-tab="netdata">Netdata</button>
+        <button class="tab-btn" data-tab="prometheus">Prometheus</button>
+        <button class="tab-btn" data-tab="grafana">Grafana</button>
+        <button class="tab-btn" data-tab="zabbix">Zabbix</button>
+    </nav>
+
+    <!-- Tab Contents -->
+    <div class="tabs-content">
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="overview-grid">
+                <!-- System Metrics -->
+                <div class="metrics-section">
+                    <h2>System Metrics</h2>
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-icon">📊</div>
+                            <div class="metric-content">
+                                <div class="metric-label">CPU Usage</div>
+                                <div class="metric-value" id="cpu-usage">--</div>
+                                <div class="metric-bar">
+                                    <div class="metric-fill" id="cpu-fill"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">💾</div>
+                            <div class="metric-content">
+                                <div class="metric-label">Memory Usage</div>
+                                <div class="metric-value" id="memory-usage">--</div>
+                                <div class="metric-bar">
+                                    <div class="metric-fill" id="memory-fill"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">💿</div>
+                            <div class="metric-content">
+                                <div class="metric-label">Disk Usage</div>
+                                <div class="metric-value" id="disk-usage">--</div>
+                                <div class="metric-bar">
+                                    <div class="metric-fill" id="disk-fill"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">⏱️</div>
+                            <div class="metric-content">
+                                <div class="metric-label">System Uptime</div>
+                                <div class="metric-value" id="uptime">--</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tool Status -->
+                <div class="status-section">
+                    <h2>Monitoring Tools Status</h2>
+                    <div class="status-grid" id="status-grid">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="actions-section">
+                    <h2>Quick Actions</h2>
+                    <div class="actions-grid">
+                        <a href="javascript:switchTab('netdata')" class="action-btn">
+                            <span class="action-icon">📊</span>
+                            <span class="action-text">Open Netdata</span>
+                        </a>
+                        <a href="javascript:switchTab('prometheus')" class="action-btn">
+                            <span class="action-icon">🔥</span>
+                            <span class="action-text">Open Prometheus</span>
+                        </a>
+                        <a href="javascript:switchTab('grafana')" class="action-btn">
+                            <span class="action-icon">📈</span>
+                            <span class="action-text">Open Grafana</span>
+                        </a>
+                        <a href="javascript:switchTab('zabbix')" class="action-btn">
+                            <span class="action-icon">⚡</span>
+                            <span class="action-text">Open Zabbix</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Netdata Tab -->
+        <div id="netdata" class="tab-content">
+            <iframe class="noc-iframe" src="http://localhost:19999" title="Netdata"></iframe>
+        </div>
+
+        <!-- Prometheus Tab -->
+        <div id="prometheus" class="tab-content">
+            <iframe class="noc-iframe" src="http://localhost:9090" title="Prometheus"></iframe>
+        </div>
+
+        <!-- Grafana Tab -->
+        <div id="grafana" class="tab-content">
+            <iframe class="noc-iframe" src="http://localhost:3000" title="Grafana"></iframe>
+        </div>
+
+        <!-- Zabbix Tab -->
+        <div id="zabbix" class="tab-content">
+            <iframe class="noc-iframe" src="http://localhost:8080" title="Zabbix"></iframe>
+        </div>
+    </div>
+</div>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        background-color: #0a0e27;
+        color: #b0b8cc;
+        line-height: 1.6;
+    }
+
+    .noc-container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+    }
+
+    /* Header */
+    .noc-header {
+        background: linear-gradient(90deg, #1a1f3a 0%, #0d4a6a 100%);
+        padding: 30px;
+        border-bottom: 2px solid #00d4ff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 20px rgba(0, 212, 255, 0.1);
+    }
+
+    .header-content h1 {
+        font-size: 28px;
+        color: #00d4ff;
+        margin-bottom: 5px;
+        text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+    }
+
+    .noc-subtitle {
+        color: #b0b8cc;
+        font-size: 14px;
+    }
+
+    .header-time {
+        font-size: 18px;
+        color: #00d4ff;
+        font-weight: bold;
+    }
+
+    /* Tabs */
+    .tabs-nav {
+        display: flex;
+        gap: 10px;
+        padding: 15px 30px;
+        background-color: #0d1117;
+        border-bottom: 1px solid #30363d;
+        overflow-x: auto;
+    }
+
+    .tab-btn {
+        padding: 10px 20px;
+        background-color: transparent;
+        color: #b0b8cc;
+        border: 2px solid transparent;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+        background-color: #1a1f3a;
+        color: #00d4ff;
+    }
+
+    .tab-btn.active {
+        background-color: #00d4ff;
+        color: #0a0e27;
+        border-color: #00d4ff;
+    }
+
+    /* Tab Content */
+    .tabs-content {
+        flex: 1;
+        overflow: hidden;
+        display: flex;
+    }
+
+    .tab-content {
+        display: none;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .tab-content.active {
+        display: flex;
+        flex-direction: column;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    /* Overview Tab */
+    .overview-grid {
+        padding: 30px;
+        overflow-y: auto;
+    }
+
+    .metrics-section, .status-section, .actions-section {
+        margin-bottom: 40px;
+    }
+
+    .metrics-section h2, .status-section h2, .actions-section h2 {
+        font-size: 20px;
+        color: #00d4ff;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #00d4ff;
+        padding-bottom: 10px;
+    }
+
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .metric-card {
+        background-color: #1a1f3a;
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 4px solid #00d4ff;
+        display: flex;
+        gap: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease;
+    }
+
+    .metric-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 20px rgba(0, 212, 255, 0.2);
+    }
+
+    .metric-icon {
+        font-size: 40px;
+    }
+
+    .metric-label {
+        font-size: 12px;
+        color: #808a9d;
+        margin-bottom: 5px;
+    }
+
+    .metric-value {
+        font-size: 24px;
+        color: #00d4ff;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    .metric-bar {
+        height: 6px;
+        background-color: #0d1117;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    .metric-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #00d4ff 0%, #00ff88 100%);
+        border-radius: 3px;
+        transition: width 0.5s ease;
+    }
+
+    /* Status Grid */
+    .status-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    }
+
+    .status-item {
+        background-color: #1a1f3a;
+        padding: 15px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        border-left: 4px solid #30363d;
+    }
+
+    .status-item.healthy {
+        border-left-color: #00ff88;
+    }
+
+    .status-item.unhealthy {
+        border-left-color: #ff0055;
+    }
+
+    .status-icon {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: #30363d;
+    }
+
+    .status-item.healthy .status-icon {
+        background-color: #00ff88;
+        box-shadow: 0 0 10px #00ff88;
+    }
+
+    .status-item.unhealthy .status-icon {
+        background-color: #ff0055;
+        box-shadow: 0 0 10px #ff0055;
+    }
+
+    .status-info {
+        flex: 1;
+    }
+
+    .status-name {
+        font-weight: bold;
+        color: #ffffff;
+        margin-bottom: 3px;
+    }
+
+    .status-description {
+        font-size: 12px;
+        color: #808a9d;
+    }
+
+    /* Actions Grid */
+    .actions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+    }
+
+    .action-btn {
+        background-color: #1a1f3a;
+        padding: 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid #30363d;
+        color: inherit;
+    }
+
+    .action-btn:hover {
+        background-color: #0d4a6a;
+        border-color: #00d4ff;
+        transform: translateY(-3px);
+        box-shadow: 0 4px 15px rgba(0, 212, 255, 0.2);
+    }
+
+    .action-icon {
+        font-size: 32px;
+    }
+
+    .action-text {
+        font-size: 14px;
+        font-weight: 500;
+        color: #b0b8cc;
+    }
+
+    /* iFrame */
+    .noc-iframe {
+        flex: 1;
+        width: 100%;
+        height: 100%;
+        border: none;
+        background-color: #0a0e27;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #0a0e27;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #30363d;
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #00d4ff;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .noc-header {
+            flex-direction: column;
+            gap: 15px;
+            text-align: center;
+        }
+
+        .metrics-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .tabs-nav {
+            overflow-x: scroll;
+        }
+
+        .tab-btn {
+            flex-shrink: 0;
+        }
+    }
+</style>
+
+<script>
+    // Tab Switching
+    function switchTab(tabName) {
+        const tabs = document.querySelectorAll('.tab-content');
+        const buttons = document.querySelectorAll('.tab-btn');
+
+        tabs.forEach(tab => tab.classList.remove('active'));
+        buttons.forEach(btn => btn.classList.remove('active'));
+
+        document.getElementById(tabName).classList.add('active');
+        event.target.closest('.tab-btn') ? event.target.closest('.tab-btn').classList.add('active') : 
+            Array.from(buttons).find(btn => btn.dataset.tab === tabName)?.classList.add('active');
+    }
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            switchTab(btn.dataset.tab);
+            btn.classList.add('active');
+        });
+    });
+
+    // Update current time
+    function updateTime() {
+        const now = new Date();
+        document.getElementById('current-time').textContent = now.toLocaleString();
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+
+    // Load System Metrics
+    async function loadMetrics() {
+        try {
+            const response = await fetch('/api/monitoring/metrics');
+            const metrics = await response.json();
+
+            document.getElementById('cpu-usage').textContent = metrics.cpuUsage.toFixed(1) + '%';
+            document.getElementById('memory-usage').textContent = metrics.memoryUsage.toFixed(1) + '%';
+            document.getElementById('disk-usage').textContent = metrics.diskUsage.toFixed(1) + '%';
+            document.getElementById('uptime').textContent = metrics.systemUptime;
+
+            // Update bars
+            document.getElementById('cpu-fill').style.width = metrics.cpuUsage + '%';
+            document.getElementById('memory-fill').style.width = metrics.memoryUsage + '%';
+            document.getElementById('disk-fill').style.width = metrics.diskUsage + '%';
+        } catch (error) {
+            console.error('Error loading metrics:', error);
+        }
+    }
+
+    // Load Tool Status
+    async function loadToolStatus() {
+        try {
+            const response = await fetch('/api/monitoring/status');
+            const statuses = await response.json();
+
+            const statusGrid = document.getElementById('status-grid');
+            statusGrid.innerHTML = statuses.map(status => `
+                <div class="status-item ${status.isHealthy ? 'healthy' : 'unhealthy'}">
+                    <div class="status-icon"></div>
+                    <div class="status-info">
+                        <div class="status-name">${status.name}</div>
+                        <div class="status-description">${status.isHealthy ? 'Online' : 'Offline'}</div>
+                    </div>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error('Error loading status:', error);
+        }
+    }
+
+    // Initial load and refresh
+    loadMetrics();
+    loadToolStatus();
+    setInterval(loadMetrics, 5000);
+    setInterval(loadToolStatus, 30000);
+</script>

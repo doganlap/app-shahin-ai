@@ -1,0 +1,334 @@
+/**
+ * Unified Enterprise Design System - Design Tokens
+ * Light Theme - CSS Custom Properties
+ *
+ * Three-tier token hierarchy:
+ * 1. Global Tokens (raw values)
+ * 2. Alias/Semantic Tokens (mapped to roles)
+ * 3. Component Tokens (component-specific)
+ */
+
+:root {
+  /* ========================================
+     GLOBAL TOKENS - Raw Values
+     ======================================== */
+
+  /* Color - Primary & Accent */
+  --global-blue-500: #0d6efd;
+  --global-blue-600: #0056b3;
+  --global-blue-700: #004085;
+  --global-blue-50: #e7f1ff;
+  --global-blue-100: #cfe2ff;
+
+  --global-green-500: #4caf50;
+  --global-green-600: #388e3c;
+  --global-green-50: #e8f5e9;
+
+  --global-amber-500: #ffc107;
+  --global-amber-600: #ffa000;
+  --global-amber-50: #fff8e1;
+
+  /* Color - Neutrals */
+  --global-white: #ffffff;
+  --global-gray-50: #f8f9fa;
+  --global-gray-100: #f0f2f5;
+  --global-gray-200: #e9ecef;
+  --global-gray-300: #dcdcdc;
+  --global-gray-800: #495057;
+  --global-gray-900: #333333;
+  --global-black: #000000;
+
+  /* Color - Status/Feedback */
+  --global-red-500: #dc3545;
+  --global-red-600: #c82333;
+  --global-red-50: #f8d7da;
+
+  --global-teal-500: #17a2b8;
+  --global-teal-600: #117a8b;
+  --global-teal-50: #d1ecf1;
+
+  /* Typography - Font Families */
+  --global-font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --global-font-family-monospace: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+
+  /* Typography - Font Sizes */
+  --global-font-size-xs: 0.75rem;    /* 12px */
+  --global-font-size-sm: 0.875rem;   /* 14px */
+  --global-font-size-base: 1rem;     /* 16px */
+  --global-font-size-lg: 1.125rem;   /* 18px */
+  --global-font-size-xl: 1.25rem;    /* 20px */
+  --global-font-size-2xl: 1.5rem;    /* 24px */
+  --global-font-size-3xl: 2rem;      /* 32px */
+  --global-font-size-4xl: 2.5rem;    /* 40px */
+
+  /* Typography - Font Weights */
+  --global-font-weight-light: 300;
+  --global-font-weight-normal: 400;
+  --global-font-weight-medium: 500;
+  --global-font-weight-semibold: 600;
+  --global-font-weight-bold: 700;
+
+  /* Typography - Line Heights */
+  --global-line-height-tight: 1.25;
+  --global-line-height-base: 1.5;
+  --global-line-height-relaxed: 1.75;
+
+  /* Spacing - Base Unit: 8px */
+  --global-space-0: 0;
+  --global-space-1: 0.25rem;   /* 4px */
+  --global-space-2: 0.5rem;    /* 8px */
+  --global-space-3: 0.75rem;   /* 12px */
+  --global-space-4: 1rem;      /* 16px */
+  --global-space-5: 1.5rem;    /* 24px */
+  --global-space-6: 2rem;      /* 32px */
+  --global-space-7: 2.5rem;    /* 40px */
+  --global-space-8: 3rem;      /* 48px */
+  --global-space-10: 4rem;     /* 64px */
+
+  /* Border Radius */
+  --global-radius-none: 0;
+  --global-radius-sm: 0.125rem;   /* 2px */
+  --global-radius-base: 0.25rem;  /* 4px */
+  --global-radius-md: 0.375rem;   /* 6px */
+  --global-radius-lg: 0.5rem;     /* 8px */
+  --global-radius-xl: 0.75rem;    /* 12px */
+  --global-radius-full: 9999px;
+
+  /* Shadows */
+  --global-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --global-shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --global-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --global-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --global-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+  /* Z-Index */
+  --global-z-base: 1;
+  --global-z-dropdown: 1000;
+  --global-z-sticky: 1020;
+  --global-z-fixed: 1030;
+  --global-z-modal-backdrop: 1040;
+  --global-z-modal: 1050;
+  --global-z-popover: 1060;
+  --global-z-tooltip: 1070;
+
+  /* Transitions */
+  --global-transition-fast: 150ms ease-in-out;
+  --global-transition-base: 250ms ease-in-out;
+  --global-transition-slow: 350ms ease-in-out;
+
+  /* Breakpoints (for reference in media queries) */
+  --global-breakpoint-xs: 0px;
+  --global-breakpoint-sm: 576px;
+  --global-breakpoint-md: 768px;
+  --global-breakpoint-lg: 992px;
+  --global-breakpoint-xl: 1200px;
+  --global-breakpoint-xxl: 1400px;
+
+  /* Container Max Widths */
+  --global-container-sm: 540px;
+  --global-container-md: 720px;
+  --global-container-lg: 960px;
+  --global-container-xl: 1140px;
+  --global-container-xxl: 1320px;
+
+
+  /* ========================================
+     ALIAS/SEMANTIC TOKENS - Mapped Roles
+     ======================================== */
+
+  /* Color - Primary */
+  --color-primary: var(--global-blue-500);
+  --color-primary-hover: var(--global-blue-600);
+  --color-primary-active: var(--global-blue-700);
+  --color-primary-light: var(--global-blue-50);
+
+  /* Color - Success */
+  --color-success: var(--global-green-500);
+  --color-success-hover: var(--global-green-600);
+  --color-success-light: var(--global-green-50);
+
+  /* Color - Warning */
+  --color-warning: var(--global-amber-500);
+  --color-warning-hover: var(--global-amber-600);
+  --color-warning-light: var(--global-amber-50);
+
+  /* Color - Error/Danger */
+  --color-error: var(--global-red-500);
+  --color-error-hover: var(--global-red-600);
+  --color-error-light: var(--global-red-50);
+
+  /* Color - Info */
+  --color-info: var(--global-teal-500);
+  --color-info-hover: var(--global-teal-600);
+  --color-info-light: var(--global-teal-50);
+
+  /* Color - Backgrounds */
+  --color-bg-primary: var(--global-white);
+  --color-bg-secondary: var(--global-gray-50);
+  --color-bg-tertiary: var(--global-gray-100);
+  --color-bg-disabled: var(--global-gray-200);
+
+  /* Color - Text */
+  --color-text-primary: var(--global-gray-900);
+  --color-text-secondary: var(--global-gray-800);
+  --color-text-disabled: var(--global-gray-300);
+  --color-text-inverse: var(--global-white);
+  --color-text-link: var(--color-primary);
+  --color-text-link-hover: var(--color-primary-hover);
+
+  /* Color - Borders */
+  --color-border-base: var(--global-gray-300);
+  --color-border-light: var(--global-gray-200);
+  --color-border-focus: var(--color-primary);
+  --color-border-error: var(--color-error);
+
+  /* Typography - Semantic */
+  --font-family-base: var(--global-font-family-base);
+  --font-family-code: var(--global-font-family-monospace);
+  --font-size-base: var(--global-font-size-base);
+  --font-size-small: var(--global-font-size-sm);
+  --font-size-large: var(--global-font-size-lg);
+  --font-size-heading-sm: var(--global-font-size-xl);
+  --font-size-heading-md: var(--global-font-size-2xl);
+  --font-size-heading-lg: var(--global-font-size-3xl);
+  --font-size-heading-xl: var(--global-font-size-4xl);
+  --font-weight-base: var(--global-font-weight-normal);
+  --font-weight-heading: var(--global-font-weight-semibold);
+  --line-height-base: var(--global-line-height-base);
+  --line-height-heading: var(--global-line-height-tight);
+
+  /* Spacing - Semantic */
+  --space-padding-xs: var(--global-space-1);
+  --space-padding-sm: var(--global-space-2);
+  --space-padding-md: var(--global-space-4);
+  --space-padding-lg: var(--global-space-5);
+  --space-padding-xl: var(--global-space-6);
+
+  --space-margin-xs: var(--global-space-1);
+  --space-margin-sm: var(--global-space-2);
+  --space-margin-md: var(--global-space-4);
+  --space-margin-lg: var(--global-space-5);
+  --space-margin-xl: var(--global-space-6);
+
+  --space-gap-xs: var(--global-space-1);
+  --space-gap-sm: var(--global-space-2);
+  --space-gap-md: var(--global-space-4);
+  --space-gap-lg: var(--global-space-5);
+
+  /* Border Radius - Semantic */
+  --radius-small: var(--global-radius-base);
+  --radius-medium: var(--global-radius-md);
+  --radius-large: var(--global-radius-lg);
+  --radius-pill: var(--global-radius-full);
+
+  /* Shadows - Semantic */
+  --shadow-small: var(--global-shadow-sm);
+  --shadow-medium: var(--global-shadow-base);
+  --shadow-large: var(--global-shadow-md);
+  --shadow-elevated: var(--global-shadow-lg);
+
+
+  /* ========================================
+     COMPONENT TOKENS - Component-specific
+     ======================================== */
+
+  /* Button */
+  --button-padding-vertical: var(--global-space-3);     /* 12px */
+  --button-padding-horizontal: var(--global-space-5);   /* 24px */
+  --button-font-size: var(--font-size-base);
+  --button-font-weight: var(--global-font-weight-medium);
+  --button-border-radius: var(--radius-medium);
+  --button-min-height: 40px;
+  --button-transition: var(--global-transition-fast);
+
+  --button-bg-primary: var(--color-primary);
+  --button-bg-primary-hover: var(--color-primary-hover);
+  --button-text-primary: var(--color-text-inverse);
+
+  --button-bg-secondary: transparent;
+  --button-border-secondary: var(--color-border-base);
+  --button-text-secondary: var(--color-text-primary);
+
+  --button-bg-danger: var(--color-error);
+  --button-bg-danger-hover: var(--color-error-hover);
+  --button-text-danger: var(--color-text-inverse);
+
+  --button-bg-disabled: var(--color-bg-disabled);
+  --button-text-disabled: var(--color-text-disabled);
+
+  /* Form Input */
+  --input-padding-vertical: var(--global-space-3);      /* 12px */
+  --input-padding-horizontal: var(--global-space-4);    /* 16px */
+  --input-font-size: var(--font-size-base);
+  --input-border-radius: var(--radius-small);
+  --input-min-height: 40px;
+  --input-border-width: 1px;
+  --input-border-color: var(--color-border-base);
+  --input-border-color-focus: var(--color-border-focus);
+  --input-border-color-error: var(--color-border-error);
+  --input-bg: var(--color-bg-primary);
+  --input-text-color: var(--color-text-primary);
+  --input-placeholder-color: var(--global-gray-800);
+  --input-spacing-vertical: var(--global-space-6);      /* 32px between fields */
+
+  /* Alert/Notification */
+  --alert-padding: var(--global-space-4);
+  --alert-border-radius: var(--radius-medium);
+  --alert-font-size: var(--font-size-base);
+  --alert-margin-bottom: var(--space-margin-md);
+
+  --alert-bg-success: var(--color-success-light);
+  --alert-text-success: var(--global-green-600);
+  --alert-border-success: var(--color-success);
+
+  --alert-bg-warning: var(--color-warning-light);
+  --alert-text-warning: var(--global-amber-600);
+  --alert-border-warning: var(--color-warning);
+
+  --alert-bg-error: var(--color-error-light);
+  --alert-text-error: var(--global-red-600);
+  --alert-border-error: var(--color-error);
+
+  --alert-bg-info: var(--color-info-light);
+  --alert-text-info: var(--global-teal-600);
+  --alert-border-info: var(--color-info);
+
+  /* Card/Panel */
+  --card-padding: var(--global-space-5);                /* 24px */
+  --card-padding-compact: var(--global-space-4);        /* 16px */
+  --card-border-radius: var(--radius-large);
+  --card-bg: var(--color-bg-primary);
+  --card-shadow: var(--shadow-small);
+  --card-border: 1px solid var(--color-border-light);
+  --card-margin-bottom: var(--space-margin-lg);
+
+  /* Modal/Dialog */
+  --modal-padding-header: var(--global-space-5);
+  --modal-padding-body: var(--global-space-5);
+  --modal-padding-footer: var(--global-space-5);
+  --modal-border-radius: var(--radius-large);
+  --modal-bg: var(--color-bg-primary);
+  --modal-shadow: var(--shadow-elevated);
+  --modal-width-sm: 400px;
+  --modal-width-md: 600px;
+  --modal-width-lg: 800px;
+  --modal-backdrop-bg: rgba(0, 0, 0, 0.5);
+  --modal-z-index: var(--global-z-modal);
+
+  /* Navigation */
+  --nav-height: 64px;
+  --nav-padding-horizontal: var(--global-space-5);
+  --nav-bg: var(--color-bg-primary);
+  --nav-border-bottom: 1px solid var(--color-border-light);
+  --nav-text-color: var(--color-text-primary);
+  --nav-link-hover-bg: var(--color-bg-secondary);
+  --nav-active-color: var(--color-primary);
+
+  /* Focus States */
+  --focus-ring-width: 3px;
+  --focus-ring-color: var(--color-primary-light);
+  --focus-ring-offset: 2px;
+
+  /* Interactive Element Minimum Size (Accessibility) */
+  --interactive-min-size: 44px;
+}
