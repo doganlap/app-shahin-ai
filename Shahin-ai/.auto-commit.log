@@ -25,3 +25,20 @@ To https://github.com/doganlap/app-shahin-ai.git
 [2026-01-13 07:00:01] === Auto-commit started ===
 [2026-01-13 07:00:01] Current branch: main-with-latest-fixes
 [2026-01-13 07:00:01] Current branch: main-with-latest-fixes
+[2026-01-13 07:00:01] Staged 7 file(s) for commit
+[2026-01-13 07:00:01] Staged 7 file(s) for commit
+[main-with-latest-fixes 86a466f] chore: Auto-commit 2026-01-13 07:00:01 - 7 file(s) changed
+ 7 files changed, 28766 insertions(+)
+ create mode 100644 Shahin-ai/Shahin-Jan-2026/LANDING_PAGE_BUTTON_FIX.md
+ create mode 100644 Shahin-ai/Shahin-Jan-2026/PHASE_3_MIGRATION_APPLIED.md
+ create mode 100644 Shahin-ai/Shahin-Jan-2026/PHASE_3_TEST_RESULTS.md
+ create mode 100644 Shahin-ai/Shahin-Jan-2026/src/GrcMvc/EF_CORE_CONNECTION_FIX.md
+ create mode 100644 Shahin-ai/Shahin-Jan-2026/src/GrcMvc/backup_20260113_064028.sql
+[2026-01-13 07:00:01] ✅ Commit successful: 86a466f
+[2026-01-13 07:00:01] ✅ Commit successful: 86a466f
+To https://github.com/doganlap/app-shahin-ai.git
+   1ddbed2..86a466f  main-with-latest-fixes -> main-with-latest-fixes
+[2026-01-13 07:00:03] ✅ Push successful to origin/main-with-latest-fixes
+[2026-01-13 07:00:03] ✅ Push successful to origin/main-with-latest-fixes
+[2026-01-13 07:00:03] === Auto-commit completed successfully ===
+[2026-01-13 07:00:03] === Auto-commit completed successfully ===

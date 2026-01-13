@@ -199,6 +199,31 @@ select:focus-visible {
     background: var(--gradient-accent);
 }
 
+/* KSA Form Badge - For newly modified forms/views only */
+.ksa-form-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fff;
+    margin-left: 0.5rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #006633 0%, #00cc66 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    vertical-align: middle;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ksa-form-badge::before {
+    content: "🇸🇦";
+    font-size: 0.9rem;
+    margin-right: 0.2rem;
+}
+
 /* Desktop Navigation */
 .nav-links {
     display: flex;
