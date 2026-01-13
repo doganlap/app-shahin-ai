@@ -1,0 +1,24 @@
+{
+  "title": "Evidence",
+  "subtitle": "Shahin PROVE/VAULT - Upload and manage compliance evidence",
+  "uploadEvidence": "+ Upload Evidence",
+  "bulkUpload": "Bulk Upload",
+  "searchPlaceholder": "Search evidence...",
+  "stats": {
+    "total": "Total Evidence",
+    "approved": "Approved",
+    "pendingReview": "Pending Review",
+    "expiringSoon": "Expiring Soon"
+  },
+  "table": {
+    "name": "Name",
+    "type": "Type",
+    "control": "Control",
+    "status": "Status",
+    "uploaded": "Uploaded",
+    "expires": "Expires",
+    "actions": "Actions"
+  },
+  "loading": "Loading evidence...",
+  "noData": "No evidence uploaded yet..."
+}

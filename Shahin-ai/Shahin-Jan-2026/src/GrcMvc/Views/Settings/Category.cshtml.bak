@@ -1,0 +1,199 @@
+@model List<GrcMvc.Models.Entities.SystemSetting>
+@using GrcMvc.Models.Entities
+@{
+    ViewData["Title"] = ViewBag.Title ?? "Settings";
+    Layout = "_Layout";
+    var category = ViewBag.Category as string ?? "Settings";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">System Settings</a></li>
+                    <li class="breadcrumb-item active">@ViewBag.CategoryDisplayName</li>
+                </ol>
+            </nav>
+            <h1>
+                <i class="bi bi-gear"></i> @ViewBag.Title
+            </h1>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <form asp-action="BulkUpdate" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+        
+        <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <span>
+                    <i class="bi bi-sliders"></i> @Model.Count Settings
+                </span>
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="bi bi-save"></i> Save All Changes
+                </button>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 25%;">Setting</th>
+                            <th style="width: 35%;">Value</th>
+                            <th style="width: 25%;">Description</th>
+                            <th style="width: 15%;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var setting in Model.OrderBy(s => s.DisplayOrder))
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@setting.DisplayName</strong>
+                                    <br>
+                                    <code class="small text-muted">@setting.Key</code>
+                                </td>
+                                <td>
+                                    @if (setting.DataType == "bool")
+                                    {
+                                        <div class="form-check form-switch">
+                                            <input type="hidden" name="settings[@setting.Key]" value="false" />
+                                            <input type="checkbox" 
+                                                   class="form-check-input" 
+                                                   id="setting_@setting.Key.Replace(":", "_")"
+                                                   name="settings[@setting.Key]"
+                                                   value="true"
+                                                   @(setting.Value == "true" ? "checked" : "") />
+                                            <label class="form-check-label" for="setting_@setting.Key.Replace(":", "_")">
+                                                @(setting.Value == "true" ? "Enabled" : "Disabled")
+                                            </label>
+                                        </div>
+                                    }
+                                    else if (setting.IsSensitive)
+                                    {
+                                        <div class="input-group">
+                                            <input type="password" 
+                                                   class="form-control form-control-sm sensitive-field" 
+                                                   id="setting_@setting.Key.Replace(":", "_")"
+                                                   name="settings[@setting.Key]"
+                                                   value="@setting.Value"
+                                                   placeholder="Enter secret value..." />
+                                            <button type="button" class="btn btn-outline-secondary btn-sm toggle-visibility" title="Show/Hide">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        </div>
+                                        @if (!string.IsNullOrEmpty(setting.Value))
+                                        {
+                                            <small class="text-success"><i class="bi bi-check"></i> Value is set</small>
+                                        }
+                                    }
+                                    else if (setting.DataType == "int" || setting.DataType == "number")
+                                    {
+                                        <input type="number" 
+                                               class="form-control form-control-sm" 
+                                               name="settings[@setting.Key]"
+                                               value="@setting.Value"
+                                               style="max-width: 150px;" />
+                                    }
+                                    else if (setting.DataType == "select" && !string.IsNullOrEmpty(setting.ValidationRules))
+                                    {
+                                        <select class="form-select form-select-sm" name="settings[@setting.Key]" style="max-width: 250px;">
+                                            @foreach (var option in setting.ValidationRules.Split(','))
+                                            {
+                                                <option value="@option.Trim()" selected="@(setting.Value == option.Trim())">@option.Trim()</option>
+                                            }
+                                        </select>
+                                    }
+                                    else
+                                    {
+                                        <input type="text" 
+                                               class="form-control form-control-sm" 
+                                               name="settings[@setting.Key]"
+                                               value="@setting.Value"
+                                               placeholder="@(setting.DefaultValue ?? "Enter value...")" />
+                                    }
+                                </td>
+                                <td>
+                                    <small class="text-muted">@setting.Description</small>
+                                    @if (setting.IsRequired)
+                                    {
+                                        <span class="badge bg-danger">Required</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (setting.IsEnabled)
+                                    {
+                                        <span class="badge bg-success"><i class="bi bi-check-circle"></i> Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary"><i class="bi bi-x-circle"></i> Inactive</span>
+                                    }
+                                    @if (setting.ModifiedAt.HasValue)
+                                    {
+                                        <br>
+                                        <small class="text-muted" title="@setting.ModifiedAt">
+                                            <i class="bi bi-clock"></i> @setting.ModifiedAt?.ToString("MMM dd, yyyy")
+                                        </small>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer bg-white d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to All Settings
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Save All Changes
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        // Toggle password visibility
+        document.querySelectorAll('.toggle-visibility').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const input = this.parentElement.querySelector('.sensitive-field');
+                const icon = this.querySelector('i');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('bi-eye');
+                    icon.classList.add('bi-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('bi-eye-slash');
+                    icon.classList.add('bi-eye');
+                }
+            });
+        });
+
+        // Update toggle label on change
+        document.querySelectorAll('.form-check-input').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const label = this.nextElementSibling;
+                label.textContent = this.checked ? 'Enabled' : 'Disabled';
+            });
+        });
+    </script>
+}

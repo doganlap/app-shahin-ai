@@ -1,0 +1,160 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Volo.Abp.TenantManagement;
+using Volo.Abp.Identity;
+using Volo.Abp.MultiTenancy;
+using System.ComponentModel.DataAnnotations;
+using AbpIdentityUser = Volo.Abp.Identity.IdentityUser;
+using AspNetSignInManager = Microsoft.AspNetCore.Identity.SignInManager<Volo.Abp.Identity.IdentityUser>;
+
+namespace GrcMvc.Controllers
+{
+    /// <summary>
+    /// Trial registration controller using ABP Framework services
+    /// </summary>
+    [Route("trial")]
+    public class TrialControllerAbp : Controller
+    {
+        private readonly ITenantManager _tenantManager;
+        private readonly ITenantRepository _tenantRepository;
+        private readonly IdentityUserManager _userManager;
+        private readonly IdentityRoleManager _roleManager;
+        private readonly ICurrentTenant _currentTenant;
+        private readonly AspNetSignInManager _signInManager;
+        private readonly ILogger<TrialControllerAbp> _logger;
+
+        public TrialControllerAbp(
+            ITenantManager tenantManager,
+            ITenantRepository tenantRepository,
+            IdentityUserManager userManager,
+            IdentityRoleManager roleManager,
+            ICurrentTenant currentTenant,
+            AspNetSignInManager signInManager,
+            ILogger<TrialControllerAbp> logger)
+        {
+            _tenantManager = tenantManager;
+            _tenantRepository = tenantRepository;
+            _userManager = userManager;
+            _roleManager = roleManager;
+            _currentTenant = currentTenant;
+            _signInManager = signInManager;
+            _logger = logger;
+        }
+
+        [HttpGet("")]
+        [AllowAnonymous]
+        public IActionResult Index()
+        {
+            return View(new TrialRegistrationModel());
+        }
+
+        [HttpPost("")]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(TrialRegistrationModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("Index", model);
+            }
+
+            try
+            {
+                // Step 1: Create Tenant (in host context)
+                Tenant? tenant;
+                using (_currentTenant.Change(null)) // Ensure host context
+                {
+                    // Generate tenant name from organization
+                    var tenantName = GenerateTenantName(model.OrganizationName);
+                    
+                    // Check if tenant already exists
+                    var existingTenant = await _tenantRepository.FindByNameAsync(tenantName);
+                    if (existingTenant != null)
+                    {
+                        tenantName = $"{tenantName}-{DateTime.UtcNow:HHmmss}";
+                    }
+
+                    // Create tenant using ABP TenantManager
+                    tenant = await _tenantManager.CreateAsync(tenantName);
+                    await _tenantRepository.InsertAsync(tenant);
+                    
+                    _logger.LogInformation("Created tenant: {TenantName} (ID: {TenantId})", tenantName, tenant.Id);
+                }
+
+                // Step 2: Create Admin User (in tenant context)
+                IdentityUser user;
+                using (_currentTenant.Change(tenant.Id)) // Switch to tenant context
+                {
+                    // Check if user already exists
+                    var existingUser = await _userManager.FindByEmailAsync(model.Email);
+                    if (existingUser != null)
+                    {
+                        ModelState.AddModelError("Email", "An account with this email already exists.");
+                        return View("Index", model);
+                    }
+
+                    // Create user using ABP IdentityUserManager
+                    user = new AbpIdentityUser(
+                        id: Guid.NewGuid(),
+                        userName: model.Email,
+                        email: model.Email,
+                        tenantId: tenant.Id // ABP users have TenantId built-in
+                    );
+
+                    // Set user properties
+                    user.SetEmailConfirmed(false); // Require email confirmation
+                    
+                    // Create user with password
+                    var createResult = await _userManager.CreateAsync(user, model.Password);
+                    if (!createResult.Succeeded)
+                    {
+                        var errors = string.Join(" • ", createResult.Errors.Select(e => e.Description));
+                        ModelState.AddModelError("", $"كلمة المرور: {errors}");
+                        
+                        // Rollback tenant creation
+                        using (_currentTenant.Change(null))
+                        {
+                            await _tenantRepository.DeleteAsync(tenant);
+                        }
+                        
+                        return View("Index", model);
+                    }
+
+                    // Assign TenantAdmin role
+                    var adminRole = await _roleManager.FindByNameAsync("TenantAdmin");
+                    if (adminRole == null)
+                    {
+                        adminRole = new IdentityRole(Guid.NewGuid(), "TenantAdmin", tenant.Id);
+                        await _roleManager.CreateAsync(adminRole);
+                    }
+                    await _userManager.AddToRoleAsync(user, "TenantAdmin");
+
+                    _logger.LogInformation("Created user: {Email} for tenant: {TenantId}", model.Email, tenant.Id);
+                }
+
+                // Step 3: Sign in the user
+                await _signInManager.SignInAsync(user, isPersistent: true);
+
+                // Step 4: Redirect to onboarding
+                return RedirectToAction("Start", "Onboarding", new { tenantSlug = tenant.Name });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Trial registration failed");
+                ModelState.AddModelError("", "Registration failed. Please try again.");
+                return View("Index", model);
+            }
+        }
+
+        private string GenerateTenantName(string organizationName)
+        {
+            return organizationName
+                .ToLowerInvariant()
+                .Replace(" ", "-")
+                .Replace(".", "")
+                .Replace(",", "")
+                .Substring(0, Math.Min(organizationName.Length, 50));
+        }
+    }
+
+}

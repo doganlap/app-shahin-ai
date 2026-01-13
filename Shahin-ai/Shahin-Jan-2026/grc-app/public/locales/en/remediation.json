@@ -1,0 +1,36 @@
+{
+  "title": "Remediation Manager",
+  "subtitle": "Shahin FIX - Track and resolve compliance gaps",
+  "newIssue": "+ New Issue",
+  "stats": {
+    "critical": "Critical",
+    "high": "High",
+    "medium": "Medium",
+    "open": "Open",
+    "inProgress": "In Progress"
+  },
+  "kanban": {
+    "open": "Open",
+    "inProgress": "In Progress",
+    "review": "Review",
+    "closed": "Closed"
+  },
+  "allIssues": {
+    "title": "All Issues",
+    "table": {
+      "issueId": "Issue ID",
+      "title": "Title",
+      "control": "Control",
+      "severity": "Severity",
+      "status": "Status",
+      "assignee": "Assignee",
+      "dueDate": "Due Date"
+    }
+  },
+  "sampleIssues": {
+    "mfa": "Missing MFA implementation for admin accounts",
+    "auditLogs": "Incomplete audit logs for privileged access",
+    "encryption": "Data encryption at rest not fully implemented",
+    "backup": "Backup retention policy not documented"
+  }
+}

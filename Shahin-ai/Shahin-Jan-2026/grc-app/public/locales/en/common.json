@@ -1,0 +1,88 @@
+{
+  "app": {
+    "name": "Shahin AI",
+    "platform": "GRC Platform",
+    "title": "GRC Platform"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "controls": "Controls",
+    "requirements": "Requirements",
+    "applicability": "Applicability",
+    "evidence": "Evidence",
+    "tests": "Tests",
+    "reports": "Reports",
+    "remediation": "Remediation",
+    "vault": "Vault",
+    "assessments": "Assessments",
+    "risks": "Risks",
+    "audits": "Audits",
+    "settings": "Settings",
+    "users": "Users",
+    "tenants": "Tenants",
+    "mainMenu": "Main Menu",
+    "admin": "Admin"
+  },
+  "actions": {
+    "export": "Export",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "view": "View",
+    "search": "Search",
+    "filter": "Filter",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "download": "Download",
+    "upload": "Upload",
+    "bulkUpload": "Bulk Upload",
+    "generate": "Generate"
+  },
+  "common": {
+    "loading": "Loading...",
+    "noData": "No data available",
+    "error": "An error occurred",
+    "success": "Success",
+    "total": "Total",
+    "status": "Status",
+    "actions": "Actions",
+    "name": "Name",
+    "type": "Type",
+    "date": "Date",
+    "searchPlaceholder": "Search controls, evidence, reports..."
+  },
+  "status": {
+    "compliant": "Compliant",
+    "partial": "Partial",
+    "nonCompliant": "Non-Compliant",
+    "notAssessed": "Not Assessed",
+    "approved": "Approved",
+    "pending": "Pending Review",
+    "rejected": "Rejected",
+    "expired": "Expired",
+    "critical": "Critical",
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low",
+    "open": "Open",
+    "inProgress": "In Progress",
+    "review": "Review",
+    "closed": "Closed",
+    "expiringSoon": "Expiring Soon"
+  },
+  "frameworks": {
+    "ncaEcc": "NCA ECC",
+    "samaCsf": "SAMA CSF",
+    "pdpl": "PDPL",
+    "ncaCscc": "NCA CSCC",
+    "allFrameworks": "All Frameworks"
+  },
+  "user": {
+    "profile": "Admin User",
+    "email": "admin@company.com"
+  },
+  "footer": {
+    "copyright": "© 2026 Shahin AI. All rights reserved."
+  }
+}

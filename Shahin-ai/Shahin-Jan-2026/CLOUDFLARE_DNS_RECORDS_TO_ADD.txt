@@ -1,0 +1,270 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║        CLOUDFLARE DNS RECORDS TO ADD - Copy/Paste Ready                      ║
+║                          shahin-ai.com                                       ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+📋 CURRENT RECORDS (Keep These):
+  ✅ A    app         46.224.68.73     [Proxy: Auto]
+  ✅ A    login       46.224.68.73     [Proxy: Auto]
+  ✅ A    portal      46.224.68.73     [Proxy: Auto]
+  ✅ A    @ (root)    46.224.68.73     [Proxy: Auto]
+  ✅ A    www         46.224.68.73     [Proxy: Auto]
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📧 NEW RECORDS TO ADD (Required for Email):
+
+───────────────────────────────────────────────────────────────────────────────
+RECORD 1: MX (Mail Exchange) - CHOOSE ONE OPTION BELOW
+───────────────────────────────────────────────────────────────────────────────
+
+OPTION A: If using Google Workspace (Recommended)
+═══════════════════════════════════════════════════════════════════════════════
+Type:    MX
+Name:    @ (or leave blank for root domain)
+Priority: 1
+Content: aspmx.l.google.com
+Proxy:   ⚪ DNS only (OFF - gray cloud)
+TTL:     Auto
+
+Type:    MX
+Name:    @ (or leave blank for root domain)
+Priority: 5
+Content: alt1.aspmx.l.google.com
+Proxy:   ⚪ DNS only (OFF)
+TTL:     Auto
+
+Type:    MX
+Name:    @ (or leave blank for root domain)
+Priority: 5
+Content: alt2.aspmx.l.google.com
+Proxy:   ⚪ DNS only (OFF)
+TTL:     Auto
+
+Type:    MX
+Name:    @ (or leave blank for root domain)
+Priority: 10
+Content: alt3.aspmx.l.google.com
+Proxy:   ⚪ DNS only (OFF)
+TTL:     Auto
+
+Type:    MX
+Name:    @ (or leave blank for root domain)
+Priority: 10
+Content: alt4.aspmx.l.google.com
+Proxy:   ⚪ DNS only (OFF)
+TTL:     Auto
+
+
+OPTION B: If using Microsoft Office 365
+═══════════════════════════════════════════════════════════════════════════════
+Type:    MX
+Name:    @ (or leave blank for root domain)
+Priority: 0
+Content: shahin-ai-com.mail.protection.outlook.com
+Proxy:   ⚪ DNS only (OFF - gray cloud)
+TTL:     Auto
+
+
+OPTION C: If hosting your own mail server (Basic Setup)
+═══════════════════════════════════════════════════════════════════════════════
+Type:    MX
+Name:    @ (or leave blank for root domain)
+Priority: 10
+Content: mail.shahin-ai.com
+Proxy:   ⚪ DNS only (OFF - gray cloud)
+TTL:     Auto
+
+Type:    A
+Name:    mail
+Content: 46.224.68.73
+Proxy:   ⚪ DNS only (OFF)
+TTL:     Auto
+
+
+OPTION D: If NO email service yet (Prevent Spoofing Only)
+═══════════════════════════════════════════════════════════════════════════════
+Type:    MX
+Name:    @ (or leave blank for root domain)
+Priority: 10
+Content: mail.shahin-ai.com
+Proxy:   ⚪ DNS only (OFF)
+TTL:     Auto
+
+Type:    A
+Name:    mail
+Content: 46.224.68.73
+Proxy:   ⚪ DNS only (OFF)
+TTL:     Auto
+
+⚠️ NOTE: This requires setting up a mail server later. If you don't plan to send
+   emails from @shahin-ai.com, you can skip MX and use SPF/DMARC only to prevent
+   others from spoofing your domain.
+
+───────────────────────────────────────────────────────────────────────────────
+RECORD 2: SPF (Sender Policy Framework) - REQUIRED
+───────────────────────────────────────────────────────────────────────────────
+
+If using Google Workspace:
+═══════════════════════════════════════════════════════════════════════════════
+Type:    TXT
+Name:    @ (or leave blank for root domain)
+Content: v=spf1 include:_spf.google.com ~all
+Proxy:   ⚪ DNS only (OFF - gray cloud)
+TTL:     Auto
+
+
+If using Office 365:
+═══════════════════════════════════════════════════════════════════════════════
+Type:    TXT
+Name:    @ (or leave blank for root domain)
+Content: v=spf1 include:spf.protection.outlook.com ~all
+Proxy:   ⚪ DNS only (OFF)
+TTL:     Auto
+
+
+If using your own mail server (46.224.68.73):
+═══════════════════════════════════════════════════════════════════════════════
+Type:    TXT
+Name:    @ (or leave blank for root domain)
+Content: v=spf1 ip4:46.224.68.73 include:_spf.google.com ~all
+Proxy:   ⚪ DNS only (OFF)
+TTL:     Auto
+
+
+Restrictive (Only allow your server - prevent ALL spoofing):
+═══════════════════════════════════════════════════════════════════════════════
+Type:    TXT
+Name:    @ (or leave blank for root domain)
+Content: v=spf1 ip4:46.224.68.73 -all
+Proxy:   ⚪ DNS only (OFF)
+TTL:     Auto
+
+⚠️ NOTE: -all means REJECT all other servers. Use ~all (soft fail) if unsure.
+
+
+If NO email service (Prevent spoofing only):
+═══════════════════════════════════════════════════════════════════════════════
+Type:    TXT
+Name:    @ (or leave blank for root domain)
+Content: v=spf1 -all
+Proxy:   ⚪ DNS only (OFF)
+TTL:     Auto
+
+⚠️ This tells mail servers "no one is authorized to send from @shahin-ai.com"
+   This prevents spoofing but you won't be able to send emails until you add
+   a proper SPF record.
+
+───────────────────────────────────────────────────────────────────────────────
+RECORD 3: DMARC (Domain-based Message Authentication) - REQUIRED
+───────────────────────────────────────────────────────────────────────────────
+
+START WITH MONITORING MODE (Recommended First Step):
+═══════════════════════════════════════════════════════════════════════════════
+Type:    TXT
+Name:    _dmarc
+Content: v=DMARC1; p=none; rua=mailto:dmarc@shahin-ai.com; pct=100
+Proxy:   ⚪ DNS only (OFF - gray cloud)
+TTL:     Auto
+
+⚠️ IMPORTANT: Create email address dmarc@shahin-ai.com first, or use your
+   existing email: dmarc@your-email-provider.com
+
+
+AFTER MONITORING (Week 2-4):
+═══════════════════════════════════════════════════════════════════════════════
+Type:    TXT
+Name:    _dmarc
+Content: v=DMARC1; p=quarantine; rua=mailto:dmarc@shahin-ai.com; ruf=mailto:dmarc@shahin-ai.com; pct=100; sp=quarantine; aspf=r
+Proxy:   ⚪ DNS only (OFF)
+TTL:     Auto
+
+
+STRICT MODE (After 1 month of monitoring):
+═══════════════════════════════════════════════════════════════════════════════
+Type:    TXT
+Name:    _dmarc
+Content: v=DMARC1; p=reject; rua=mailto:dmarc@shahin-ai.com; ruf=mailto:dmarc@shahin-ai.com; pct=100; sp=reject; aspf=r
+Proxy:   ⚪ DNS only (OFF)
+TTL:     Auto
+
+───────────────────────────────────────────────────────────────────────────────
+RECORD 4: DKIM (DomainKeys Identified Mail) - OPTIONAL but RECOMMENDED
+───────────────────────────────────────────────────────────────────────────────
+
+If using Google Workspace:
+═══════════════════════════════════════════════════════════════════════════════
+1. Go to Google Admin Console → Apps → Google Workspace → Gmail
+2. Click "Authenticate email"
+3. Select your domain: shahin-ai.com
+4. Generate DKIM key (will show as "google._domainkey")
+5. Copy the TXT record value provided by Google
+6. Add in Cloudflare:
+
+Type:    TXT
+Name:    google._domainkey
+Content: [Paste the value from Google Admin Console - looks like: v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC...]
+Proxy:   ⚪ DNS only (OFF)
+TTL:     Auto
+
+
+If using Office 365:
+═══════════════════════════════════════════════════════════════════════════════
+1. Office 365 Admin Center → Exchange → Mail Flow → DKIM
+2. Enable DKIM for shahin-ai.com
+3. Copy the CNAME records provided (usually selector1._domainkey and selector2._domainkey)
+4. Add CNAME records in Cloudflare (not TXT)
+
+───────────────────────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    MINIMUM REQUIRED SETUP (Quick Start)                      ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+If you just want to PREVENT EMAIL SPOOFING (don't send emails yet):
+
+1. Add SPF Record:
+   Type:    TXT
+   Name:    @
+   Content: v=spf1 -all
+   Proxy:   OFF
+
+2. Add DMARC Record:
+   Type:    TXT
+   Name:    _dmarc
+   Content: v=DMARC1; p=reject; pct=100
+   Proxy:   OFF
+
+That's it! This prevents anyone from spoofing @shahin-ai.com emails.
+
+───────────────────────────────────────────────────────────────────────────────
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                         CRITICAL REMINDERS                                   ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+✅ ALL email records (MX, TXT for SPF/DKIM/DMARC) MUST have Proxy = OFF (gray cloud)
+❌ DO NOT enable proxy (orange cloud) for email records - it will break email!
+
+✅ Changes take effect within 5-15 minutes on Cloudflare
+✅ Test with: dig shahin-ai.com MX or nslookup -type=MX shahin-ai.com
+
+✅ Start with DMARC p=none (monitoring) then move to p=quarantine, then p=reject
+✅ Use SPF ~all (soft fail) first, then -all (hard fail) after testing
+
+───────────────────────────────────────────────────────────────────────────────
+
+📝 RECOMMENDED ORDER OF OPERATION:
+
+1. ✅ Add SPF record first (prevents spoofing immediately)
+2. ✅ Add DMARC with p=none (start monitoring)
+3. ✅ Add MX record (if you have email service)
+4. ✅ Add DKIM (if available from your email provider)
+5. ✅ After 1-2 weeks, change DMARC to p=quarantine
+6. ✅ After 1 month, change DMARC to p=reject
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Last Updated: 2025-01-22
+Domain: shahin-ai.com
+Server IP: 46.224.68.73

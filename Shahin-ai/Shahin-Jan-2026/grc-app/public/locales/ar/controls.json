@@ -1,0 +1,29 @@
+{
+  "title": "الضوابط",
+  "subtitle": "شاهين MAP - إدارة مكتبة الضوابط الخاصة بك",
+  "addControl": "+ إضافة ضابط",
+  "searchPlaceholder": "البحث عن الضوابط...",
+  "filters": {
+    "allFrameworks": "جميع الأطر",
+    "allStatus": "جميع الحالات"
+  },
+  "stats": {
+    "total": "المجموع",
+    "compliant": "متوافق",
+    "partial": "جزئي",
+    "nonCompliant": "غير متوافق",
+    "notAssessed": "غير مقيّم"
+  },
+  "table": {
+    "controlId": "معرف الضابط",
+    "name": "الاسم",
+    "framework": "الإطار",
+    "category": "الفئة",
+    "status": "الحالة",
+    "maturity": "النضج",
+    "actions": "الإجراءات"
+  },
+  "controlsCount": "{{count}} ضوابط",
+  "loading": "جاري تحميل الضوابط...",
+  "noData": "لم يتم العثور على ضوابط"
+}

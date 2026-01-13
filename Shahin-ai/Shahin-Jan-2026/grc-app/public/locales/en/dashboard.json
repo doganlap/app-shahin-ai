@@ -1,0 +1,33 @@
+{
+  "title": "Dashboard",
+  "subtitle": "Overview of your compliance status",
+  "stats": {
+    "activePlans": "Active Plans",
+    "completed": "Completed",
+    "baselines": "Baselines",
+    "controls": "Controls",
+    "complianceRate": "Compliance Rate",
+    "pendingTasks": "Pending Tasks"
+  },
+  "recentActivity": {
+    "title": "Recent Activity",
+    "activities": {
+      "controlUpdated": "Control {{id}} status updated to Compliant",
+      "evidenceUploaded": "Evidence uploaded for {{control}}",
+      "assessmentCompleted": "{{framework}} assessment completed",
+      "remediation": "Remediation task assigned to {{user}}"
+    }
+  },
+  "quickActions": {
+    "title": "Quick Actions",
+    "newAssessment": "New Assessment",
+    "uploadEvidence": "Upload Evidence",
+    "viewReports": "View Reports",
+    "createRemediation": "Create Remediation",
+    "reviewControls": "Review Controls"
+  },
+  "complianceByFramework": {
+    "title": "Compliance by Framework",
+    "controlsCompliant": "{{count}} of {{total}} controls compliant"
+  }
+}

@@ -1,0 +1,160 @@
+@model GrcMvc.Controllers.OwnerSetupViewModel
+@{
+    ViewData["Title"] = "Owner Setup - First Time Configuration";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-user-shield"></i> Owner Account Setup
+                    </h3>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.OwnerExists == true)
+                    {
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>@ViewBag.WarningMessage</strong>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>First Time Setup</strong><br />
+                            This is a one-time setup to create the first owner account. 
+                            After this setup is complete, this page will no longer be accessible.
+                        </div>
+                    }
+
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle"></i> @TempData["Error"]
+                        </div>
+                    }
+
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i> @TempData["Success"]
+                        </div>
+                    }
+
+                    <form asp-action="Index" method="post" id="ownerSetupForm">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" class="form-control" type="email" required />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="FirstName" class="form-label"></label>
+                                <input asp-for="FirstName" class="form-control" required />
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="LastName" class="form-label"></label>
+                                <input asp-for="LastName" class="form-control" required />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label"></label>
+                            <input asp-for="Password" class="form-control" type="password" required />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                            <small class="form-text text-muted">Password must be at least 8 characters long.</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ConfirmPassword" class="form-label"></label>
+                            <input asp-for="ConfirmPassword" class="form-control" type="password" required />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="OrganizationName" class="form-label"></label>
+                            <input asp-for="OrganizationName" class="form-control" />
+                            <span asp-validation-for="OrganizationName" class="text-danger"></span>
+                            <small class="form-text text-muted">Optional: Your organization name.</small>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                                <span id="submitBtnText">
+                                    <i class="fas fa-user-plus"></i> Create Owner Account
+                                </span>
+                                <span id="submitBtnLoading" class="d-none">
+                                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                    Creating account...
+                                </span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function () {
+            var form = $('#ownerSetupForm');
+            var submitBtn = $('#submitBtn');
+            var submitBtnText = $('#submitBtnText');
+            var submitBtnLoading = $('#submitBtnLoading');
+            var isSubmitting = false;
+
+            // Handle form submission
+            form.on('submit', function (e) {
+                // Prevent double submission
+                if (isSubmitting) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Validate form using jQuery validation
+                if (!form.valid()) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Set submitting state
+                isSubmitting = true;
+                submitBtn.prop('disabled', true);
+                submitBtnText.addClass('d-none');
+                submitBtnLoading.removeClass('d-none');
+
+                // Form will submit naturally
+                return true;
+            });
+
+            // Re-enable submit button if validation fails
+            form.find('input').on('invalid', function () {
+                if (isSubmitting) {
+                    isSubmitting = false;
+                    submitBtn.prop('disabled', false);
+                    submitBtnText.removeClass('d-none');
+                    submitBtnLoading.addClass('d-none');
+                }
+            });
+
+            // Debug: Log when validation is ready
+            console.log('Owner Setup form validation initialized');
+            console.log('jQuery version:', $.fn.jquery);
+            console.log('jQuery Validation loaded:', typeof $.fn.validate !== 'undefined');
+            console.log('Unobtrusive validation loaded:', typeof $.validator !== 'undefined' && typeof $.validator.unobtrusive !== 'undefined');
+        });
+    </script>
+}

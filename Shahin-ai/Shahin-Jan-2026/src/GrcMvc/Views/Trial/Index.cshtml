@@ -1,0 +1,127 @@
+@model GrcMvc.Controllers.TrialRegistrationModel
+@{
+    ViewData["Title"] = "Free Trial Registration";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0"><i class="bi bi-rocket-takeoff"></i> Free Trial Registration</h4>
+                </div>
+                <div class="card-body p-4">
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill"></i> @TempData["ErrorMessage"]
+                        </div>
+                    }
+
+                    <form asp-action="Register" asp-controller="Trial" method="post" id="trialRegistrationForm">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="OrganizationName" class="form-label">
+                                <span class="text-danger">*</span> Organization Name
+                            </label>
+                            <input asp-for="OrganizationName" class="form-control" placeholder="Enter your organization name" />
+                            <span asp-validation-for="OrganizationName" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="FullName" class="form-label">
+                                <span class="text-danger">*</span> Full Name
+                            </label>
+                            <input asp-for="FullName" class="form-control" placeholder="Enter your full name" />
+                            <span asp-validation-for="FullName" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label">
+                                <span class="text-danger">*</span> Email Address
+                            </label>
+                            <input asp-for="Email" type="email" class="form-control" placeholder="your.email@example.com" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                            <small class="form-text text-muted">This will be your admin account email</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label">
+                                <span class="text-danger">*</span> Password
+                            </label>
+                            <input asp-for="Password" type="password" class="form-control" placeholder="At least 12 characters" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                            <small class="form-text text-muted">Must be at least 12 characters long</small>
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input asp-for="AcceptTerms" class="form-check-input" type="checkbox" id="acceptTerms" />
+                            <label asp-for="AcceptTerms" class="form-check-label" for="acceptTerms">
+                                I accept the terms and conditions
+                            </label>
+                            <span asp-validation-for="AcceptTerms" class="text-danger d-block"></span>
+                        </div>
+                        
+                        @* SECURITY: CAPTCHA widget for bot protection *@
+                        @if (ViewBag.CaptchaEnabled == true && !string.IsNullOrEmpty(ViewBag.CaptchaSiteKey))
+                        {
+                            <div class="mb-3">
+                                <div class="g-recaptcha" data-sitekey="@ViewBag.CaptchaSiteKey"></div>
+                                <small class="form-text text-muted">Please complete the CAPTCHA to verify you are not a robot</small>
+                            </div>
+                        }
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg" id="submitButton">
+                                <i class="bi bi-rocket-takeoff"></i> Start Free Trial
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center text-muted">
+                    <small>Already have an account? <a asp-action="Login" asp-controller="Account">Sign in here</a></small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    @* SECURITY: Load reCAPTCHA script if enabled *@
+    @if (ViewBag.CaptchaEnabled == true && !string.IsNullOrEmpty(ViewBag.CaptchaSiteKey))
+    {
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    }
+    <script>
+        // Prevent double submission
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('trialRegistrationForm');
+            const submitButton = document.getElementById('submitButton');
+            
+            if (form && submitButton) {
+                form.addEventListener('submit', function(e) {
+                    @* SECURITY: Validate CAPTCHA before submission if enabled *@
+                    @if (ViewBag.CaptchaEnabled == true)
+                    {
+                        <text>
+                        const captchaResponse = grecaptcha.getResponse();
+                        if (!captchaResponse) {
+                            e.preventDefault();
+                            alert('Please complete the CAPTCHA verification');
+                            return false;
+                        }
+                        </text>
+                    }
+                    
+                    // Disable submit button to prevent double submission
+                    submitButton.disabled = true;
+                    submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Processing...';
+                });
+            }
+        });
+    </script>
+}

@@ -1,0 +1,41 @@
+{
+  "title": "Reports",
+  "subtitle": "Shahin WATCH - Generate compliance reports and dashboards",
+  "generateReport": "+ Generate Report",
+  "types": {
+    "compliance": {
+      "title": "Compliance Report",
+      "description": "Comprehensive overview of compliance status across all frameworks"
+    },
+    "control": {
+      "title": "Control Assessment",
+      "description": "Detailed analysis of control implementation and effectiveness"
+    },
+    "evidence": {
+      "title": "Evidence Summary",
+      "description": "Summary of all evidence artifacts and their status"
+    },
+    "gap": {
+      "title": "Gap Analysis",
+      "description": "Identify gaps in compliance and control coverage"
+    },
+    "remediation": {
+      "title": "Remediation Tracker",
+      "description": "Track remediation efforts and resolution progress"
+    },
+    "executive": {
+      "title": "Executive Summary",
+      "description": "High-level overview for leadership and stakeholders"
+    }
+  },
+  "recentReports": {
+    "title": "Recent Reports",
+    "table": {
+      "reportName": "Report Name",
+      "type": "Type",
+      "generated": "Generated",
+      "status": "Status",
+      "actions": "Actions"
+    }
+  }
+}

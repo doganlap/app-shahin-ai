@@ -1,0 +1,25 @@
+
+{
+    "ConnectionStrings": {
+      "Default": "Server=(localdb)\\mssqllocaldb;Database=GrcMvcTestDb;Trusted_Connection=True;"
+    },
+    "Authentication": {
+      "JwtBearer": {
+        "IsEnabled": true,
+        "SecurityKey": "VerySecureTestKeyForJwtSigningPurposes123!",
+        "Issuer": "GrcMvc.Test",
+        "Audience": "GrcMvc.Test"
+      }
+    },
+    "App": {
+      "SelfUrl": "https://localhost:44300"
+    },
+    "Logging": {
+      "LogLevel": {
+        "Default": "Information",
+        "Microsoft": "Warning",
+        "Microsoft.Hosting.Lifetime": "Information"
+      }
+    }
+  }
+  

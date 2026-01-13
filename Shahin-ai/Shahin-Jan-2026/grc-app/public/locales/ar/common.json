@@ -1,0 +1,88 @@
+{
+  "app": {
+    "name": "شاهين الذكاء الاصطناعي",
+    "platform": "منصة الحوكمة والمخاطر والامتثال",
+    "title": "منصة الحوكمة والمخاطر والامتثال"
+  },
+  "navigation": {
+    "dashboard": "لوحة التحكم",
+    "controls": "الضوابط",
+    "requirements": "المتطلبات",
+    "applicability": "قابلية التطبيق",
+    "evidence": "الأدلة",
+    "tests": "الاختبارات",
+    "reports": "التقارير",
+    "remediation": "المعالجة",
+    "vault": "الخزنة",
+    "assessments": "التقييمات",
+    "risks": "المخاطر",
+    "audits": "المراجعات",
+    "settings": "الإعدادات",
+    "users": "المستخدمون",
+    "tenants": "المستأجرون",
+    "mainMenu": "القائمة الرئيسية",
+    "admin": "المسؤول"
+  },
+  "actions": {
+    "export": "تصدير",
+    "add": "إضافة",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "view": "عرض",
+    "search": "بحث",
+    "filter": "تصفية",
+    "submit": "إرسال",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "download": "تحميل",
+    "upload": "رفع",
+    "bulkUpload": "رفع جماعي",
+    "generate": "إنشاء"
+  },
+  "common": {
+    "loading": "جاري التحميل...",
+    "noData": "لا توجد بيانات",
+    "error": "حدث خطأ",
+    "success": "نجح",
+    "total": "المجموع",
+    "status": "الحالة",
+    "actions": "الإجراءات",
+    "name": "الاسم",
+    "type": "النوع",
+    "date": "التاريخ",
+    "searchPlaceholder": "البحث عن الضوابط والأدلة والتقارير..."
+  },
+  "status": {
+    "compliant": "متوافق",
+    "partial": "جزئي",
+    "nonCompliant": "غير متوافق",
+    "notAssessed": "غير مقيّم",
+    "approved": "معتمد",
+    "pending": "قيد المراجعة",
+    "rejected": "مرفوض",
+    "expired": "منتهي الصلاحية",
+    "critical": "حرج",
+    "high": "عالي",
+    "medium": "متوسط",
+    "low": "منخفض",
+    "open": "مفتوح",
+    "inProgress": "قيد التنفيذ",
+    "review": "مراجعة",
+    "closed": "مغلق",
+    "expiringSoon": "ينتهي قريباً"
+  },
+  "frameworks": {
+    "ncaEcc": "NCA ECC",
+    "samaCsf": "SAMA CSF",
+    "pdpl": "PDPL",
+    "ncaCscc": "NCA CSCC",
+    "allFrameworks": "جميع الأطر"
+  },
+  "user": {
+    "profile": "مستخدم المسؤول",
+    "email": "admin@company.com"
+  },
+  "footer": {
+    "copyright": "© 2026 شاهين الذكاء الاصطناعي. جميع الحقوق محفوظة."
+  }
+}

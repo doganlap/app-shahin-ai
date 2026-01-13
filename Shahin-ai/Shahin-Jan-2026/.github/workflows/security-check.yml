@@ -1,0 +1,34 @@
+name: Security Check - Port Exposure
+
+on:
+  pull_request:
+    paths:
+      - '**/docker-compose*.yml'
+      - '**/docker-compose*.yaml'
+  push:
+    branches:
+      - main
+      - production
+    paths:
+      - '**/docker-compose*.yml'
+      - '**/docker-compose*.yaml'
+
+jobs:
+  check-ports:
+    name: Check Database Port Exposure
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Run security check
+        run: |
+          chmod +x scripts/security-check-ports.sh
+          ./scripts/security-check-ports.sh
+      
+      - name: Fail if violations found
+        if: failure()
+        run: |
+          echo "::error::Security violations found! Database ports should not be exposed."
+          exit 1

@@ -1,0 +1,33 @@
+{
+  "title": "لوحة التحكم",
+  "subtitle": "نظرة عامة على حالة الامتثال الخاصة بك",
+  "stats": {
+    "activePlans": "الخطط النشطة",
+    "completed": "المكتمل",
+    "baselines": "الخطوط الأساسية",
+    "controls": "الضوابط",
+    "complianceRate": "معدل الامتثال",
+    "pendingTasks": "المهام المعلقة"
+  },
+  "recentActivity": {
+    "title": "النشاط الأخير",
+    "activities": {
+      "controlUpdated": "تم تحديث حالة الضابط {{id}} إلى متوافق",
+      "evidenceUploaded": "تم رفع دليل لـ {{control}}",
+      "assessmentCompleted": "تم إكمال تقييم {{framework}}",
+      "remediation": "تم تعيين مهمة المعالجة إلى {{user}}"
+    }
+  },
+  "quickActions": {
+    "title": "إجراءات سريعة",
+    "newAssessment": "تقييم جديد",
+    "uploadEvidence": "رفع دليل",
+    "viewReports": "عرض التقارير",
+    "createRemediation": "إنشاء معالجة",
+    "reviewControls": "مراجعة الضوابط"
+  },
+  "complianceByFramework": {
+    "title": "الامتثال حسب الإطار",
+    "controlsCompliant": "{{count}} من {{total}} ضوابط متوافقة"
+  }
+}

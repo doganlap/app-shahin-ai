@@ -1,0 +1,24 @@
+{
+  "title": "الأدلة",
+  "subtitle": "شاهين PROVE/VAULT - رفع وإدارة أدلة الامتثال",
+  "uploadEvidence": "+ رفع دليل",
+  "bulkUpload": "رفع جماعي",
+  "searchPlaceholder": "البحث عن الأدلة...",
+  "stats": {
+    "total": "إجمالي الأدلة",
+    "approved": "معتمد",
+    "pendingReview": "قيد المراجعة",
+    "expiringSoon": "ينتهي قريباً"
+  },
+  "table": {
+    "name": "الاسم",
+    "type": "النوع",
+    "control": "الضابط",
+    "status": "الحالة",
+    "uploaded": "تم الرفع",
+    "expires": "ينتهي",
+    "actions": "الإجراءات"
+  },
+  "loading": "جاري تحميل الأدلة...",
+  "noData": "لم يتم رفع أي دليل بعد..."
+}

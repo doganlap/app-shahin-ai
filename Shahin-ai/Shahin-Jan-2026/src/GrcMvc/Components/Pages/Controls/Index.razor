@@ -1,0 +1,275 @@
+@page "/controls"
+@using GrcMvc.Models.DTOs
+@using GrcMvc.Services.Interfaces
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IControlService ControlService
+
+@{
+    var requestCulture = HttpContextAccessor.HttpContext?.Features.Get<IRequestCultureFeature>();
+    var currentCulture = requestCulture?.RequestCulture?.UICulture?.Name ?? "ar";
+    var dir = currentCulture == "ar" ? "rtl" : "ltr";
+}
+
+<PageTitle>@(currentCulture == "ar" ? "مكتبة الضوابط" : "Control Library")</PageTitle>
+
+<div dir="@dir" class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="display-6">Control Library</h1>
+            <p class="text-muted">Organization-wide controls and their effectiveness tracking</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="/controls/create" class="btn btn-primary">
+                <span class="me-2">+</span>Create Control
+            </a>
+        </div>
+    </div>
+
+    <LoadingSpinner IsLoading="@isLoading" Message="Loading controls..." />
+
+    @if (!isLoading)
+    {
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="form-label">Filter by Status</label>
+                                <select class="form-select form-select-sm" @onchange="FilterByStatus">
+                                    <option value="">All Statuses</option>
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                    <option value="Pending">Pending</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Filter by Type</label>
+                                <select class="form-select form-select-sm" @onchange="FilterByType">
+                                    <option value="">All Types</option>
+                                    <option value="Detective">Detective</option>
+                                    <option value="Preventive">Preventive</option>
+                                    <option value="Corrective">Corrective</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Filter by Effectiveness</label>
+                                <select class="form-select form-select-sm" @onchange="FilterByEffectiveness">
+                                    <option value="">All</option>
+                                    <option value="Effective">Effective</option>
+                                    <option value="Partially Effective">Partially Effective</option>
+                                    <option value="Ineffective">Ineffective</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">&nbsp;</label>
+                                <button class="btn btn-sm btn-outline-secondary w-100" @onclick="ResetFilters">
+                                    Reset Filters
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-2">
+            <MetricCard Title="Total Controls" Value="45" Subtitle="" Color="primary" Icon="bi-shield-check" />
+        </div>
+        <div class="col-md-3 mb-2">
+            <MetricCard Title="Effective" Value="38" Subtitle="" Color="success" Icon="bi-check-circle" />
+        </div>
+        <div class="col-md-3 mb-2">
+            <MetricCard Title="Partially Effective" Value="4" Subtitle="" Color="warning" Icon="bi-exclamation-circle" />
+        </div>
+        <div class="col-md-3 mb-2">
+            <MetricCard Title="Ineffective" Value="3" Subtitle="" Color="danger" Icon="bi-x-circle" />
+        </div>
+    </div>
+
+    <!-- Controls Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Control Number</th>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Effectiveness</th>
+                                <th>Owner</th>
+                                <th>Last Tested</th>
+                                <th>Linked Risks</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var control in controls)
+                            {
+                                <tr>
+                                    <td>
+                                        <span class="badge bg-secondary">@control.ControlNumber</span>
+                                    </td>
+                                    <td>
+                                        <strong>@control.Name</strong>
+                                    </td>
+                                    <td>@control.Type</td>
+                                    <td>@control.Category</td>
+                                    <td>
+                                        <StatusBadge Status="@control.Status" />
+                                    </td>
+                                    <td>
+                                        @if (control.Effectiveness == "Effective")
+                                        {
+                                            <span class="badge bg-success">@control.Effectiveness</span>
+                                        }
+                                        else if (control.Effectiveness == "Partially Effective")
+                                        {
+                                            <span class="badge bg-warning">@control.Effectiveness</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">@control.Effectiveness</span>
+                                        }
+                                    </td>
+                                    <td>@control.Owner</td>
+                                    <td>
+                                        @if (control.LastTestedDate.HasValue)
+                                        {
+                                            @control.LastTestedDate.Value.ToString("MMM dd, yyyy")
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Not tested</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">@control.LinkedRiskCount</span>
+                                    </td>
+                                    <td>
+                                        <a href="/controls/@control.Id/edit" class="btn btn-sm btn-outline-primary">Edit</a>
+                                        <a href="/controls/@control.Id" class="btn btn-sm btn-outline-secondary">View</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+        }
+    }
+</div>
+
+@code {
+    private List<ControlListItemDto> controls = new();
+    private List<ControlListItemDto> allControls = new();
+    private bool isLoading = true;
+
+    // Filter state
+    private string? statusFilter;
+    private string? typeFilter;
+    private string? effectivenessFilter;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            isLoading = true;
+            
+            // Load controls from service
+            var controlDtos = await ControlService.GetAllAsync();
+            
+            // Map ControlDto to ControlListItemDto
+            allControls = controlDtos.Select(c => new ControlListItemDto
+            {
+                Id = c.Id,
+                ControlNumber = !string.IsNullOrEmpty(c.ControlNumber) ? c.ControlNumber : $"CTRL-{c.Id.ToString().Substring(0, 8).ToUpper()}",
+                Name = !string.IsNullOrEmpty(c.Name) ? c.Name : "Unnamed Control",
+                Type = !string.IsNullOrEmpty(c.Type) ? c.Type : "Unknown",
+                Category = !string.IsNullOrEmpty(c.Category) ? c.Category : "Uncategorized",
+                Status = !string.IsNullOrEmpty(c.Status) ? c.Status : "Unknown",
+                Effectiveness = GetEffectivenessString(c.EffectivenessScore),
+                Owner = !string.IsNullOrEmpty(c.Owner) ? c.Owner : "Unassigned",
+                LastTestedDate = c.LastTestDate,
+                LinkedRiskCount = 0, // TODO: Query linked risks count if needed
+                LinkedAssessmentCount = 0 // TODO: Query linked assessments count if needed
+            }).ToList();
+
+            controls = allControls.ToList();
+        }
+        catch (Exception ex)
+        {
+            // Log error and show empty list
+            // In production, you might want to show an error message to the user
+            allControls = new List<ControlListItemDto>();
+            controls = new List<ControlListItemDto>();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private string GetEffectivenessString(int effectivenessScore)
+    {
+        return effectivenessScore switch
+        {
+            >= 80 => "Effective",
+            >= 50 => "Partially Effective",
+            _ => "Ineffective"
+        };
+    }
+
+    private void FilterByStatus(ChangeEventArgs e)
+    {
+        statusFilter = e.Value?.ToString();
+        ApplyFilters();
+    }
+
+    private void FilterByType(ChangeEventArgs e)
+    {
+        typeFilter = e.Value?.ToString();
+        ApplyFilters();
+    }
+
+    private void FilterByEffectiveness(ChangeEventArgs e)
+    {
+        effectivenessFilter = e.Value?.ToString();
+        ApplyFilters();
+    }
+
+    private void ResetFilters()
+    {
+        statusFilter = null;
+        typeFilter = null;
+        effectivenessFilter = null;
+        controls = allControls.ToList();
+        StateHasChanged();
+    }
+
+    private void ApplyFilters()
+    {
+        var filtered = allControls.AsEnumerable();
+
+        if (!string.IsNullOrEmpty(statusFilter))
+            filtered = filtered.Where(c => c.Status == statusFilter);
+
+        if (!string.IsNullOrEmpty(typeFilter))
+            filtered = filtered.Where(c => c.Type == typeFilter);
+
+        if (!string.IsNullOrEmpty(effectivenessFilter))
+            filtered = filtered.Where(c => c.Effectiveness == effectivenessFilter);
+
+        controls = filtered.ToList();
+        StateHasChanged();
+    }
+}

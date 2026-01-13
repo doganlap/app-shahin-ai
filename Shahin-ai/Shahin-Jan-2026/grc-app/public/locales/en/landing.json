@@ -1,0 +1,62 @@
+{
+  "hero": {
+    "title": "Enterprise GRC Platform",
+    "subtitle": "Streamline governance, risk, and compliance with Shahin AI",
+    "description": "Powerful compliance automation for Saudi Arabian frameworks including NCA ECC, SAMA CSF, PDPL, and NCA CSCC",
+    "cta": {
+      "getStarted": "Get Started",
+      "requestDemo": "Request Demo",
+      "learnMore": "Learn More"
+    }
+  },
+  "features": {
+    "title": "Comprehensive GRC Solution",
+    "subtitle": "Everything you need to manage compliance",
+    "items": {
+      "controls": {
+        "title": "Control Management",
+        "description": "Centralized control library mapped to multiple frameworks"
+      },
+      "evidence": {
+        "title": "Evidence Management",
+        "description": "Secure evidence vault with automated collection and tracking"
+      },
+      "assessment": {
+        "title": "Continuous Assessment",
+        "description": "Real-time compliance monitoring and gap analysis"
+      },
+      "reporting": {
+        "title": "Advanced Reporting",
+        "description": "Executive dashboards and compliance reports"
+      },
+      "remediation": {
+        "title": "Remediation Tracking",
+        "description": "Track and resolve compliance gaps efficiently"
+      },
+      "automation": {
+        "title": "AI-Powered Automation",
+        "description": "Intelligent automation for compliance workflows"
+      }
+    }
+  },
+  "frameworks": {
+    "title": "Supported Frameworks",
+    "subtitle": "Comprehensive coverage of Saudi Arabian compliance standards"
+  },
+  "cta": {
+    "title": "Ready to transform your compliance?",
+    "subtitle": "Join leading organizations using Shahin AI for GRC",
+    "button": "Get Started Today"
+  },
+  "footer": {
+    "product": "Product",
+    "features": "Features",
+    "pricing": "Pricing",
+    "company": "Company",
+    "about": "About Us",
+    "contact": "Contact",
+    "legal": "Legal",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  }
+}

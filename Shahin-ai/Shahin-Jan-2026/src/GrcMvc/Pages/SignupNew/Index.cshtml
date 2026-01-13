@@ -1,0 +1,147 @@
+@page
+@model GrcMvc.Pages.SignupNew.IndexModel
+@{
+    ViewData["Title"] = "Start Your Free Trial";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="min-vh-100 d-flex align-items-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card shadow-lg border-0">
+                    <div class="card-body p-5">
+                        <!-- Logo/Header -->
+                        <div class="text-center mb-4">
+                            <h1 class="h3 fw-bold text-primary mb-2">Shahin AI GRC</h1>
+                            <p class="text-muted">Start your 7-day free trial</p>
+                        </div>
+
+                        <!-- Error Message -->
+                        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                        {
+                            <div class="alert alert-danger" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>@Model.ErrorMessage
+                            </div>
+                        }
+
+                        <!-- Validation Summary -->
+                        <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+
+                        <!-- Registration Form -->
+                        <form method="post" id="signupForm">
+                            @Html.AntiForgeryToken()
+                            
+                            <!-- Company Name -->
+                            <div class="mb-3">
+                                <label asp-for="Input.CompanyName" class="form-label fw-semibold">
+                                    <i class="bi bi-building me-1"></i>Company Name <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="Input.CompanyName" class="form-control form-control-lg" 
+                                       placeholder="Enter your company name" autofocus />
+                                <span asp-validation-for="Input.CompanyName" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Full Name -->
+                            <div class="mb-3">
+                                <label asp-for="Input.FullName" class="form-label fw-semibold">
+                                    <i class="bi bi-person me-1"></i>Full Name <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="Input.FullName" class="form-control form-control-lg" 
+                                       placeholder="Enter your full name" />
+                                <span asp-validation-for="Input.FullName" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="mb-3">
+                                <label asp-for="Input.Email" class="form-label fw-semibold">
+                                    <i class="bi bi-envelope me-1"></i>Work Email <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="Input.Email" type="email" class="form-control form-control-lg" 
+                                       placeholder="your.email@company.com" />
+                                <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                                <small class="form-text text-muted">This will be your admin account</small>
+                            </div>
+
+                            <!-- Password -->
+                            <div class="mb-3">
+                                <label asp-for="Input.Password" class="form-label fw-semibold">
+                                    <i class="bi bi-lock me-1"></i>Password <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <input asp-for="Input.Password" type="password" class="form-control form-control-lg" 
+                                           placeholder="At least 12 characters" id="passwordInput" />
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                        <i class="bi bi-eye" id="eyeIcon"></i>
+                                    </button>
+                                </div>
+                                <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                                <small class="form-text text-muted">Must be at least 12 characters long</small>
+                            </div>
+
+                            <!-- Terms Checkbox -->
+                            <div class="mb-4">
+                                <div class="form-check">
+                                    <input asp-for="Input.AcceptTerms" class="form-check-input" type="checkbox" id="acceptTerms" />
+                                    <label class="form-check-label" for="acceptTerms">
+                                        I accept the <a href="/terms" target="_blank">terms and conditions</a> <span class="text-danger">*</span>
+                                    </label>
+                                </div>
+                                <span asp-validation-for="Input.AcceptTerms" class="text-danger small d-block"></span>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg" id="submitButton">
+                                    <i class="bi bi-rocket-takeoff me-2"></i>Start Free Trial
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Footer -->
+                        <div class="text-center mt-4">
+                            <p class="text-muted small mb-2">
+                                Already have an account? 
+                                <a asp-page="/Account/Login" class="text-decoration-none">Sign in here</a>
+                            </p>
+                            <div class="small text-muted">
+                                <i class="bi bi-check-circle me-1"></i>7-day free trial<br>
+                                <i class="bi bi-check-circle me-1"></i>No credit card required<br>
+                                <i class="bi bi-check-circle me-1"></i>Full access to all features
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Password visibility toggle
+        document.getElementById('togglePassword')?.addEventListener('click', function() {
+            const passwordInput = document.getElementById('passwordInput');
+            const eyeIcon = document.getElementById('eyeIcon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('bi-eye');
+                eyeIcon.classList.add('bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('bi-eye-slash');
+                eyeIcon.classList.add('bi-eye');
+            }
+        });
+
+        // Prevent double submission
+        document.getElementById('signupForm')?.addEventListener('submit', function(e) {
+            const submitButton = document.getElementById('submitButton');
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating your account...';
+            }
+        });
+    </script>
+}

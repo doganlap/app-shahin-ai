@@ -1,0 +1,580 @@
+@using GrcMvc.Services
+@using GrcMvc.Services.Interfaces
+@using Microsoft.AspNetCore.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using GrcMvc.Resources
+@inject IAppInfoService AppInfo
+@inject ISiteSettingsService SiteSettings
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@inject IHtmlLocalizer<SharedResource> L
+@{
+    var baseUrl = $"{HttpContextAccessor.HttpContext?.Request.Scheme}://{HttpContextAccessor.HttpContext?.Request.Host}";
+    var currentPath = HttpContextAccessor.HttpContext?.Request.Path.ToString() ?? "/";
+    var canonicalUrl = $"{baseUrl}{currentPath}";
+    var metaDescription = ViewData["MetaDescription"]?.ToString() ?? L["Landing_MetaDescription"].Value ?? "Shahin Platform";
+    var metaKeywords = L["Landing_MetaKeywords"].Value ?? "GRC, governance, risk, compliance";
+    var ogImage = ViewData["OgImage"]?.ToString() ?? $"{baseUrl}/images/og-image.png";
+    
+    // Get current culture for i18n
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var currentCulture = requestCulture?.RequestCulture?.UICulture?.Name ?? "ar";
+    var isRtl = currentCulture == "ar";
+    var htmlLang = currentCulture;
+    var htmlDir = isRtl ? "rtl" : "ltr";
+}
+<!DOCTYPE html>
+<html lang="@htmlLang" dir="@htmlDir">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="@metaDescription" />
+    <meta name="keywords" content="@metaKeywords" />
+    <title>@ViewData["Title"] - @AppInfo.Name</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="~/images/brand/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="~/images/brand/favicon-16.png" />
+    <link rel="apple-touch-icon" sizes="128x128" href="~/images/brand/favicon-128.png" />
+    <meta name="application-name" content="@AppInfo.Name" />
+    <meta name="author" content="@AppInfo.CompanyName" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="@canonicalUrl" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    @if (isRtl)
+    {
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" crossorigin="anonymous" />
+    }
+    else
+    {
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous" />
+    }
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="~/css/landing.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/tailwind.output.css" asp-append-version="true" />
+
+    <!-- Open Graph / Social Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="@canonicalUrl" />
+    <meta property="og:title" content="@ViewData["Title"] - @AppInfo.Name" />
+    <meta property="og:description" content="@metaDescription" />
+    <meta property="og:image" content="@ogImage" />
+    <meta property="og:locale" content="ar_SA" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:site_name" content="@AppInfo.Name" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@ViewData["Title"] - @AppInfo.Name" />
+    <meta name="twitter:description" content="@metaDescription" />
+    <meta name="twitter:image" content="@ogImage" />
+
+    <!-- Structured Data (JSON-LD) for SEO -->
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@type": "SoftwareApplication",
+        "name": "@AppInfo.Name",
+        "alternateName": "Shahin GRC",
+        "description": "@metaDescription",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web Browser",
+        "url": "@baseUrl",
+        "offers": {
+            "@@type": "Offer",
+            "price": "0",
+            "priceCurrency": "SAR",
+            "description": "7-day free trial with full access"
+        },
+        "aggregateRating": {
+            "@@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "ratingCount": "127"
+        },
+        "provider": {
+            "@@type": "Organization",
+            "name": "@AppInfo.CompanyName",
+            "url": "https://www.doganconsult.com",
+            "logo": "@baseUrl/images/brand/logo.png",
+            "sameAs": [
+                "@SiteSettings.LinkedInUrl",
+                "@SiteSettings.TwitterUrl"
+            ],
+            "address": {
+                "@@type": "PostalAddress",
+                "addressCountry": "SA",
+                "addressLocality": "Riyadh"
+            }
+        },
+        "featureList": [
+            "Smart Compliance Scope Derivation",
+            "130+ KSA & International Regulators",
+            "400+ Controls Library",
+            "AI-Powered Risk Assessment",
+            "Evidence Management",
+            "Automated Workflows",
+            "Multi-tenant Architecture",
+            "Arabic & English Support"
+        ]
+    }
+    </script>
+
+    <!-- Organization Schema -->
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@type": "Organization",
+        "name": "@AppInfo.CompanyName",
+        "url": "https://www.doganconsult.com",
+        "logo": "@baseUrl/images/brand/logo.png",
+        "description": "Dogan Consult - Technology & Consulting Services",
+        "foundingDate": "2020",
+        "sameAs": [
+            "@SiteSettings.LinkedInUrl",
+            "@SiteSettings.TwitterUrl",
+            "@SiteSettings.YouTubeUrl"
+        ],
+        "contactPoint": {
+            "@@type": "ContactPoint",
+            "telephone": "@SiteSettings.PhoneNumber",
+            "contactType": "customer service",
+            "availableLanguage": ["Arabic", "English"]
+        }
+    }
+    </script>
+
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <!-- Skip Link for Accessibility -->
+    <a href="#main-content" class="skip-link">@L["Accessibility_SkipLink"]</a>
+
+    <!-- Navigation -->
+    <nav class="landing-navbar" role="navigation" aria-label="@L["Accessibility_NavMain"]">
+        <div class="container">
+            <div class="navbar-inner">
+                <a href="/" class="navbar-brand" aria-label="@L["Accessibility_Home"]">
+                    <img src="~/images/brand/eagle-logo.svg" alt="@L["Accessibility_AppName"]" class="logo-icon-img" style="width: 40px; height: 40px;" aria-hidden="true" />
+                    <span>@L["Accessibility_AppName"]</span>
+                </a>
+
+                <!-- Desktop Navigation -->
+                <div class="nav-links" role="menubar">
+                    <a href="/features" class="nav-link @(ViewData["Title"]?.ToString()?.Contains(L["Landing_Features"].Value ?? "Features") == true ? "active" : "")" role="menuitem">@L["Landing_Features"]</a>
+                    <a href="/pricing" class="nav-link @(ViewData["Title"]?.ToString()?.Contains(L["Landing_Pricing"].Value ?? "Pricing") == true ? "active" : "")" role="menuitem">@L["Landing_Pricing"]</a>
+                    <a href="/about" class="nav-link @(ViewData["Title"]?.ToString()?.Contains(L["Landing_About"].Value ?? "About") == true ? "active" : "")" role="menuitem">@L["Landing_About"]</a>
+                    <a href="/contact" class="nav-link @(ViewData["Title"]?.ToString()?.Contains(L["Landing_Contact"].Value ?? "Contact") == true ? "active" : "")" role="menuitem">@L["Landing_Contact"]</a>
+                </div>
+
+                <div class="nav-actions">
+                    <!-- Theme Toggle -->
+                    <button class="theme-toggle" onclick="toggleTheme()" aria-label="@L["Accessibility_ThemeToggle"]" title="@L["Accessibility_ThemeToggle"]">
+                        <i class="bi bi-sun-fill theme-icon-light" aria-hidden="true"></i>
+                        <i class="bi bi-moon-fill theme-icon-dark" aria-hidden="true"></i>
+                    </button>
+
+                    <!-- Desktop Buttons -->
+                    <a href="/Account/Login" class="btn btn-outline d-none d-md-inline-flex">
+                        <i class="bi bi-person-circle" aria-hidden="true"></i>
+                        @L["Nav_Login"]
+                    </a>
+                    <a href="/trial" class="btn btn-primary d-none d-md-inline-flex">
+                        <i class="bi bi-rocket-takeoff-fill" aria-hidden="true"></i>
+                        @L["Landing_StartFreeTrial"]
+                    </a>
+
+                    <!-- Mobile Menu Toggle -->
+                    <button class="mobile-menu-toggle"
+                            onclick="toggleMobileMenu()"
+                            aria-label="@L["Accessibility_OpenMenu"]"
+                            aria-expanded="false"
+                            aria-controls="mobile-menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="mobile-menu" role="menu" aria-hidden="true">
+        <a href="/features" class="nav-link" role="menuitem">@L["Landing_Features"]</a>
+        <a href="/pricing" class="nav-link" role="menuitem">@L["Landing_Pricing"]</a>
+        <a href="/about" class="nav-link" role="menuitem">@L["Landing_About"]</a>
+        <a href="/contact" class="nav-link" role="menuitem">@L["Landing_Contact"]</a>
+        <a href="/faq" class="nav-link" role="menuitem">@L["FAQ"]</a>
+        <div class="nav-actions">
+            <a href="/Account/Login" class="btn btn-outline">
+                <i class="bi bi-person-circle" aria-hidden="true"></i>
+                @L["Nav_Login"]
+            </a>
+            <a href="/trial" class="btn btn-primary">
+                <i class="bi bi-rocket-takeoff-fill" aria-hidden="true"></i>
+                @L["Landing_StartFreeTrial"]
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main id="main-content" role="main">
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    <footer class="landing-footer" role="contentinfo">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <div class="footer-brand">
+                        <div class="logo-icon" aria-hidden="true">ش</div>
+                        <span class="footer-brand-text">@L["Accessibility_AppName"]</span>
+                    </div>
+                    <p class="footer-desc">
+                        @L["Landing_FooterTagline"]
+                    </p>
+                    <div class="footer-social">
+                        @if (SiteSettings.HasLinkedIn)
+                        {
+                            <a href="@SiteSettings.LinkedInUrl" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                                <i class="bi bi-linkedin" aria-hidden="true"></i>
+                            </a>
+                        }
+                        @if (SiteSettings.HasTwitter)
+                        {
+                            <a href="@SiteSettings.TwitterUrl" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+                                <i class="bi bi-twitter-x" aria-hidden="true"></i>
+                            </a>
+                        }
+                        @if (SiteSettings.HasYouTube)
+                        {
+                            <a href="@SiteSettings.YouTubeUrl" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                                <i class="bi bi-youtube" aria-hidden="true"></i>
+                            </a>
+                        }
+                    </div>
+                </div>
+                <div>
+                    <h2 class="footer-title">المنتج</h2>
+                    <ul class="footer-links">
+                        <li><a href="/features">@L["Landing_Features"]</a></li>
+                        <li><a href="/trial">@L["Landing_StartFreeTrial"]</a></li>
+                        <li><a href="/pricing">@L["Landing_Pricing"]</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h2 class="footer-title">الموارد</h2>
+                    <ul class="footer-links">
+                        <li><a href="/docs">التوثيق</a></li>
+                        <li><a href="/blog">المدونة</a></li>
+                        <li><a href="/webinars">الندوات</a></li>
+                        <li><a href="/case-studies">دراسات الحالة</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h2 class="footer-title">الشركة</h2>
+                    <ul class="footer-links">
+                        <li><a href="/about">@L["Landing_About"]</a></li>
+                        <li><a href="/contact">@L["Landing_Contact"]</a></li>
+                        <li><a href="/careers">@L["Landing_Careers"]</a></li>
+                        <li><a href="/partners">@L["Landing_Partners"]</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h2 class="footer-title">الدعم</h2>
+                    <ul class="footer-links">
+                        <li><a href="/help">مركز المساعدة</a></li>
+                        <li><a href="/faq">الأسئلة الشائعة</a></li>
+                        <li><a href="/status">حالة النظام</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-copy">&copy; @AppInfo.CopyrightYear @AppInfo.Name. جميع الحقوق محفوظة. @AppInfo.VersionDisplay</p>
+                <div class="footer-legal">
+                    <a href="/privacy">سياسة الخصوصية</a>
+                    <a href="/terms">الشروط والأحكام</a>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span>Powered by</span>
+                    <a href="https://www.doganconsult.com" target="_blank" rel="noopener noreferrer" class="d-flex align-items-center gap-1">
+                        <i class="bi bi-lightning-charge-fill text-warning" aria-hidden="true"></i>
+                        Dogan Consult
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+    <script>
+        // ===== THEME TOGGLE =====
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('shahin-theme', newTheme);
+        }
+
+        // Load saved theme
+        (function() {
+            const savedTheme = localStorage.getItem('shahin-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+
+        // ===== MOBILE MENU =====
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            const isOpen = menu.classList.contains('open');
+
+            menu.classList.toggle('open');
+            toggle.setAttribute('aria-expanded', !isOpen);
+            menu.setAttribute('aria-hidden', isOpen);
+            toggle.setAttribute('aria-label', isOpen ? 'فتح القائمة' : 'إغلاق القائمة');
+
+            // Prevent body scroll when menu is open
+            document.body.style.overflow = isOpen ? '' : 'hidden';
+        }
+
+        // Close mobile menu on escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const menu = document.getElementById('mobile-menu');
+                if (menu.classList.contains('open')) {
+                    toggleMobileMenu();
+                }
+            }
+        });
+
+        // ===== NAVBAR SCROLL EFFECT =====
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.landing-navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // ===== FADE-IN ANIMATION ON SCROLL =====
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in, .fade-up').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+
+    <!-- AI Chat Widget -->
+    <button id="chat-toggle" class="chat-toggle" aria-label="فتح المحادثة مع المساعد الذكي" title="تحدث مع المساعد الذكي">
+        <i class="bi bi-robot" aria-hidden="true"></i>
+        <span class="chat-badge">AI</span>
+    </button>
+
+    <div id="ai-chat-widget" class="ai-chat-widget" role="dialog" aria-label="محادثة مع المساعد الذكي" aria-hidden="true">
+        <div class="chat-header">
+            <div class="chat-header-info">
+                <div class="chat-avatar" aria-hidden="true"><i class="bi bi-robot"></i></div>
+                <div>
+                    <div class="chat-title">@L["Chat_Title"]</div>
+                    <div class="chat-status">
+                        <span class="status-dot" aria-hidden="true"></span>
+                        <span>@L["Chat_Status"]</span>
+                    </div>
+                </div>
+            </div>
+            <button id="chat-close" class="chat-close" aria-label="@L["Chat_Close"]">
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div id="chat-messages" class="chat-messages" role="log" aria-live="polite" aria-label="@L["Chat_Messages"]">
+            <div class="chat-message bot">@L["Chat_Welcome"]</div>
+            <div class="chat-suggestions" role="group" aria-label="@L["Chat_Suggestions"]">
+                <button class="suggestion-btn" type="button">@L["Chat_Suggestion_WhatIsShahin"]</button>
+                <button class="suggestion-btn" type="button">@L["Landing_StartFreeTrial"]</button>
+                <button class="suggestion-btn" type="button">@L["Landing_Pricing"]</button>
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <label for="chat-input" class="visually-hidden">@L["Chat_InputLabel"]</label>
+            <input type="text" id="chat-input" placeholder="@L["Chat_InputPlaceholder"]" autocomplete="off">
+            <button id="chat-send" aria-label="@L["Chat_Send"]">
+                <i class="bi bi-send-fill" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ===== AI CHAT WIDGET =====
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatToggle = document.getElementById('chat-toggle');
+            if (!chatToggle) return; // Early exit if widget not present
+
+            (function() {
+                // Localized strings for JavaScript
+                const chatMessagesLocalized = {
+                    success: '@Html.Raw(L["Chat_SuccessMessage"].Value?.Replace("'", "\\'") ?? "Thank you for contacting us!")',
+                    error: '@Html.Raw(L["Chat_ErrorFallback"].Value?.Replace("'", "\\'") ?? "Hello! For inquiries, please contact us.")',
+                    typing: '@Html.Raw(L["Chat_Typing"].Value?.Replace("'", "\\'") ?? "Typing")'
+                };
+
+                const chatWidget = document.getElementById('ai-chat-widget');
+                const chatClose = document.getElementById('chat-close');
+                const chatMessagesEl = document.getElementById('chat-messages');
+                const chatInput = document.getElementById('chat-input');
+                const chatSend = document.getElementById('chat-send');
+                const suggestionBtns = document.querySelectorAll('.suggestion-btn');
+
+            let isOpen = false;
+
+            function openChat() {
+                isOpen = true;
+                chatWidget.classList.add('open');
+                chatWidget.setAttribute('aria-hidden', 'false');
+                chatToggle.classList.add('hidden');
+                chatInput.focus();
+            }
+
+            function closeChat() {
+                isOpen = false;
+                chatWidget.classList.remove('open');
+                chatWidget.setAttribute('aria-hidden', 'true');
+                chatToggle.classList.remove('hidden');
+                chatToggle.focus();
+            }
+
+            chatToggle.addEventListener('click', openChat);
+            chatClose.addEventListener('click', closeChat);
+
+            // Close on escape
+            chatWidget.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeChat();
+                }
+            });
+
+            async function sendMessage(message) {
+                if (!message.trim()) return;
+                addMessage(message, 'user');
+                chatInput.value = '';
+                const typingId = addTypingIndicator();
+
+                try {
+                    const response = await fetch('/api/Landing/ChatMessage', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ message, context: 'landing_page' })
+                    });
+
+                    removeTypingIndicator(typingId);
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        addMessage(data.response || chatMessagesLocalized.success, 'bot');
+                    } else if (response.status === 400) {
+                        const data = await response.json().catch(() => ({ response: 'يرجى إدخال رسالة صحيحة' }));
+                        addMessage(data.response || 'Please enter a valid message', 'bot');
+                    } else if (response.status === 429) {
+                        addMessage('تم تجاوز عدد الطلبات. يرجى المحاولة بعد قليل. / Too many requests. Please try again later.', 'bot');
+                    } else if (response.status >= 500) {
+                        addMessage('عذراً، الخدمة غير متاحة حالياً. يمكنك التواصل معنا عبر صفحة الاتصال. / Sorry, service temporarily unavailable. Please contact us.', 'bot');
+                    } else {
+                        addMessage(chatMessagesLocalized.error, 'bot');
+                    }
+                } catch (error) {
+                    removeTypingIndicator(typingId);
+
+                    if (error instanceof TypeError && error.message.includes('fetch')) {
+                        addMessage('خطأ في الاتصال بالإنترنت. يرجى التحقق من اتصالك. / Network error. Please check your connection.', 'bot');
+                    } else {
+                        addMessage(chatMessagesLocalized.error, 'bot');
+                    }
+
+                    console.error('Chat error:', error);
+                }
+            }
+
+            function addMessage(text, type) {
+                const msg = document.createElement('div');
+                msg.className = `chat-message ${type}`;
+                msg.textContent = text;
+                msg.setAttribute('role', 'article');
+                chatMessagesEl.appendChild(msg);
+                chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+            }
+
+            function addTypingIndicator() {
+                const id = 'typing-' + Date.now();
+                const indicator = document.createElement('div');
+                indicator.id = id;
+                indicator.className = 'chat-message bot typing';
+                indicator.setAttribute('aria-label', chatMessagesLocalized.typing);
+                indicator.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
+                chatMessagesEl.appendChild(indicator);
+                chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+                return id;
+            }
+
+            function removeTypingIndicator(id) {
+                const el = document.getElementById(id);
+                if (el) el.remove();
+            }
+
+            chatSend.addEventListener('click', () => sendMessage(chatInput.value));
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage(chatInput.value);
+            });
+            
+            // Handle suggestion buttons - navigate for trial/pricing, send message for others
+            const trialText = '@Html.Raw(L["Landing_StartFreeTrial"].Value?.Replace("'", "\\'") ?? "Start Free Trial")';
+            const pricingText = '@Html.Raw(L["Landing_Pricing"].Value?.Replace("'", "\\'") ?? "Pricing")';
+            
+            suggestionBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const text = btn.textContent.trim();
+                    if (text === trialText) {
+                        window.location.href = '/trial';
+                    } else if (text === pricingText) {
+                        window.location.href = '/pricing';
+                    } else {
+                        sendMessage(text);
+                    }
+                });
+            });
+
+                // Pulse animation after 3 seconds
+                setTimeout(() => {
+                    if (!isOpen) chatToggle.classList.add('pulse');
+                }, 3000);
+            })();
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

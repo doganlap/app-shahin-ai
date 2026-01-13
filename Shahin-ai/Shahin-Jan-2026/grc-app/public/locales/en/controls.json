@@ -1,0 +1,29 @@
+{
+  "title": "Controls",
+  "subtitle": "Shahin MAP - Manage your control library",
+  "addControl": "+ Add Control",
+  "searchPlaceholder": "Search controls...",
+  "filters": {
+    "allFrameworks": "All Frameworks",
+    "allStatus": "All Status"
+  },
+  "stats": {
+    "total": "Total",
+    "compliant": "Compliant",
+    "partial": "Partial",
+    "nonCompliant": "Non-Compliant",
+    "notAssessed": "Not Assessed"
+  },
+  "table": {
+    "controlId": "Control ID",
+    "name": "Name",
+    "framework": "Framework",
+    "category": "Category",
+    "status": "Status",
+    "maturity": "Maturity",
+    "actions": "Actions"
+  },
+  "controlsCount": "{{count}} controls",
+  "loading": "Loading controls...",
+  "noData": "No controls found"
+}

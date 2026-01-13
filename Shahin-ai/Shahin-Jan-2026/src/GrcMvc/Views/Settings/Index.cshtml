@@ -1,0 +1,235 @@
+@model List<GrcMvc.Controllers.SettingsCategoryViewModel>
+@using GrcMvc.Models.Entities
+@{
+    ViewData["Title"] = "System Settings";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1>
+                    <i class="bi bi-gear-fill"></i> System Settings
+                </h1>
+                <div>
+                    <a asp-action="Export" class="btn btn-outline-secondary">
+                        <i class="bi bi-download"></i> Export
+                    </a>
+                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#importModal">
+                        <i class="bi bi-upload"></i> Import
+                    </button>
+                    <form asp-action="Initialize" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-primary" onclick="return confirm('This will initialize default settings. Continue?');">
+                            <i class="bi bi-arrow-repeat"></i> Initialize Defaults
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <p class="text-muted">Manage all system configuration settings from the Admin dashboard. Changes take effect immediately.</p>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Quick Navigation -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="btn-group flex-wrap" role="group">
+                <a asp-action="AI" class="btn btn-outline-primary">
+                    <i class="bi bi-robot"></i> AI Services
+                </a>
+                <a asp-action="Integrations" class="btn btn-outline-primary">
+                    <i class="bi bi-plug"></i> Integrations
+                </a>
+                <a asp-action="Security" class="btn btn-outline-primary">
+                    <i class="bi bi-shield-lock"></i> Security
+                </a>
+                <a asp-action="Email" class="btn btn-outline-primary">
+                    <i class="bi bi-envelope"></i> Email
+                </a>
+                <a asp-action="Azure" class="btn btn-outline-primary">
+                    <i class="bi bi-cloud"></i> Azure
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Categories Overview -->
+    <div class="row">
+        @foreach (var category in Model)
+        {
+            <div class="col-md-4 col-lg-3 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="bi @GetCategoryIcon(category.Category)"></i>
+                            @GetCategoryDisplayName(category.Category)
+                        </h5>
+                        <span class="badge @(category.EnabledCount == category.Count ? "bg-success" : "bg-secondary")">
+                            @category.EnabledCount / @category.Count
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-3">@GetCategoryDescription(category.Category)</p>
+                        <ul class="list-unstyled mb-0">
+                            @foreach (var setting in category.Settings.Take(5))
+                            {
+                                <li class="d-flex justify-content-between align-items-center py-1 border-bottom">
+                                    <span class="small text-truncate" style="max-width: 150px;" title="@setting.Key">
+                                        @setting.DisplayName
+                                    </span>
+                                    @if (setting.DataType == "bool")
+                                    {
+                                        <span class="badge @(setting.Value == "true" ? "bg-success" : "bg-secondary")">
+                                            @(setting.Value == "true" ? "ON" : "OFF")
+                                        </span>
+                                    }
+                                    else if (setting.IsSensitive)
+                                    {
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="bi bi-lock-fill"></i>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-info text-truncate" style="max-width: 80px;" title="@setting.Value">
+                                            @(string.IsNullOrEmpty(setting.Value) ? "Not set" : (setting.Value?.Length > 10 ? setting.Value.Substring(0, 10) + "..." : setting.Value))
+                                        </span>
+                                    }
+                                </li>
+                            }
+                            @if (category.Settings.Count > 5)
+                            {
+                                <li class="text-center pt-2">
+                                    <span class="text-muted small">+@(category.Settings.Count - 5) more</span>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <a asp-action="Category" asp-route-category="@category.Category" class="btn btn-sm btn-outline-primary w-100">
+                            <i class="bi bi-pencil"></i> Edit Settings
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> No settings configured yet.
+                    Click <strong>Initialize Defaults</strong> to create default system settings.
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Import Modal -->
+<div class="modal fade" id="importModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="Import" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-upload"></i> Import Settings</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="file" class="form-label">Select JSON file</label>
+                        <input type="file" class="form-control" id="file" name="file" accept=".json" required>
+                        <div class="form-text">Upload a previously exported settings JSON file.</div>
+                    </div>
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>Warning:</strong> This will overwrite existing settings with matching keys.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Import</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetCategoryIcon(string category) => category switch
+    {
+        "Claude" or "OpenAI" or "AzureOpenAI" or "Gemini" or "LocalLlm" or "Copilot" => "bi-robot",
+        "SMTP" => "bi-envelope",
+        "Security" => "bi-shield-lock",
+        "Camunda" => "bi-diagram-3",
+        "Kafka" or "RabbitMQ" => "bi-broadcast",
+        "Redis" => "bi-database",
+        "Hangfire" => "bi-calendar-check",
+        "Azure" or "AzureBlob" or "AzureKeyVault" => "bi-cloud",
+        "MicrosoftGraph" => "bi-microsoft",
+        _ => "bi-gear"
+    };
+
+    string GetCategoryDisplayName(string category) => category switch
+    {
+        "Claude" => "Claude AI",
+        "OpenAI" => "OpenAI",
+        "AzureOpenAI" => "Azure OpenAI",
+        "Gemini" => "Google Gemini",
+        "LocalLlm" => "Local LLM",
+        "Copilot" => "MS Copilot",
+        "SMTP" => "Email",
+        "Security" => "Security",
+        "Camunda" => "Camunda",
+        "Kafka" => "Kafka",
+        "RabbitMQ" => "RabbitMQ",
+        "Redis" => "Redis",
+        "Hangfire" => "Hangfire",
+        "Azure" => "Azure",
+        "AzureBlob" => "Blob Storage",
+        "AzureKeyVault" => "Key Vault",
+        "MicrosoftGraph" => "MS Graph",
+        _ => category
+    };
+
+    string GetCategoryDescription(string category) => category switch
+    {
+        "Claude" => "Anthropic Claude AI configuration",
+        "OpenAI" => "OpenAI GPT models configuration",
+        "AzureOpenAI" => "Azure-hosted OpenAI services",
+        "Gemini" => "Google Gemini AI models",
+        "LocalLlm" => "Ollama local LLM settings",
+        "Copilot" => "Microsoft Copilot integration",
+        "SMTP" => "Email and SMTP settings",
+        "Security" => "Authentication and security",
+        "Camunda" => "BPM workflow engine",
+        "Kafka" => "Event streaming platform",
+        "RabbitMQ" => "Message queue broker",
+        "Redis" => "Distributed caching",
+        "Hangfire" => "Background job processing",
+        "Azure" => "Azure tenant configuration",
+        "AzureBlob" => "File storage settings",
+        "AzureKeyVault" => "Secrets management",
+        "MicrosoftGraph" => "Microsoft 365 API",
+        _ => "System configuration"
+    };
+}
