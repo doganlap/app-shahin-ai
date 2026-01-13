@@ -60,15 +60,20 @@ public class SyncExistingTenantsToAbp
                         continue;
                     }
 
-                    // Create ABP tenant with the same ID as custom tenant
-                    var abpTenant = await tenantManager.CreateAsync(
-                        name: customTenant.TenantSlug,
-                        id: customTenant.Id // Use same GUID to maintain referential integrity
-                    );
+                    // Create ABP tenant (ABP will generate the ID)
+                    var abpTenant = await tenantManager.CreateAsync(customTenant.TenantSlug);
+                    
+                    // Note: ABP generates its own ID. If you need to maintain the same ID,
+                    // you'll need to update the custom Tenant record to reference the new ABP tenant ID
+                    // or handle ID mapping separately to maintain referential integrity
 
                     // Insert into repository
                     await tenantRepository.InsertAsync(abpTenant);
                     await dbContext.SaveChangesAsync();
+                    
+                    // Optionally update custom tenant to reference ABP tenant ID if needed
+                    // customTenant.Id = abpTenant.Id;
+                    // await dbContext.SaveChangesAsync();
 
                     logger.LogInformation("✅ Synced tenant: {TenantName} (ID: {TenantId})",
                         customTenant.TenantSlug, customTenant.Id);
