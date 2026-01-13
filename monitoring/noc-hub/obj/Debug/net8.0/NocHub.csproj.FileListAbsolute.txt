@@ -1,0 +1,7 @@
+/home/monitoring/noc-hub/obj/Debug/net8.0/NocHub.GeneratedMSBuildEditorConfig.editorconfig
+/home/monitoring/noc-hub/obj/Debug/net8.0/NocHub.AssemblyInfoInputs.cache
+/home/monitoring/noc-hub/obj/Debug/net8.0/NocHub.AssemblyInfo.cs
+/home/monitoring/noc-hub/obj/Debug/net8.0/NocHub.csproj.CoreCompileInputs.cache
+/home/monitoring/noc-hub/obj/Debug/net8.0/NocHub.MvcApplicationPartsAssemblyInfo.cache
+/home/monitoring/noc-hub/obj/Debug/net8.0/NocHub.RazorAssemblyInfo.cache
+/home/monitoring/noc-hub/obj/Debug/net8.0/NocHub.RazorAssemblyInfo.cs

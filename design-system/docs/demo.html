@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unified Enterprise Design System - Demo</title>
+  <link rel="stylesheet" href="../tokens/design-tokens.css">
+  <link rel="stylesheet" href="../components/components.css">
+  <style>
+    .demo-section {
+      margin-bottom: var(--space-margin-xl);
+      padding-bottom: var(--space-padding-xl);
+      border-bottom: 2px solid var(--color-border-light);
+    }
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--space-gap-md);
+      margin-top: var(--space-margin-md);
+    }
+    .color-swatch {
+      padding: var(--space-padding-lg);
+      border-radius: var(--radius-medium);
+      color: white;
+      font-weight: var(--font-weight-medium);
+      text-align: center;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--space-padding-lg);
+    }
+    .token-example {
+      background: var(--color-bg-primary);
+      border: 1px solid var(--color-border-base);
+      border-radius: var(--radius-medium);
+      padding: var(--space-padding-md);
+      margin-bottom: var(--space-margin-sm);
+    }
+    .token-name {
+      font-family: var(--font-family-code);
+      color: var(--color-primary);
+      font-size: var(--font-size-small);
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <a href="#" class="navbar-brand">Design System Demo</a>
+    <button class="navbar-toggle" onclick="toggleMenu()">☰</button>
+    <ul class="navbar-nav" id="navMenu">
+      <li><a href="#colors" class="nav-link active">Colors</a></li>
+      <li><a href="#typography" class="nav-link">Typography</a></li>
+      <li><a href="#buttons" class="nav-link">Buttons</a></li>
+      <li><a href="#forms" class="nav-link">Forms</a></li>
+      <li><a href="#components" class="nav-link">Components</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <!-- Header -->
+    <div class="demo-section">
+      <h1>Unified Enterprise Design System</h1>
+      <p class="text-secondary">A Modern, Responsive Design System for Web & Mobile Apps</p>
+    </div>
+
+    <!-- Color Palette -->
+    <div class="demo-section" id="colors">
+      <h2>Color Palette</h2>
+      <p>WCAG AA Compliant - Professional digital blue theme</p>
+
+      <h3 class="mt-lg">Primary & Accent Colors</h3>
+      <div class="demo-grid">
+        <div class="color-swatch" style="background-color: var(--color-primary);">
+          Primary Blue<br>
+          <code style="color: white; font-size: 0.875rem;">#0d6efd</code>
+        </div>
+        <div class="color-swatch" style="background-color: var(--color-success);">
+          Success Green<br>
+          <code style="color: white; font-size: 0.875rem;">#4caf50</code>
+        </div>
+        <div class="color-swatch" style="background-color: var(--color-warning); color: #333;">
+          Warning Amber<br>
+          <code style="font-size: 0.875rem;">#ffc107</code>
+        </div>
+        <div class="color-swatch" style="background-color: var(--color-error);">
+          Error Red<br>
+          <code style="color: white; font-size: 0.875rem;">#dc3545</code>
+        </div>
+        <div class="color-swatch" style="background-color: var(--color-info);">
+          Info Teal<br>
+          <code style="color: white; font-size: 0.875rem;">#17a2b8</code>
+        </div>
+      </div>
+
+      <h3 class="mt-lg">Neutral Colors</h3>
+      <div class="demo-grid">
+        <div class="color-swatch" style="background-color: var(--global-white); border: 1px solid var(--color-border-base); color: #333;">
+          White Background<br>
+          <code style="font-size: 0.875rem;">#ffffff</code>
+        </div>
+        <div class="color-swatch" style="background-color: var(--global-gray-100); color: #333;">
+          Light Gray<br>
+          <code style="font-size: 0.875rem;">#f0f2f5</code>
+        </div>
+        <div class="color-swatch" style="background-color: var(--global-gray-300); color: #333;">
+          Medium Gray<br>
+          <code style="font-size: 0.875rem;">#dcdcdc</code>
+        </div>
+        <div class="color-swatch" style="background-color: var(--global-gray-900);">
+          Dark Gray<br>
+          <code style="color: white; font-size: 0.875rem;">#333333</code>
+        </div>
+      </div>
+    </div>
+
+    <!-- Typography -->
+    <div class="demo-section" id="typography">
+      <h2>Typography</h2>
+
+      <h1>Heading 1 - Extra Large (40px)</h1>
+      <h2>Heading 2 - Large (32px)</h2>
+      <h3>Heading 3 - Medium (24px)</h3>
+      <h4>Heading 4 - Small (20px)</h4>
+      <h5>Heading 5 - Base Large (18px)</h5>
+      <h6>Heading 6 - Base (16px)</h6>
+
+      <p>This is regular body text. The base font size is 16px with a line height of 1.5 for optimal readability. This design system uses system fonts for performance and native appearance across all platforms.</p>
+
+      <p class="text-secondary">This is secondary text, used for less important information or captions.</p>
+
+      <p><a href="#">This is a link</a> with proper color contrast and hover states.</p>
+
+      <p>This is <code>inline code</code> with a monospace font and subtle background.</p>
+    </div>
+
+    <!-- Buttons -->
+    <div class="demo-section" id="buttons">
+      <h2>Buttons</h2>
+
+      <h3>Button Variants</h3>
+      <div class="d-flex gap-md flex-wrap mt-md">
+        <button class="btn btn-primary">Primary Button</button>
+        <button class="btn btn-secondary">Secondary Button</button>
+        <button class="btn btn-danger">Danger Button</button>
+        <button class="btn btn-primary" disabled>Disabled Button</button>
+      </div>
+
+      <h3 class="mt-lg">Button Sizes</h3>
+      <div class="d-flex gap-md align-items-center flex-wrap mt-md">
+        <button class="btn btn-primary btn-sm">Small Button</button>
+        <button class="btn btn-primary">Default Button</button>
+        <button class="btn btn-primary btn-lg">Large Button</button>
+      </div>
+
+      <h3 class="mt-lg">Full Width Button</h3>
+      <button class="btn btn-primary btn-block mt-md">Full Width Primary Button</button>
+    </div>
+
+    <!-- Forms -->
+    <div class="demo-section" id="forms">
+      <h2>Form Elements</h2>
+
+      <form>
+        <div class="demo-grid">
+          <div>
+            <div class="form-group">
+              <label class="form-label" for="name">Full Name</label>
+              <input type="text" id="name" class="form-input" placeholder="John Doe">
+              <span class="form-helper-text">Enter your first and last name</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="email">Email Address</label>
+              <input type="email" id="email" class="form-input" placeholder="you@example.com">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="password">Password</label>
+              <input type="password" id="password" class="form-input is-invalid" placeholder="Enter password">
+              <span class="form-error-text">Password must be at least 8 characters</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="country">Country</label>
+              <select id="country" class="form-select">
+                <option>Select a country</option>
+                <option>United States</option>
+                <option>Canada</option>
+                <option>United Kingdom</option>
+                <option>Australia</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <div class="form-group">
+              <label class="form-label" for="message">Message</label>
+              <textarea id="message" class="form-textarea" placeholder="Your message here..."></textarea>
+              <span class="form-success-text">Message looks good!</span>
+            </div>
+
+            <div class="form-group">
+              <div class="form-check">
+                <input type="checkbox" id="newsletter" class="form-check-input" checked>
+                <label for="newsletter" class="form-check-label">Subscribe to newsletter</label>
+              </div>
+
+              <div class="form-check">
+                <input type="checkbox" id="terms" class="form-check-input">
+                <label for="terms" class="form-check-label">I agree to terms and conditions</label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="form-check">
+                <input type="radio" id="option1" name="options" class="form-check-input" checked>
+                <label for="option1" class="form-check-label">Option 1</label>
+              </div>
+
+              <div class="form-check">
+                <input type="radio" id="option2" name="options" class="form-check-input">
+                <label for="option2" class="form-check-label">Option 2</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit Form</button>
+        <button type="button" class="btn btn-secondary">Cancel</button>
+      </form>
+    </div>
+
+    <!-- Alerts -->
+    <div class="demo-section" id="components">
+      <h2>Alerts & Notifications</h2>
+
+      <div class="alert alert-success">
+        <span class="alert-icon">✓</span>
+        <div class="alert-content">
+          <strong>Success!</strong> Your changes have been saved successfully.
+        </div>
+        <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+      </div>
+
+      <div class="alert alert-info">
+        <span class="alert-icon">ℹ</span>
+        <div class="alert-content">
+          <strong>Info:</strong> New features are now available. Check them out!
+        </div>
+        <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+      </div>
+
+      <div class="alert alert-warning">
+        <span class="alert-icon">⚠</span>
+        <div class="alert-content">
+          <strong>Warning:</strong> Please review your information before submitting.
+        </div>
+        <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+      </div>
+
+      <div class="alert alert-error">
+        <span class="alert-icon">✕</span>
+        <div class="alert-content">
+          <strong>Error:</strong> An error occurred while processing your request. Please try again.
+        </div>
+        <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+      </div>
+    </div>
+
+    <!-- Cards -->
+    <div class="demo-section">
+      <h2>Cards & Panels</h2>
+
+      <div class="demo-grid">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Standard Card</h3>
+          </div>
+          <div class="card-body">
+            <p>This is a standard card with header, body, and footer sections. Cards are great for grouping related content.</p>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-primary">Action</button>
+            <button class="btn btn-secondary">Cancel</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title">Simple Card</h3>
+            <p>This card only has a body section. Perfect for simple content blocks without headers or footers.</p>
+            <button class="btn btn-secondary btn-block mt-md">Learn More</button>
+          </div>
+        </div>
+
+        <div class="card card-compact">
+          <div class="card-header">
+            <h4 class="card-title">Compact Card</h4>
+          </div>
+          <div class="card-body">
+            <p>Compact cards have reduced padding for tighter layouts.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Example (Hidden by default) -->
+    <div class="demo-section">
+      <h2>Modals & Dialogs</h2>
+      <p>Click the button below to see a modal example.</p>
+      <button class="btn btn-primary" onclick="showModal()">Open Modal</button>
+
+      <div id="exampleModal" style="display: none;">
+        <div class="modal-backdrop" onclick="hideModal()">
+          <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+              <h2 class="modal-title">Confirm Action</h2>
+              <button class="modal-close" onclick="hideModal()">×</button>
+            </div>
+            <div class="modal-body">
+              <p>Are you sure you want to proceed with this action? This cannot be undone.</p>
+
+              <div class="form-group">
+                <label class="form-label" for="modalInput">Confirmation</label>
+                <input type="text" id="modalInput" class="form-input" placeholder="Type 'CONFIRM' to proceed">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" onclick="hideModal()">Cancel</button>
+              <button class="btn btn-danger">Delete Permanently</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Utility Classes -->
+    <div class="demo-section">
+      <h2>Utility Classes</h2>
+
+      <h3>Spacing</h3>
+      <div class="token-example">
+        <div class="p-md border rounded" style="background: var(--color-bg-tertiary);">
+          <code>p-md</code> - Medium padding (16px)
+        </div>
+      </div>
+
+      <h3 class="mt-lg">Flexbox</h3>
+      <div class="token-example">
+        <div class="d-flex justify-content-between align-items-center p-md border rounded" style="background: var(--color-bg-tertiary);">
+          <span>Left</span>
+          <span>Center</span>
+          <span>Right</span>
+        </div>
+      </div>
+
+      <h3 class="mt-lg">Text Alignment</h3>
+      <div class="token-example">
+        <p class="text-left">Left aligned text</p>
+        <p class="text-center">Center aligned text</p>
+        <p class="text-right">Right aligned text</p>
+      </div>
+
+      <h3 class="mt-lg">Text Colors</h3>
+      <div class="token-example">
+        <p class="text-primary">Primary colored text</p>
+        <p class="text-success">Success colored text</p>
+        <p class="text-warning">Warning colored text</p>
+        <p class="text-error">Error colored text</p>
+        <p class="text-secondary">Secondary colored text</p>
+      </div>
+
+      <h3 class="mt-lg">Shadows</h3>
+      <div class="demo-grid">
+        <div class="p-md shadow-sm border rounded">Small Shadow</div>
+        <div class="p-md shadow-md border rounded">Medium Shadow</div>
+        <div class="p-md shadow-lg border rounded">Large Shadow</div>
+      </div>
+    </div>
+
+    <!-- Design Tokens Reference -->
+    <div class="demo-section">
+      <h2>Design Tokens Reference</h2>
+
+      <h3>Key Token Categories</h3>
+
+      <div class="card mb-md">
+        <div class="card-body">
+          <h4>Color Tokens</h4>
+          <p class="token-name">--color-primary, --color-success, --color-warning, --color-error, --color-info</p>
+          <p class="text-secondary">Use semantic color tokens for consistent theming</p>
+        </div>
+      </div>
+
+      <div class="card mb-md">
+        <div class="card-body">
+          <h4>Spacing Tokens</h4>
+          <p class="token-name">--space-padding-xs, --space-padding-sm, --space-padding-md, --space-padding-lg</p>
+          <p class="text-secondary">8px-based spacing scale for consistent layouts</p>
+        </div>
+      </div>
+
+      <div class="card mb-md">
+        <div class="card-body">
+          <h4>Typography Tokens</h4>
+          <p class="token-name">--font-size-base, --font-size-heading-sm, --font-weight-base</p>
+          <p class="text-secondary">Scalable typography system from 12px to 40px</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <h4>Component Tokens</h4>
+          <p class="token-name">--button-padding-vertical, --input-border-color, --card-shadow</p>
+          <p class="text-secondary">Component-specific tokens built on semantic tokens</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-lg p-lg text-center border-top">
+      <p class="text-secondary">Unified Enterprise Design System - v1.0</p>
+      <p class="text-secondary">Inspired by IBM Carbon, Google Material, and Microsoft Fluent</p>
+    </footer>
+  </div>
+
+  <script>
+    function toggleMenu() {
+      const nav = document.getElementById('navMenu');
+      nav.classList.toggle('is-open');
+    }
+
+    function showModal() {
+      document.getElementById('exampleModal').style.display = 'block';
+    }
+
+    function hideModal() {
+      document.getElementById('exampleModal').style.display = 'none';
+    }
+
+    // Update active nav link based on scroll
+    const sections = document.querySelectorAll('.demo-section[id]');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        if (pageYOffset >= sectionTop - 100) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) {
+          link.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

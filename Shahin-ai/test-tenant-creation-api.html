@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Tenant Creation API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .response {
+            margin-top: 30px;
+            padding: 15px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: monospace;
+            font-size: 13px;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Test Tenant Creation API</h1>
+
+        <div class="form-group">
+            <label for="apiUrl">API URL:</label>
+            <input type="text" id="apiUrl" value="http://localhost:5137/api/agent/tenant/create">
+        </div>
+
+        <div class="form-group">
+            <label for="tenantName">Tenant Name:</label>
+            <input type="text" id="tenantName" placeholder="e.g., test-company" value="test-company">
+        </div>
+
+        <div class="form-group">
+            <label for="adminEmail">Admin Email:</label>
+            <input type="email" id="adminEmail" placeholder="e.g., admin@test.com" value="admin@test.com">
+        </div>
+
+        <div class="form-group">
+            <label for="adminPassword">Admin Password:</label>
+            <input type="password" id="adminPassword" placeholder="At least 6 characters" value="TestPass123!">
+        </div>
+
+        <div class="form-group">
+            <label for="deviceFingerprint">Device Fingerprint (Optional):</label>
+            <input type="text" id="deviceFingerprint" placeholder="e.g., fp_abc123">
+        </div>
+
+        <button onclick="createTenant()">Create Tenant</button>
+        <button onclick="generateRandomData()" style="background-color: #6c757d; margin-left: 10px;">Generate Random Data</button>
+
+        <div id="response"></div>
+    </div>
+
+    <script>
+        function generateRandomData() {
+            const timestamp = Date.now();
+            const random = Math.floor(Math.random() * 1000);
+            document.getElementById('tenantName').value = `test-tenant-${random}`;
+            document.getElementById('adminEmail').value = `admin${random}@test.com`;
+            document.getElementById('adminPassword').value = `TestPass${random}!`;
+            document.getElementById('deviceFingerprint').value = `fp_${timestamp}`;
+        }
+
+        async function createTenant() {
+            const apiUrl = document.getElementById('apiUrl').value;
+            const responseDiv = document.getElementById('response');
+
+            const payload = {
+                tenantName: document.getElementById('tenantName').value,
+                adminEmail: document.getElementById('adminEmail').value,
+                adminPassword: document.getElementById('adminPassword').value,
+                recaptchaToken: "",
+                deviceFingerprint: document.getElementById('deviceFingerprint').value || ""
+            };
+
+            responseDiv.innerHTML = '<div class="response info">Sending request...</div>';
+            responseDiv.innerHTML += `<div class="response info">Request Payload:\n${JSON.stringify(payload, null, 2)}</div>`;
+
+            try {
+                const startTime = Date.now();
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const endTime = Date.now();
+                const duration = endTime - startTime;
+
+                const responseText = await response.text();
+                let responseJson;
+
+                try {
+                    responseJson = JSON.parse(responseText);
+                } catch (e) {
+                    responseJson = { rawResponse: responseText };
+                }
+
+                const statusClass = response.ok ? 'success' : 'error';
+
+                responseDiv.innerHTML = `
+                    <div class="response ${statusClass}">
+                        <strong>HTTP Status:</strong> ${response.status} ${response.statusText}
+                        <br><strong>Duration:</strong> ${duration}ms
+                        <br><br><strong>Response:</strong>
+                        <pre>${JSON.stringify(responseJson, null, 2)}</pre>
+                    </div>
+                `;
+
+                if (response.ok && responseJson.tenantId) {
+                    responseDiv.innerHTML += `
+                        <div class="response success">
+                            <strong>✅ Tenant Created Successfully!</strong>
+                            <br><br>
+                            <strong>Tenant ID:</strong> ${responseJson.tenantId}
+                            <br><strong>Tenant Name:</strong> ${responseJson.tenantName}
+                            <br><strong>Admin Email:</strong> ${responseJson.adminEmail}
+                            <br><strong>Message:</strong> ${responseJson.message}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                responseDiv.innerHTML = `
+                    <div class="response error">
+                        <strong>Error:</strong> ${error.message}
+                        <br><br>
+                        <strong>Details:</strong>
+                        <pre>${error.stack}</pre>
+                    </div>
+                `;
+            }
+        }
+
+        // Auto-generate random data on load
+        window.onload = function() {
+            generateRandomData();
+        };
+    </script>
+</body>
+</html>
