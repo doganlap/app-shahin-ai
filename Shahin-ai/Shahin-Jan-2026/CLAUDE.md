@@ -25,7 +25,7 @@
 
 ## Architecture Overview
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                    Shahin AI GRC Platform                    │
 ├─────────────────────────────────────────────────────────────┤
@@ -60,7 +60,7 @@
 
 ## Project Structure
 
-```
+```text
 d:\Shahin-Jan-2026/
 ├── src/
 │   └── GrcMvc/                        # Main ASP.NET Core MVC project
