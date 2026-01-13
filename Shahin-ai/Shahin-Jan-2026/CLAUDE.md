@@ -124,6 +124,7 @@ d:\Shahin-Jan-2026/
 ## Key Conventions
 
 ### Naming Conventions
+
 - **Entities**: PascalCase, singular (e.g., `Risk`, `Control`, `Assessment`)
 - **Controllers**: `{Entity}Controller` (MVC), `{Entity}ApiController` (API)
 - **Services**: `{Entity}Service` implementing `I{Entity}Service`
@@ -132,6 +133,7 @@ d:\Shahin-Jan-2026/
 - **Views**: `{Controller}/{Action}.cshtml`
 
 ### Code Style
+
 - Use `async/await` for all I/O operations
 - Dependency Injection via constructor injection
 - Use `ILogger<T>` for logging (Serilog configured)
@@ -139,6 +141,7 @@ d:\Shahin-Jan-2026/
 - AutoMapper for object mapping
 
 ### Database (PostgreSQL 15)
+
 - **Two databases**:
   - `GrcMvcDb` (main application data via `GrcDbContext`)
   - `GrcAuthDb` (authentication data via `GrcAuthDbContext`)
@@ -149,12 +152,14 @@ d:\Shahin-Jan-2026/
 - **Concurrency**: Optimistic concurrency with `RowVersion` (timestamp)
 
 ### Localization
+
 - Resources in `src/GrcMvc/Resources/`
 - Full bilingual support: English (2,495 strings) + Arabic (2,399 strings)
 - RTL (Right-to-Left) support for Arabic via `rtl.css`
 - Usage: `@L["KeyName"]` in Razor views, `IStringLocalizer` in services
 
 ### Multi-Tenancy Architecture
+
 - **Tenant Isolation**: Every entity has `TenantId` (Guid?)
 - **Workspace Scoping**: Additional `WorkspaceId` for team collaboration
 - **Query Filters**: Automatic filtering in `GrcDbContext.OnModelCreating()`
@@ -166,7 +171,7 @@ d:\Shahin-Jan-2026/
 **12 Specialized AI Agents** (not 9!):
 
 | Agent Code | Name | Type | Implementation Status |
-|------------|------|------|----------------------|
+| ----------- | ---- | ---- | --------------------- |
 | SHAHIN_AI | Shahin AI Assistant | Orchestrator | ✅ Implemented |
 | COMPLIANCE_AGENT | Compliance Analysis Agent | Analysis | ✅ ClaudeAgentService |
 | RISK_AGENT | Risk Assessment Agent | Analysis | ✅ ClaudeAgentService |
@@ -208,6 +213,7 @@ d:\Shahin-Jan-2026/
 ## Environment Setup
 
 ### Prerequisites
+
 - .NET 8.0 SDK ([download](https://dotnet.microsoft.com/download/dotnet/8.0))
 - Docker Desktop (for PostgreSQL, Kafka, etc.)
 - Node.js 18+ (optional, for frontend build tools)
@@ -222,6 +228,7 @@ export PATH="$PATH:/usr/share/dotnet:$HOME/.dotnet/tools"
 ```
 
 Add to `~/.bashrc` or `~/.zshrc` for persistence:
+
 ```bash
 echo 'export PATH="$PATH:/usr/share/dotnet:$HOME/.dotnet/tools"' >> ~/.bashrc
 source ~/.bashrc
@@ -237,6 +244,7 @@ dotnet --version   # Should show 8.0.x
 ## Critical Configuration (BEFORE FIRST RUN)
 
 ### 1. Create .env File
+
 ```bash
 cp .env.production.template .env
 ```
@@ -362,6 +370,7 @@ dotnet run
 ### Running the Application
 
 #### Option 1: Docker Compose (Recommended for Full Stack)
+
 ```bash
 # Start all services (app + infrastructure)
 docker-compose up
@@ -377,6 +386,7 @@ docker-compose down
 ```
 
 #### Option 2: Local Development (App only)
+
 ```bash
 # Terminal 1 - Start infrastructure
 docker-compose up -d db redis kafka
@@ -388,6 +398,7 @@ dotnet run
 ```
 
 #### Option 3: Visual Studio / VS Code
+
 - Open `src/GrcMvc/GrcMvc.csproj` in IDE
 - Press F5 to debug
 - Ensure Docker services are running first
@@ -395,6 +406,7 @@ dotnet run
 ### Database Operations
 
 #### Run Migrations
+
 ```bash
 cd src/GrcMvc
 dotnet ef database update
