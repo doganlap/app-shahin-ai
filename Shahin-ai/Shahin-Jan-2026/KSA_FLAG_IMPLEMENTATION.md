@@ -11,6 +11,12 @@
 - ✅ **Trial Registration Form** (`Views/Trial/Index.cshtml`)
   - Location: Card header title
   - Badge: "🇸🇦 KSA" indicator
+  - Route: `/trial`
+
+- ✅ **SignupNew Form** (`Pages/SignupNew/Index.cshtml`)
+  - Location: Header title
+  - Badge: "🇸🇦 KSA" indicator
+  - Route: `/SignupNew`
 
 ### KSA Flag NOT Added To:
 - ❌ Main navigation (navbar brand)
@@ -52,8 +58,9 @@ To add KSA flag to a newly modified form/view:
 
 | Form/View | KSA Flag | Status |
 |-----------|----------|--------|
-| Trial Registration | ✅ Added | Newly modified |
-| Login Form | ❌ Not added | Existing form |
+| Trial Registration (`/trial`) | ✅ Added | Newly modified (from pull) |
+| SignupNew (`/SignupNew`) | ✅ Added | Newly modified (from pull) |
+| Login Form | ❌ Removed | Existing form (not from new pull) |
 | Landing Page | ❌ Not added | Main section |
 | Navigation | ❌ Not added | Main section |
 
