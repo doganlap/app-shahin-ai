@@ -2,3 +2,22 @@
 [2026-01-13 06:00:01] === Auto-commit started ===
 [2026-01-13 06:00:01] Current branch: claude/fix-database-duplication-qQvTq
 [2026-01-13 06:00:01] Current branch: claude/fix-database-duplication-qQvTq
+[2026-01-13 06:00:02] Staged 9 file(s) for commit
+[2026-01-13 06:00:02] Staged 9 file(s) for commit
+[claude/fix-database-duplication-qQvTq 96274af] chore: Auto-commit 2026-01-13 06:00:02 - 9 file(s) changed
+ 9 files changed, 1393 insertions(+), 2 deletions(-)
+ create mode 100644 Shahin-ai/.auto-commit.log
+ create mode 100644 Shahin-ai/Shahin-Jan-2026/FIX_500_ERROR_SUMMARY.md
+ create mode 100644 Shahin-ai/Shahin-Jan-2026/TRIAL_PATHS_CONNECTION_ANALYSIS.md
+ create mode 100644 Shahin-ai/Shahin-Jan-2026/TRIAL_PATHS_TEST_INTEGRATION_STATUS.md
+ create mode 100644 Shahin-ai/Shahin-Jan-2026/TRIAL_PATHS_TEST_RESULTS.md
+ create mode 100644 Shahin-ai/Shahin-Jan-2026/tests/GrcMvc.Tests/E2E/TrialRegistrationE2ETests.cs
+ create mode 100644 Shahin-ai/Shahin-Jan-2026/tests/GrcMvc.Tests/Integration/TrialRegistrationIntegrationTests.cs
+[2026-01-13 06:00:02] ✅ Commit successful: 96274af
+[2026-01-13 06:00:02] ✅ Commit successful: 96274af
+To https://github.com/doganlap/app-shahin-ai.git
+   1987049..96274af  claude/fix-database-duplication-qQvTq -> claude/fix-database-duplication-qQvTq
+[2026-01-13 06:00:03] ✅ Push successful to origin/claude/fix-database-duplication-qQvTq
+[2026-01-13 06:00:03] ✅ Push successful to origin/claude/fix-database-duplication-qQvTq
+[2026-01-13 06:00:03] === Auto-commit completed successfully ===
+[2026-01-13 06:00:03] === Auto-commit completed successfully ===

@@ -78,11 +78,11 @@ namespace GrcMvc.Data
                 if (string.IsNullOrWhiteSpace(connectionString))
                 {
                     // Build from individual DB_* environment variables
-                    var dbHost = Environment.GetEnvironmentVariable("DB_HOST") ?? "172.18.0.6";
+                    var dbHost = Environment.GetEnvironmentVariable("DB_HOST") ?? "grc-db";
                     var dbPort = Environment.GetEnvironmentVariable("DB_PORT") ?? "5432";
                     var dbName = Environment.GetEnvironmentVariable("DB_NAME") ?? "GrcMvcDb";
                     var dbUser = Environment.GetEnvironmentVariable("DB_USER") ?? "postgres";
-                    var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "postgres_2026";
+                    var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "postgres";
                     connectionString = $"Host={dbHost};Port={dbPort};Database={dbName};Username={dbUser};Password={dbPassword}";
                 }
                 

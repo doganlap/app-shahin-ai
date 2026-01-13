@@ -413,17 +413,20 @@ dotnet ef database update
 ```
 
 #### Add New Migration
+
 ```bash
 cd src/GrcMvc
 dotnet ef migrations add YourMigrationName
 ```
 
 #### Rollback Migration
+
 ```bash
 dotnet ef database update PreviousMigrationName
 ```
 
 #### View Migration List
+
 ```bash
 dotnet ef migrations list
 ```
